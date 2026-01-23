@@ -10,6 +10,19 @@ public class SubTask {
     public SubTask() {
     }
 
+    public SubTask(int id, String title, boolean completed, int taskId) {
+        this.id = id;
+        this.title = title;
+        this.completed = completed;
+        this.taskId = taskId;
+    }
+
+    public SubTask(String title, int taskId) {
+        this.title = title;
+        this.taskId = taskId;
+        this.completed = false;
+    }
+
     //Getter y Setter
     public int getId() {
         return id;

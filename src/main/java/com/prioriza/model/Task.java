@@ -7,14 +7,34 @@ public class Task {
     private String title;
     private String description;
     private LocalDate dueDate;
-    private int priority; // recordar 1-alta 2-media 3-baja
-    private boolean completed;
+    private Priority priority; // recordar LOW, MEDIUM, HIGH, URGENT
+    private TaskStatus status; // PENDING, COMPLETED, CANCELLED
+    private int taskListId; // FK a TaskList
 
     //Constructor
     public Task() {
     }
 
+    public Task(int id, String title, String description, LocalDate dueDate, Priority priority, TaskStatus status, int taskListId) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.dueDate = dueDate;
+        this.priority = priority;
+        this.status = status;
+        this.taskListId = taskListId;
+    }
+
+    public Task(String title, String description, LocalDate dueDate) {
+        this.title = title;
+        this.description = description;
+        this.dueDate = dueDate;
+        this.status = TaskStatus.PENDING;
+        this.priority = Priority.MEDIUM;
+    }
+
     //Getter y Setter
+
 
     public int getId() {
         return id;
@@ -48,19 +68,27 @@ public class Task {
         this.dueDate = dueDate;
     }
 
-    public int getPriority() {
+    public Priority getPriority() {
         return priority;
     }
 
-    public void setPriority(int priority) {
+    public void setPriority(Priority priority) {
         this.priority = priority;
     }
 
-    public boolean isCompleted() {
-        return completed;
+    public TaskStatus getStatus() {
+        return status;
     }
 
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
+    public void setStatus(TaskStatus status) {
+        this.status = status;
+    }
+
+    public int getTaskListId() {
+        return taskListId;
+    }
+
+    public void setTaskListId(int taskListId) {
+        this.taskListId = taskListId;
     }
 }

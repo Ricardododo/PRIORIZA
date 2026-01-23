@@ -5,16 +5,25 @@ import java.util.List;
 public class TaskList {
     private int id;
     private String name;
-    private int userId; // esta es la FK a la clase User para BD
-
-    //aquí debe ir una List<> para las tareas asociadas a la lista de tareas de (Task)
-    private List<Task> tasks;
+    private int userId; // FK a la clase User
 
     //Constructor
     public TaskList() {
     }
 
+    public TaskList(int id, String name, int userId) {
+        this.id = id;
+        this.name = name;
+        this.userId = userId;
+    }
+
+    public TaskList(String name, int userId) {
+        this.name = name;
+        this.userId = userId;
+    }
+
     //Getter y Setter
+
 
     public int getId() {
         return id;
