@@ -13,13 +13,15 @@ public class UserDAO {
         String sql = "INSERT INTO users(name, email) VALUES(?, ?)";
         try(Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
+
             stmt.setString(1, user.getName());
             stmt.setString(2, user.getEmail());
             stmt.executeUpdate();
 
-            try(ResultSet generatedKeys = stmt.getGeneratedKeys()){
-                if (generatedKeys.next()){
-                    user.setId(generatedKeys.getInt(1)); //actualiza el id
+            //obtener el id generado y asignarlo al objeto User
+            try(ResultSet rs = stmt.getGeneratedKeys()){
+                if (rs.next()){
+                    user.setId(rs.getInt(1)); //actualiza el id
                 }
             }
         }

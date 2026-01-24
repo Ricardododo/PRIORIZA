@@ -13,8 +13,11 @@ public class Task {
 
     //Constructor
     public Task() {
+        this.status = TaskStatus.PENDING;
+        this.priority = Priority.MEDIUM;
     }
 
+    //constructor completo
     public Task(int id, String title, String description, LocalDate dueDate, Priority priority, TaskStatus status, int taskListId) {
         this.id = id;
         this.title = title;
@@ -25,10 +28,12 @@ public class Task {
         this.taskListId = taskListId;
     }
 
-    public Task(String title, String description, LocalDate dueDate) {
+    //constructor para crear tareas
+    public Task(String title, String description, LocalDate dueDate, int taskListId) {
         this.title = title;
         this.description = description;
         this.dueDate = dueDate;
+        this.taskListId = taskListId;
         this.status = TaskStatus.PENDING;
         this.priority = Priority.MEDIUM;
     }

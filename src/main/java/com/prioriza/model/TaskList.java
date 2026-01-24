@@ -1,5 +1,6 @@
 package com.prioriza.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TaskList {
@@ -7,16 +8,19 @@ public class TaskList {
     private String name;
     private int userId; // FK a la clase User
 
-    //Constructor
+    //relación lógica
+    private List<Task> tasks = new ArrayList<>();
+
+    //Constructor vacio (JDBC)
     public TaskList() {
     }
-
+    //constructor completo (lectura desde BD)
     public TaskList(int id, String name, int userId) {
         this.id = id;
         this.name = name;
         this.userId = userId;
     }
-
+    //constructor para crear desde la app
     public TaskList(String name, int userId) {
         this.name = name;
         this.userId = userId;
@@ -47,5 +51,30 @@ public class TaskList {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
+    }
+
+    public void addTask(Task task) {
+        this.tasks.add(task);
+    }
+
+
+    //toString
+
+    @Override
+    public String toString() {
+        return "TaskList{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", userId=" + userId +
+                ", tasks=" + tasks +
+                '}';
     }
 }

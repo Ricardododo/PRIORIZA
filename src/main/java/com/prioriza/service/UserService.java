@@ -15,14 +15,18 @@ public class UserService {
     }
 
     //registrar usuario
-    public void registerUser(String name, String email) throws SQLException{
+    public User registerUser(String name, String email) throws SQLException{
+        //verificar si existe
         if (userDAO.getByEmail(email) !=null){
             System.out.println("El email ya existe: " + email);
+            return null;// si ya existe
         }
         User user = new User(name, email);
         userDAO.addUser(user); //esto guarda en la base de datos
         System.out.println("Usuario registrado: " + user);
+        return user; //esto retorna el usuario con ID
     }
+
     //listar todos los usuarios
     public List<User> listUsers() throws SQLException{
         return userDAO.getAllUsers(); // esto devuelve todos los usuarios
