@@ -8,19 +8,18 @@ import java.util.List;
 
 public class UserService {
 
-    private final UserDAO userDAO;
-
-    public UserService() {
-        this.userDAO = new UserDAO();
-    }
+    private final UserDAO userDAO = new UserDAO();
 
     //registrar usuario
     public User registerUser(String name, String email) throws SQLException{
-        //verificar si existe
-        if (userDAO.getByEmail(email) !=null){
+
+        //Regla de negocio
+        User existing = userDAO.getByEmail(email);
+        if (existing !=null){
             System.out.println("El email ya existe: " + email);
-            return null;// si ya existe
+            return existing;// si ya existe
         }
+
         User user = new User(name, email);
         userDAO.addUser(user); //esto guarda en la base de datos
         System.out.println("Usuario registrado: " + user);
@@ -40,9 +39,4 @@ public class UserService {
         return userDAO.getByEmail(email);
     }
 
-    //regla de negocio
-
-    //verificar la relación
-
-    //persistencia
 }

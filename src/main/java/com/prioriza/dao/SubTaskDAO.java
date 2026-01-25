@@ -54,7 +54,7 @@ public class SubTaskDAO {
         return null;
     }
 
-    //Leer por Task
+    //Listar subTareas
     public List<SubTask> getByTaskId(int taskId){
         List<SubTask> subTasks = new ArrayList<>();
         String sql = "SELECT * FROM sub_task WHERE task_id = ?";

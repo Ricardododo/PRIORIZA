@@ -1,0 +1,57 @@
+package com.prioriza.service;
+
+import com.prioriza.dao.DatabaseInitializer;
+import com.prioriza.model.SubTask;
+import com.prioriza.model.Task;
+import com.prioriza.model.TaskList;
+import com.prioriza.model.User;
+
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.List;
+
+public class TestService {
+    //test de (Reglas de negocio, verificación de relaciones, uso correcto de DAOs)
+    public static void main(String[] args) throws SQLException {
+
+        DatabaseInitializer.initialize();
+
+        //services
+        UserService userService = new UserService();
+        TaskListService taskListService = new TaskListService();
+        TaskService taskService = new TaskService();
+        SubTaskService subTaskService = new SubTaskService();
+
+        //usuario
+        User user = userService.registerUser("Anabel", "anabel@hotmail.com");
+
+        //lista
+        TaskList taskList = new TaskList("Lista de Service", user.getId());//crea el objeto
+        taskListService.create(taskList);//inserta en la base datos
+        int taskListId = taskList.getId();//obtiene el ID que se le asigna
+        System.out.println("\nLista creada: " + taskList.getName() + " | ID: " + taskListId);
+
+        //tarea
+        Task t1 = new Task("Tarea 1", "Descripción 1", LocalDate.now().plusDays(3), taskListId);
+        Task t2 = new Task("Tarea 2", "Descripción 2", LocalDate.now().plusDays(1), taskListId);
+        taskService.createTask(t1);
+        taskService.createTask(t2);
+        System.out.println("\nTareas creadas:");
+        System.out.println(t1.getTitle() + " | ID: " + t1.getId());
+        System.out.println(t2.getTitle() + " | ID: " + t2.getId());
+
+        //subtareas
+        subTaskService.createSubTask(new SubTask("Diseñar UI", t1.getId()));
+        subTaskService.createSubTask(new SubTask("Conectar BD", t2.getId()));
+
+        //leer subtareas
+        List<SubTask> subtasksT1 = subTaskService.getSubTasksByTaskId(t1.getId());
+        List<SubTask> subtasksT2 = subTaskService.getSubTasksByTaskId(t2.getId());
+
+        System.out.println("\nSubtareas de Tarea 1:");
+        subtasksT1.forEach(System.out::println);
+        System.out.println("\nSubtareas de Tarea 2:");
+        subtasksT2.forEach(System.out::println);
+
+    }
+}

@@ -55,4 +55,14 @@ public class SubTask {
     public void setTaskId(int taskId) {
         this.taskId = taskId;
     }
+
+    @Override
+    public String toString() {
+        return "SubTask{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", completed=" + completed +
+                ", taskId=" + taskId +
+                '}';
+    }
 }

@@ -9,7 +9,7 @@ import com.prioriza.service.UserService;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
-
+//test de persistencia DAO (conexión BD, CRUD DAO, Relaciones reales en SQLite)
 public class TestDAO {
     public static void main(String[] args) throws SQLException {
         // inicializar BD
@@ -17,7 +17,7 @@ public class TestDAO {
 
         // crear usuario
         UserService userService = new UserService();
-        User user = userService.registerUser("Fernando", "fernando@hotmail.com");
+        User user = userService.registerUser("Sara", "sara@hotmail.com");
 
         if(user != null){
             // crear lista de tareas
