@@ -1,10 +1,7 @@
 package com.prioriza.service;
 
 import com.prioriza.dao.DatabaseInitializer;
-import com.prioriza.model.SubTask;
-import com.prioriza.model.Task;
-import com.prioriza.model.TaskList;
-import com.prioriza.model.User;
+import com.prioriza.model.*;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -22,8 +19,17 @@ public class TestService {
         TaskService taskService = new TaskService();
         SubTaskService subTaskService = new SubTaskService();
 
+        User user;
         //usuario
-        User user = userService.registerUser("Anabel", "anabel@hotmail.com");
+        try{
+            user = userService.registerUser("Lurdes", "lurdes@hotmail.com");
+        } catch (IllegalArgumentException e) {
+            System.err.println(e.getMessage());
+            return; //para cortar el flujo
+        }
+        //listar listas de usuarios
+        System.out.println("\nListas del usuario");
+        taskListService.getByUserId(user.getId()).forEach(System.out::println);
 
         //lista
         TaskList taskList = new TaskList("Lista de Service", user.getId());//crea el objeto
@@ -40,6 +46,10 @@ public class TestService {
         System.out.println(t1.getTitle() + " | ID: " + t1.getId());
         System.out.println(t2.getTitle() + " | ID: " + t2.getId());
 
+        //listar tareas por lista
+        System.out.println("\ntareas por lista:");
+        taskService.getByTasksListId(taskListId).forEach(System.out::println);
+
         //subtareas
         subTaskService.createSubTask(new SubTask("Diseñar UI", t1.getId()));
         subTaskService.createSubTask(new SubTask("Conectar BD", t2.getId()));
@@ -52,6 +62,26 @@ public class TestService {
         subtasksT1.forEach(System.out::println);
         System.out.println("\nSubtareas de Tarea 2:");
         subtasksT2.forEach(System.out::println);
+
+        //cambiar prioridad de t1 a "Alta"
+        t1.setPriority(Priority.HIGH);
+        taskService.updateTask(t1);
+        System.out.println("\nTarea 1 actualizada por prioridad: ");
+        System.out.println(t1);
+
+        //cambiar estado de t1 a "Completada"
+        t1.setStatus(TaskStatus.COMPLETED);
+        taskService.updateTask(t1);
+        System.out.println("\nTarea 1 actualizada por estado: ");
+        System.out.println(t1);
+
+        //cambiar prioridad subtasksT1 a completada
+        for (SubTask sub : subtasksT1){
+            subTaskService.completeSubTask(sub);
+        }
+        System.out.println("\nSubtareas de tarea 1 actualizadas a COMPLETED: ");
+        subtasksT1.forEach(System.out::println);
+
 
     }
 }

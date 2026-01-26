@@ -107,4 +107,24 @@ public class TaskListDAO {
             e.printStackTrace();
         }
     }
+
+    //Listar listas de un usuario
+    public List<TaskList> getByUserId(int userId) throws SQLException{
+        List<TaskList> lists = new ArrayList<>();
+        String sql = "SELECT * FROM task_list WHERE user_id = ?";
+        try(Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                TaskList list = new TaskList(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getInt("user_id")
+                );
+                lists.add(list);
+            }
+            return lists;
+        }
+    }
 }

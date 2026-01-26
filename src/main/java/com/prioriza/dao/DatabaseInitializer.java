@@ -49,7 +49,7 @@ public class DatabaseInitializer {
                 CREATE TABLE IF NOT EXISTS sub_task (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     title TEXT NOT NULL,
-                    complete INTEGER DEFAULT 0,
+                    sub_task_status TEXT NOT NULL,
                     task_id INTEGER NOT NULL,
                     FOREIGN KEY(task_id) REFERENCES task(id)
                 );

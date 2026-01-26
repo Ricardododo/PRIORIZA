@@ -1,6 +1,7 @@
 package com.prioriza.dao;
 
 import com.prioriza.model.SubTask;
+import com.prioriza.model.SubTaskStatus;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ public class SubTaskDAO {
     //Crear
     public void insert(SubTask subTask){
         String sql = """
-                INSERT INTO sub_task (title, complete, task_id)
+                INSERT INTO sub_task (title, sub_task_status, task_id)
                 VALUES (?, ?, ?)
                 """;
 
@@ -19,7 +20,7 @@ public class SubTaskDAO {
             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
                 ps.setString(1, subTask.getTitle());
-                ps.setInt(2, subTask.isCompleted() ? 1 : 0);
+                ps.setString(2, subTask.getSubTaskStatus().name()); //enum
                 ps.setInt(3, subTask.getTaskId());
 
                 ps.executeUpdate();
@@ -79,14 +80,14 @@ public class SubTaskDAO {
     public void update(SubTask subTask){
         String sql = """
                 UPDATE sub_task
-                SET title = ?, complete = ?
+                SET title = ?, sub_task_status = ?
                 WHERE id = ?
                 """;
         try(Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)){
 
             ps.setString(1, subTask.getTitle());
-            ps.setInt(2, subTask.isCompleted() ? 1 : 0);
+            ps.setString(2, subTask.getSubTaskStatus().name());
             ps.setInt(3, subTask.getId());
 
             ps.executeUpdate();
@@ -116,7 +117,7 @@ public class SubTaskDAO {
         SubTask s = new SubTask();
         s.setId(rs.getInt("id"));
         s.setTitle(rs.getString("title"));
-        s.setCompleted(rs.getInt("complete") == 1);
+        s.setSubTaskStatus(SubTaskStatus.valueOf(rs.getString("sub_task_status")));
         s.setTaskId(rs.getInt("task_id"));
         return s;
     }

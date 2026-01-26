@@ -35,4 +35,9 @@ public class TaskListService {
     public void deleteTaskList(int id) throws SQLException{
         taskListDAO.delete(id);
     }
+
+    //Listar listas de un usuario
+    public List<TaskList> getByUserId(int userId)throws SQLException{
+        return taskListDAO.getByUserId(userId);
+    }
 }

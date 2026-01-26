@@ -1,0 +1,10 @@
+# Archivos compilados
+target/
+*.class
+
+# Base de datos local
+prioriza.db
+
+# Archivos de IDE
+.idea/
+*.iml

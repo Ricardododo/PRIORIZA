@@ -96,4 +96,17 @@ public class Task {
     public void setTaskListId(int taskListId) {
         this.taskListId = taskListId;
     }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", dueDate=" + dueDate +
+                ", priority=" + priority +
+                ", status=" + status +
+                ", taskListId=" + taskListId +
+                '}';
+    }
 }

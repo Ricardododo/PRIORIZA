@@ -3,27 +3,30 @@ package com.prioriza.model;
 public class SubTask {
     private int id;
     private String title;
-    private boolean completed;
+    private SubTaskStatus subTaskStatus;
     private int taskId; // esta es la FK a la clase Task para la BD
 
     //Constructor
     public SubTask() {
+        this.subTaskStatus = SubTaskStatus.PENDING;
     }
 
-    public SubTask(int id, String title, boolean completed, int taskId) {
+    public SubTask(int id, String title, SubTaskStatus subTaskStatus, int taskId) {
         this.id = id;
         this.title = title;
-        this.completed = completed;
+        this.subTaskStatus = subTaskStatus;
         this.taskId = taskId;
     }
 
     public SubTask(String title, int taskId) {
         this.title = title;
+        this.subTaskStatus = SubTaskStatus.PENDING;
         this.taskId = taskId;
-        this.completed = false;
     }
 
     //Getter y Setter
+
+
     public int getId() {
         return id;
     }
@@ -40,12 +43,12 @@ public class SubTask {
         this.title = title;
     }
 
-    public boolean isCompleted() {
-        return completed;
+    public SubTaskStatus getSubTaskStatus() {
+        return subTaskStatus;
     }
 
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
+    public void setSubTaskStatus(SubTaskStatus subTaskStatus) {
+        this.subTaskStatus = subTaskStatus;
     }
 
     public int getTaskId() {
@@ -56,12 +59,17 @@ public class SubTask {
         this.taskId = taskId;
     }
 
+    //metodo para marcar completado
+    public void markCompleted(){
+        this.subTaskStatus = SubTaskStatus.COMPLETED;
+    }
+
     @Override
     public String toString() {
         return "SubTask{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", completed=" + completed +
+                ", subTaskStatus=" + subTaskStatus +
                 ", taskId=" + taskId +
                 '}';
     }

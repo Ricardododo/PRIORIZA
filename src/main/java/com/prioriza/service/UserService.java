@@ -13,13 +13,10 @@ public class UserService {
     //registrar usuario
     public User registerUser(String name, String email) throws SQLException{
 
-        //Regla de negocio
-        User existing = userDAO.getByEmail(email);
-        if (existing !=null){
-            System.out.println("El email ya existe: " + email);
-            return existing;// si ya existe
+        //Regla de negocio: email unico
+        if (userDAO.getByEmail(email) !=null){
+            throw new IllegalArgumentException("El email ya existe: " + email);
         }
-
         User user = new User(name, email);
         userDAO.addUser(user); //esto guarda en la base de datos
         System.out.println("Usuario registrado: " + user);

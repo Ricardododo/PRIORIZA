@@ -3,6 +3,7 @@ package com.prioriza.service;
 import com.prioriza.dao.SubTaskDAO;
 import com.prioriza.dao.TaskDAO;
 import com.prioriza.model.SubTask;
+import com.prioriza.model.SubTaskStatus;
 import com.prioriza.model.Task;
 
 import java.sql.SQLException;
@@ -42,6 +43,12 @@ public class SubTaskService {
             throw  new IllegalArgumentException("ID de subtarea inválido");
         }
         subTaskDAO.update(subTask);
+    }
+
+    //marcar como completada
+    public void completeSubTask(SubTask subtask) throws SQLException {
+        subtask.setSubTaskStatus(SubTaskStatus.COMPLETED);
+        subTaskDAO.update(subtask);
     }
 
     //eliminar subtareas

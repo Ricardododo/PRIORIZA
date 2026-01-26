@@ -1,9 +1,6 @@
 package com.prioriza.dao;
 
-import com.prioriza.model.SubTask;
-import com.prioriza.model.Task;
-import com.prioriza.model.TaskList;
-import com.prioriza.model.User;
+import com.prioriza.model.*;
 import com.prioriza.service.UserService;
 
 import java.sql.SQLException;
@@ -76,11 +73,11 @@ public class TestDAO {
                 System.out.println(
                         s.getId() + " | " +
                         s.getTitle() + " | completada: " +
-                        s.isCompleted()
+                        s.getSubTaskStatus()
                 );
             }
             //actulizar
-            s1.setCompleted(true);
+            s1.setSubTaskStatus(SubTaskStatus.COMPLETED);
             subTaskDAO.update(s1);
 
             //borrar
