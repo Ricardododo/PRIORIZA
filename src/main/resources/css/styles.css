@@ -1,0 +1,7 @@
+.root {
+    -fx-font-family: "Segoe UI";
+ }
+
+ .label {
+    -fx-font-size: 14px;
+ }

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <BorderPane layoutX="131.0" layoutY="94.0" prefHeight="433.0" prefWidth="497.0" stylesheets="@../css/styles.css">
+         <left>
+            <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label text="Mis listas" textAlignment="CENTER" />
+                  <ListView prefHeight="200.0" prefWidth="200.0" />
+                  <Button mnemonicParsing="false" text="+ Nueva lista" />
+               </children>
+            </VBox>
+         </left>
+         <center>
+            <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label text="Tareas" />
+                  <TableView prefHeight="200.0" prefWidth="200.0">
+                    <columns>
+                      <TableColumn prefWidth="75.0" text="C1" />
+                      <TableColumn prefWidth="75.0" text="C2" />
+                    </columns>
+                  </TableView>
+                  <Button mnemonicParsing="false" text="+ Nueva Tarea" />
+               </children>
+            </VBox>
+         </center>
+         <right>
+            <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label text="Subtareas" />
+                  <ListView prefHeight="200.0" prefWidth="200.0" />
+                  <Button mnemonicParsing="false" text="+ Nueva Subtarea" />
+               </children>
+            </VBox>
+         </right>
+         <top>
+            <Label prefHeight="62.0" prefWidth="425.0" text="PRIORIZA - Gestor Inteligente de Tareas" textAlignment="CENTER" BorderPane.alignment="CENTER">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+         </top>
+      </BorderPane>
+   </children>
+</AnchorPane>
