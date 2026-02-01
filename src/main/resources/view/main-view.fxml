@@ -12,7 +12,7 @@
             <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
                <children>
                   <Label text="Mis listas" textAlignment="CENTER" />
-                  <ListView prefHeight="200.0" prefWidth="200.0" />
+                  <ListView fx:id="taskListView" prefHeight="200.0" prefWidth="200.0" />
                   <Button mnemonicParsing="false" text="+ Nueva lista" />
                </children>
             </VBox>
@@ -20,11 +20,13 @@
          <center>
             <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
                <children>
-                  <Label text="Tareas" />
-                  <TableView prefHeight="200.0" prefWidth="200.0">
+                  <Label text="Tareas"/>
+                  <TableView fx:id="taskTableView" prefHeight="200.0" prefWidth="200.0">
                     <columns>
-                      <TableColumn prefWidth="75.0" text="C1" />
-                      <TableColumn prefWidth="75.0" text="C2" />
+                      <TableColumn fx:id="titleColumn" text="Título" prefWidth="75.0"/>
+                      <TableColumn fx:id="priorityColumn" text="Prioridad" prefWidth="75.0"/>
+                      <TableColumn prefWidth="75.0" fx:id="dueDateColumn" text="Fecha"/>
+                      <TableColumn prefWidth="75.0" fx:id="statusColumn" text="Estado"/>
                     </columns>
                   </TableView>
                   <Button mnemonicParsing="false" text="+ Nueva Tarea" />
@@ -35,7 +37,7 @@
             <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
                <children>
                   <Label text="Subtareas" />
-                  <ListView prefHeight="200.0" prefWidth="200.0" />
+                  <ListView fx:id="subTaskView" prefHeight="200.0" prefWidth="200.0" />
                   <Button mnemonicParsing="false" text="+ Nueva Subtarea" />
                </children>
             </VBox>

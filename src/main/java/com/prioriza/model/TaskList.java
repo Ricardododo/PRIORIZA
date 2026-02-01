@@ -70,11 +70,6 @@ public class TaskList {
 
     @Override
     public String toString() {
-        return "TaskList{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", userId=" + userId +
-                ", tasks=" + tasks +
-                '}';
+        return name;
     }
 }

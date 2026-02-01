@@ -23,7 +23,7 @@ public class TaskListService {
 
     //Listar Lista de tareas por id
     public List<TaskList> getByListTaskListId(int id) throws SQLException{
-        return taskListDAO.getListOfTaskListById(id);
+        return taskListDAO.getAllTaskList();
     }
 
     //actualizar lista de tareas

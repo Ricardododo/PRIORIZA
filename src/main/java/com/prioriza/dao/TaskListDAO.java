@@ -58,7 +58,7 @@ public class TaskListDAO {
     }
 
     // Listar todas las listas
-    public List<TaskList> getListOfTaskListById(int id) {
+    public List<TaskList> getAllTaskList() {
         List<TaskList> lists = new ArrayList<>();
         String sql = "SELECT * FROM task_list";
         try (Connection conn = DatabaseConnection.getConnection();

@@ -66,11 +66,6 @@ public class SubTask {
 
     @Override
     public String toString() {
-        return "SubTask{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", subTaskStatus=" + subTaskStatus +
-                ", taskId=" + taskId +
-                '}';
+        return title;
     }
 }
