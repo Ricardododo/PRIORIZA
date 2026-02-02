@@ -12,7 +12,7 @@ import java.util.List;
 public class TaskDAO {
 
     //Insertar
-    public void insert(Task task){
+    public void insert(Task task) {
         String sql = "INSERT INTO task(title, description, due_date, priority, status, task_list_id) VALUES (?, ?, ?, ?, ?, ?)";
 
         try(Connection conn = DatabaseConnection.getConnection();
@@ -20,7 +20,7 @@ public class TaskDAO {
 
             ps.setString(1, task.getTitle());
             ps.setString(2, task.getDescription());
-            ps.setString(3, task.getDueDate() != null ? task.getDueDate().toString() : null);
+            ps.setString(3, task.getDueDate() != null ? String.valueOf(Date.valueOf(task.getDueDate())) : null);
             ps.setString(4, task.getPriority().name());
             ps.setString(5, task.getStatus().name());
             ps.setInt(6, task.getTaskListId()); //incluyendo la FK

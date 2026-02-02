@@ -1,5 +1,8 @@
-package com.prioriza.dao;
+package com.prioriza.test;
 
+import com.prioriza.dao.DatabaseInitializer;
+import com.prioriza.dao.SubTaskDAO;
+import com.prioriza.dao.TaskListDAO;
 import com.prioriza.model.*;
 import com.prioriza.service.TaskService;
 import com.prioriza.service.UserService;

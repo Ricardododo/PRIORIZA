@@ -1,7 +1,11 @@
-package com.prioriza.service;
+package com.prioriza.test;
 
 import com.prioriza.dao.DatabaseInitializer;
 import com.prioriza.model.*;
+import com.prioriza.service.SubTaskService;
+import com.prioriza.service.TaskListService;
+import com.prioriza.service.TaskService;
+import com.prioriza.service.UserService;
 
 import java.sql.SQLException;
 import java.time.LocalDate;

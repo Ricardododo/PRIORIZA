@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/20"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.prioriza.controller.TaskFormController">
+
+    <VBox spacing="10" layoutX="20" layoutY="20">
+
+        <Label text="Nueva Tarea"
+               style="-fx-font-size: 18px;" />
+
+        <TextField fx:id="titleField"
+                   promptText="Título de la tarea" />
+
+        <TextArea fx:id="descriptionField"
+                  promptText="Descripción..."
+                  prefRowCount="3" />
+
+        <DatePicker fx:id="datePicker" />
+
+        <ChoiceBox fx:id="statusChoiceBox" />
+
+        <HBox spacing="10">
+            <Button text="Guardar"
+                    onAction="#handleSave" />
+            <Button text="Cancelar"
+                    onAction="#handleCancel" />
+        </HBox>
+
+    </VBox>
+
+</AnchorPane>

@@ -4,44 +4,50 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-
-<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <BorderPane layoutX="131.0" layoutY="94.0" prefHeight="433.0" prefWidth="497.0" stylesheets="@../css/styles.css">
+<BorderPane
+        prefHeight="600.0"
+        prefWidth="800.0"
+        xmlns="http://javafx.com/javafx/20"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="com.prioriza.controller.MainController">
+        <!--izquierda-->
          <left>
             <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-               <children>
                   <Label text="Mis listas" textAlignment="CENTER" />
                   <ListView fx:id="taskListView" prefHeight="200.0" prefWidth="200.0" />
                   <Button mnemonicParsing="false" text="+ Nueva lista" />
-               </children>
             </VBox>
          </left>
+
+   <!--Centro-->
          <center>
             <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-               <children>
                   <Label text="Tareas"/>
+
                   <TableView fx:id="taskTableView" prefHeight="200.0" prefWidth="200.0">
                     <columns>
-                      <TableColumn fx:id="titleColumn" text="Título" prefWidth="75.0"/>
-                      <TableColumn fx:id="priorityColumn" text="Prioridad" prefWidth="75.0"/>
-                      <TableColumn prefWidth="75.0" fx:id="dueDateColumn" text="Fecha"/>
-                      <TableColumn prefWidth="75.0" fx:id="statusColumn" text="Estado"/>
+                      <TableColumn fx:id="colTitle" text="Título" prefWidth="75.0"/>
+                      <TableColumn fx:id="colDescription" text="Descripción" prefWidth="75.0"/>
+                      <TableColumn fx:id="colPriority" text="Prioridad" prefWidth="75.0"/>
+                      <TableColumn prefWidth="75.0" fx:id="colDueDate" text="Fecha"/>
+                      <TableColumn prefWidth="75.0" fx:id="colStatus" text="Estado"/>
                     </columns>
                   </TableView>
-                  <Button mnemonicParsing="false" text="+ Nueva Tarea" />
-               </children>
+
+                  <Button mnemonicParsing="false" text="+ Nueva Tarea" onAction="#handleNewTask"/>
             </VBox>
          </center>
+
+         <!-- Derecha -->
          <right>
             <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-               <children>
                   <Label text="Subtareas" />
                   <ListView fx:id="subTaskView" prefHeight="200.0" prefWidth="200.0" />
                   <Button mnemonicParsing="false" text="+ Nueva Subtarea" />
-               </children>
             </VBox>
          </right>
+
+         <!--top-->
          <top>
             <Label prefHeight="62.0" prefWidth="425.0" text="PRIORIZA - Gestor Inteligente de Tareas" textAlignment="CENTER" BorderPane.alignment="CENTER">
                <font>
@@ -49,6 +55,7 @@
                </font>
             </Label>
          </top>
-      </BorderPane>
-   </children>
-</AnchorPane>
+
+</BorderPane>
+
+

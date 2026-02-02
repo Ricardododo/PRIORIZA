@@ -4,11 +4,19 @@ import com.prioriza.dao.SubTaskDAO;
 import com.prioriza.dao.TaskDAO;
 import com.prioriza.dao.TaskListDAO;
 import com.prioriza.model.*;
+import com.prioriza.service.TaskService;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import java.io.IOException;
+
 
 
 import java.time.LocalDate;
@@ -27,6 +35,8 @@ public class MainController {
     @FXML
     private TableColumn<Task, String> colTitle;
     @FXML
+    private TableColumn<Task, String> colDescription;
+    @FXML
     private TableColumn<Task, Priority> colPriority;
     @FXML
     private TableColumn<Task, LocalDate> colDueDate;
@@ -40,7 +50,11 @@ public class MainController {
 
         //conectar columnas con atributos del model/Task
         colTitle.setCellValueFactory(data ->
-                new SimpleObjectProperty<>(data.getValue().getTitle())
+                new javafx.beans.property.SimpleObjectProperty<>(data.getValue().getTitle())
+        );
+
+        colDescription.setCellValueFactory(data ->
+                new javafx.beans.property.SimpleObjectProperty<>(data.getValue().getDescription())
         );
 
         colPriority.setCellValueFactory(data ->
@@ -113,6 +127,55 @@ public class MainController {
             List<SubTask> subs = subTaskDAO.getByTaskId(taskId);
             subTaskView.getItems().setAll(subs);
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    //metodo para controlar el popup (+ Nueva Tarea)
+    @FXML
+    private void handleNewTask(){
+
+        TaskList selectedList = taskListView.getSelectionModel().getSelectedItem();
+
+        if (selectedList == null) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setContentText("Selecciona una lista antes de crear una tarea");
+            alert.showAndWait();
+            return;
+        }
+
+        try{
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/view/task-form.fxml")
+            );
+
+            Scene scene = new Scene(loader.load());
+
+            Stage stage = new Stage();
+            stage.setTitle("Nueva Tarea");
+            stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+            //obtener tarea creada
+            TaskFormController controller = loader.getController();
+            Task newTask = controller.getTaskResult();
+
+            if(newTask != null){
+
+                //asignar a una lista
+                newTask.setTaskListId(selectedList.getId());
+
+                //usar service para aplicar reglas
+                TaskService taskService = new TaskService();
+                taskService.createTask(newTask);
+
+                //refrescar tabla
+                loadTasks(selectedList.getId());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }

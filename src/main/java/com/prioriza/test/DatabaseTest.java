@@ -1,6 +1,6 @@
-package com.prioriza.dao;
+package com.prioriza.test;
 
-import java.sql.Connection;
+import com.prioriza.dao.DatabaseInitializer;
 
 public class DatabaseTest {
 
