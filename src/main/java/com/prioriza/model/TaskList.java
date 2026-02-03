@@ -70,6 +70,7 @@ public class TaskList {
 
     @Override
     public String toString() {
+
         return name; // solo muestra el nombre
     }
 }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.prioriza.controller.SubTaskFormController">
+
+    <VBox spacing="10" layoutX="20" layoutY="20">
+
+        <Label text="Nueva Subtarea" style="-fx-font-size:18px; -fx-font-weight:bold;"/>
+
+        <TextField fx:id="titleField" promptText="Título de la subtarea"/>
+
+        <ChoiceBox fx:id="statusChoiceBox"/>
+
+        <HBox spacing="10">
+            <Button text="Guardar" onAction="#handleSave"/>
+            <Button text="Cancelar" onAction="#handleCancel"/>
+        </HBox>
+
+    </VBox>
+</AnchorPane>

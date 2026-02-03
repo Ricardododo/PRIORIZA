@@ -66,6 +66,7 @@ public class SubTask {
 
     @Override
     public String toString() {
-        return title;
+
+        return title + " (" + subTaskStatus + ")";
     }
 }

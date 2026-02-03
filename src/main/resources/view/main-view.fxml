@@ -7,15 +7,15 @@
 <BorderPane
         prefHeight="600.0"
         prefWidth="800.0"
-        xmlns="http://javafx.com/javafx/20"
+        xmlns="http://javafx.com/javafx"
         xmlns:fx="http://javafx.com/fxml/1"
         fx:controller="com.prioriza.controller.MainController">
-        <!--izquierda-->
+    <!--izquierda-->
          <left>
             <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
                   <Label text="Mis listas" textAlignment="CENTER" />
                   <ListView fx:id="taskListView" prefHeight="200.0" prefWidth="200.0" />
-                  <Button mnemonicParsing="false" text="+ Nueva lista" />
+                  <Button text="+ Nueva lista" onAction="#handleNewList"/>
             </VBox>
          </left>
 
@@ -26,11 +26,11 @@
 
                   <TableView fx:id="taskTableView" prefHeight="200.0" prefWidth="200.0">
                     <columns>
-                      <TableColumn fx:id="colTitle" text="Título" prefWidth="75.0"/>
-                      <TableColumn fx:id="colDescription" text="Descripción" prefWidth="75.0"/>
-                      <TableColumn fx:id="colPriority" text="Prioridad" prefWidth="75.0"/>
-                      <TableColumn prefWidth="75.0" fx:id="colDueDate" text="Fecha"/>
-                      <TableColumn prefWidth="75.0" fx:id="colStatus" text="Estado"/>
+                      <TableColumn fx:id="colTitle" text="Título" />
+                      <TableColumn fx:id="colDescription" text="Descripción" />
+                      <TableColumn fx:id="colPriority" text="Prioridad" />
+                      <TableColumn fx:id="colDueDate" text="Fecha"/>
+                      <TableColumn fx:id="colStatus" text="Estado"/>
                     </columns>
                   </TableView>
 
@@ -38,16 +38,16 @@
             </VBox>
          </center>
 
-         <!-- Derecha -->
+    <!-- Derecha -->
          <right>
             <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
                   <Label text="Subtareas" />
                   <ListView fx:id="subTaskView" prefHeight="200.0" prefWidth="200.0" />
-                  <Button mnemonicParsing="false" text="+ Nueva Subtarea" />
+                  <Button text="+ Nueva Subtarea" onAction="#handleNewSubTask"/>
             </VBox>
          </right>
 
-         <!--top-->
+    <!--top-->
          <top>
             <Label prefHeight="62.0" prefWidth="425.0" text="PRIORIZA - Gestor Inteligente de Tareas" textAlignment="CENTER" BorderPane.alignment="CENTER">
                <font>

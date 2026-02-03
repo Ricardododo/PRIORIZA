@@ -7,10 +7,7 @@ import com.prioriza.model.*;
 import com.prioriza.service.TaskService;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
@@ -77,7 +74,15 @@ public class MainController {
     private void loadTaskLists() {
         try {
             List<TaskList> lists = taskListDAO.getAllTaskList();
+
+            System.out.println("LISTAS ENCONTRADAS: " + lists.size());
+
+            for (TaskList l : lists) {
+                System.out.println("-> " + l.getId() + " - " + l.getName());
+            }
+
             taskListView.getItems().setAll(lists);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -131,6 +136,42 @@ public class MainController {
             e.printStackTrace();
         }
     }
+    //metodo para controlar el popup (+ Nueva Lista)
+    @FXML
+    private void handleNewList(){
+
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Nueva Lista");
+        dialog.setHeaderText("Crear una nueva lista");
+        dialog.setContentText("Nombre de la lista: ");
+
+        dialog.showAndWait().ifPresent(name -> {
+
+            if (name.trim().isEmpty()){
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("El nombre no puede estar vacío");
+                alert.showAndWait();
+                return;
+            }
+            try{
+                TaskList newList = new TaskList();
+                newList.setName(name);
+                newList.setUserId(1); //por ahora será fijo
+
+                taskListDAO.insert(newList);
+
+                //refrescar listas
+                loadTaskLists();
+
+                //selecciona automaticamente la nueva lista
+                taskListView.getSelectionModel().select(newList);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
     //metodo para controlar el popup (+ Nueva Tarea)
     @FXML
     private void handleNewTask(){
@@ -179,6 +220,49 @@ public class MainController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+    }
+    //metodo para controlar el popup (+ Nueva SubTarea)
+    @FXML
+    private void handleNewSubTask(){
+
+        Task selectedTask = taskTableView.getSelectionModel().getSelectedItem();
+        if (selectedTask == null){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setContentText("Selecciona una tarea antes de crear una subtarea");
+            alert.showAndWait();
+            return;
+        }
+
+        try{
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/subtask-form.fxml"));
+
+            Scene scene = new Scene(loader.load());
+            Stage stage = new Stage();
+            stage.setTitle("Nueva SubTarea");
+            stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+            //obtener subtarea creada
+            SubTaskFormController controller = loader.getController();
+            SubTask newSub = controller.getResult();
+
+            if(newSub != null){
+
+                //asignar FK Tarea
+                newSub.setTaskId(selectedTask.getId());
+
+                //guardar bd
+                subTaskDAO.insert(newSub);
+
+                //refrescar lista
+                loadSubTasks(selectedTask.getId());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }
 
