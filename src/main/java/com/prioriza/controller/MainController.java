@@ -5,6 +5,7 @@ import com.prioriza.dao.TaskDAO;
 import com.prioriza.dao.TaskListDAO;
 import com.prioriza.model.*;
 import com.prioriza.service.TaskService;
+import com.prioriza.session.Session;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -45,6 +46,13 @@ public class MainController {
     @FXML
     public void initialize() {
 
+        if (Session.getUser() == null){
+            System.out.println("No hay sesión iniciada todavía");
+            return;
+        }
+        loadTaskLists();
+        setupListeners();
+
         //conectar columnas con atributos del model/Task
         colTitle.setCellValueFactory(data ->
                 new javafx.beans.property.SimpleObjectProperty<>(data.getValue().getTitle())
@@ -72,15 +80,17 @@ public class MainController {
 
     //metodo interno, carga listas desde la base de datos
     private void loadTaskLists() {
+
         try {
-            List<TaskList> lists = taskListDAO.getAllTaskList();
+            // usuario actual
+            int userId = Session.getUser().getId();
+
+            //cargar listas solo de ese uusuario
+            List<TaskList> lists = taskListDAO.getByUserId(userId);
 
             System.out.println("LISTAS ENCONTRADAS: " + lists.size());
 
-            for (TaskList l : lists) {
-                System.out.println("-> " + l.getId() + " - " + l.getName());
-            }
-
+            //mostrar en el ListView
             taskListView.getItems().setAll(lists);
 
         } catch (Exception e) {

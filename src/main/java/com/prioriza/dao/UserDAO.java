@@ -9,14 +9,17 @@ import java.util.List;
 public class UserDAO {
 
     //Crear y Agregar
-    public void addUser(User user) throws SQLException {
-        String sql = "INSERT INTO users(name, email) VALUES(?, ?)";
+    public void addUser(User user) {
+        String sql = "INSERT INTO users(name, email, password) VALUES(?, ?, ?)";
         try(Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
 
             stmt.setString(1, user.getName());
             stmt.setString(2, user.getEmail());
+            stmt.setString(3, user.getPassword());
             stmt.executeUpdate();
+
+            System.out.println("Usuario registrado correctamente");
 
             //obtener el id generado y asignarlo al objeto User
             try(ResultSet rs = stmt.getGeneratedKeys()){
@@ -24,7 +27,35 @@ public class UserDAO {
                     user.setId(rs.getInt(1)); //actualiza el id
                 }
             }
+        } catch (SQLException e) {
+            System.err.println("ERROR al registrar usuario");
+            e.printStackTrace();
         }
+    }
+    //Login
+    public User login(String name, String password){
+
+        String sql = "SELECT * FROM users WHERE name = ? AND password = ?";
+
+        try(Connection con = DatabaseConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)){
+
+            ps.setString(1, name);
+            ps.setString(2, password);
+
+            ResultSet rs = ps.executeQuery();
+
+            if(rs.next()){
+                return new User(
+                        rs.getInt("id"),
+                        rs.getString("name")
+                );
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     //Leer

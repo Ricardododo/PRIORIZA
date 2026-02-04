@@ -117,14 +117,18 @@ public class TaskListDAO {
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
-                TaskList list = new TaskList(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getInt("user_id")
-                );
+                TaskList list = new TaskList();
+                list.setId(rs.getInt("id"));
+                list.setName(rs.getString("name"));
+                list.setUserId(userId);
+
                 lists.add(list);
+
             }
-            return lists;
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return lists;
     }
 }

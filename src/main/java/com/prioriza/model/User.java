@@ -4,12 +4,13 @@ public class User {
     private int id;
     private String name;
     private String email;
+    private String password;
 
     //constructores
     public User() {
     }
 
-    public User(String name, String email) {
+    public User(String name, String emai) {
         this.name = name;
         this.email = email;
     }
@@ -18,6 +19,11 @@ public class User {
         this.id = id;
         this.name = name;
         this.email = email;
+    }
+
+    public User(int id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
     // Getter y Setter
@@ -43,6 +49,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     //toString para poder imprimir mostrar

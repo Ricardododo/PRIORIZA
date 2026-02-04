@@ -16,12 +16,12 @@ public class MainApp extends Application {
         DatabaseInitializer.initialize();
 
         FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/view/main-view.fxml")
+                getClass().getResource("/view/login-view.fxml")
         );
 
         Scene scene = new Scene(loader.load());
 
-        stage.setTitle("PRIORIZA");
+        stage.setTitle("PRIORIZA - Login");
         stage.setScene(scene);
         stage.show();
     }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="12" alignment="CENTER"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.prioriza.controller.RegisterController">
+
+    <Label text="Crear Cuenta" style="-fx-font-size: 22px,"/>
+
+    <TextField fx:id="usernameField" promptText="Nombre de usuario"/>
+    <TextField fx:id="emailField" promptText="Correo electrónico"/>
+    <PasswordField fx:id="passwordField" promptText="Contraseña"/>
+    <PasswordField fx:id="confirmPasswordField" promptText="Confirmar contraseña"/>
+    <Button text="Registrarse" onAction="#handleRegister"/>
+
+    <Hyperlink text="¿Ya tienes cuenta en PRIORIZA? Inicia sesión" onAction="#handleBackToLogin"/>
+
+
+</VBox>
