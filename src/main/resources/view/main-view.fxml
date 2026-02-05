@@ -2,7 +2,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+
 
 <BorderPane
         prefHeight="600.0"
@@ -10,51 +10,52 @@
         xmlns="http://javafx.com/javafx"
         xmlns:fx="http://javafx.com/fxml/1"
         fx:controller="com.prioriza.controller.MainController">
-    <!--izquierda-->
-         <left>
-            <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-                  <Label text="Mis listas" textAlignment="CENTER" />
-                  <ListView fx:id="taskListView" prefHeight="200.0" prefWidth="200.0" />
-                  <Button text="+ Nueva lista" onAction="#handleNewList"/>
-            </VBox>
-         </left>
-
-   <!--Centro-->
-         <center>
-            <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-                  <Label text="Tareas"/>
-
-                  <TableView fx:id="taskTableView" prefHeight="200.0" prefWidth="200.0">
-                    <columns>
-                      <TableColumn fx:id="colTitle" text="Título" />
-                      <TableColumn fx:id="colDescription" text="Descripción" />
-                      <TableColumn fx:id="colPriority" text="Prioridad" />
-                      <TableColumn fx:id="colDueDate" text="Fecha"/>
-                      <TableColumn fx:id="colStatus" text="Estado"/>
-                    </columns>
-                  </TableView>
-
-                  <Button mnemonicParsing="false" text="+ Nueva Tarea" onAction="#handleNewTask"/>
-            </VBox>
-         </center>
-
-    <!-- Derecha -->
-         <right>
-            <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-                  <Label text="Subtareas" />
-                  <ListView fx:id="subTaskView" prefHeight="200.0" prefWidth="200.0" />
-                  <Button text="+ Nueva Subtarea" onAction="#handleNewSubTask"/>
-            </VBox>
-         </right>
 
     <!--top-->
-         <top>
-            <Label prefHeight="62.0" prefWidth="425.0" text="PRIORIZA - Gestor Inteligente de Tareas" textAlignment="CENTER" BorderPane.alignment="CENTER">
-               <font>
-                  <Font size="24.0" />
-               </font>
-            </Label>
-         </top>
+    <top>
+        <HBox spacing="10" styleClass="top-bar">
+            <Label prefHeight="62.0" prefWidth="425.0" text="PRIORIZA - Gestor Inteligente de Tareas" textAlignment="CENTER" BorderPane.alignment="CENTER"/>
+            <Pane HBox.hgrow="ALWAYS"/>
+            <Label fx:id="userLabel" text="Usuario" styleClass="user-label" layoutX="20" layoutY="10"/>
+            <Button text="Cerrar sesión" onAction="#handleLogout"/>
+        </HBox>
+    </top>
+    <center>
+        <HBox spacing="10">
+
+            <!--listas-->
+            <VBox spacing="5" prefWidth="200">
+                <Label text="Mis listas" styleClass="title" />
+                <ListView fx:id="taskListView"/>
+                <Button text="+ Nueva lista" onAction="#handleNewList"/>
+            </VBox>
+
+            <!--tareas-->
+            <VBox spacing="5" prefWidth="200">
+                <Label text="Tareas" styleClass="title"/>
+
+                <TableView fx:id="taskTableView">
+                    <columns>
+                        <TableColumn fx:id="colTitle" text="Título" />
+                        <TableColumn fx:id="colDescription" text="Descripción" />
+                        <TableColumn fx:id="colPriority" text="Prioridad" />
+                        <TableColumn fx:id="colDueDate" text="Fecha"/>
+                        <TableColumn fx:id="colStatus" text="Estado"/>
+                    </columns>
+                </TableView>
+
+                <Button text="+ Nueva Tarea" onAction="#handleNewTask"/>
+            </VBox>
+
+
+            <!-- subtareas -->
+            <VBox spacing="5" prefWidth="200">
+                <Label text="Subtareas" styleClass="title"/>
+                <ListView fx:id="subTaskView"/>
+                <Button text="+ Nueva Subtarea" onAction="#handleNewSubTask"/>
+            </VBox>
+        </HBox>
+    </center>
 
 </BorderPane>
 

@@ -42,16 +42,19 @@ public class MainController {
     private TableColumn<Task, TaskStatus> colStatus;
     @FXML
     private ListView<SubTask> subTaskView;
+    @FXML
+    private Label userLabel;
 
     @FXML
     public void initialize() {
 
+        //comprobar si hay un usuario
         if (Session.getUser() == null){
             System.out.println("No hay sesión iniciada todavía");
-            return;
+            return; //no sigue si no hay nadie
         }
-        loadTaskLists();
-        setupListeners();
+        //mostrar usuario activo
+        userLabel.setText(" " + Session.getUser().getName());
 
         //conectar columnas con atributos del model/Task
         colTitle.setCellValueFactory(data ->
@@ -74,8 +77,8 @@ public class MainController {
                 new SimpleObjectProperty<>(data.getValue().getStatus())
         );
 
-        loadTaskLists(); //cargar las listas de tareas
-        setupListeners(); //mostrar
+        loadTaskLists(); //cargar las listas de tareas(datos)
+        setupListeners(); //activar listeners 8seleccio de listas, tareas, subtareas) para los clicks
     }
 
     //metodo interno, carga listas desde la base de datos
@@ -273,6 +276,27 @@ public class MainController {
             e.printStackTrace();
         }
 
+    }
+    //metodo para cerrar sesión
+    @FXML
+    private void handleLogout(){
+
+        //limpiar sesión
+        Session.clear();
+
+        try{
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/view/login-view.fxml")
+            );
+            Scene scene = new Scene(loader.load());
+
+            Stage stage = (Stage) taskTableView.getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 

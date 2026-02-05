@@ -3,6 +3,7 @@ package com.prioriza;
 import com.prioriza.dao.DatabaseInitializer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
@@ -19,7 +20,13 @@ public class MainApp extends Application {
                 getClass().getResource("/view/login-view.fxml")
         );
 
-        Scene scene = new Scene(loader.load());
+        Parent root = loader.load(); //linea donde se aplica el CSS
+
+        Scene scene = new Scene(root);
+
+        scene.getStylesheets().add(
+                getClass().getResource("/css/styles.css").toExternalForm()
+        );
 
         stage.setTitle("PRIORIZA - Login");
         stage.setScene(scene);
