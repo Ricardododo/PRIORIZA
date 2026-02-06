@@ -28,29 +28,38 @@ public class LoginController {
         String username = userField.getText();
         String password = passField.getText();
 
-        User user = userDAO.login(username, password);
+        //validar campos vacíos
+        if(username == null || username.trim().isEmpty() ||
+            password == null || password.isEmpty()){
 
-        if(user != null){
+            showWarning("Introduce usuario y contraseña.");
+            return;
+        }
 
-            Session.setUser(user);
+        try{
+            User user = userDAO.login(username.trim(), password);
 
-            try {
-                FXMLLoader loader = new FXMLLoader(
-                        getClass().getResource("/view/main-view.fxml")
-                );
-
-                Stage stage = (Stage) userField.getScene().getWindow();
-                stage.setScene(new Scene(loader.load()));
-                stage.show();
-
-            } catch (Exception e) {
-                e.printStackTrace();
+            if(user == null){
+                showError("Usuario o contraseña incorrectos.");
+                passField.clear();
+                return;
             }
 
-        }else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("Usuario o contraseña incorrectos");
-            alert.showAndWait();
+            //guardar sesión
+            Session.setUser(user);
+
+            //cargar vista principal
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/view/main-view.fxml")
+            );
+
+            Stage stage = (Stage) userField.getScene().getWindow();
+            stage.setScene(new Scene(loader.load()));
+            stage.show();
+
+        } catch (Exception e) {
+            showError("Error al intentar iniciar sesión.\nInténtalo de nuevo.");
+            e.printStackTrace();
         }
     }
     //metodo para abrir el registro
@@ -70,8 +79,25 @@ public class LoginController {
             stage.showAndWait();
 
         } catch (Exception e) {
+            showError("No se pudo abrir la ventana de registro.");
             e.printStackTrace();
         }
+    }
+    //metodos alerta , mensajes
+    private void showWarning(String message){
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Atención");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    private void showError(String message){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
 }

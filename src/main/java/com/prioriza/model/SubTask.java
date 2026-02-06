@@ -8,7 +8,7 @@ public class SubTask {
 
     //Constructor
     public SubTask() {
-        this.subTaskStatus = SubTaskStatus.PENDING;
+        this.subTaskStatus = SubTaskStatus.PENDIENTE;
     }
 
     public SubTask(int id, String title, SubTaskStatus subTaskStatus, int taskId) {
@@ -20,13 +20,11 @@ public class SubTask {
 
     public SubTask(String title, int taskId) {
         this.title = title;
-        this.subTaskStatus = SubTaskStatus.PENDING;
+        this.subTaskStatus = SubTaskStatus.PENDIENTE;
         this.taskId = taskId;
     }
 
     //Getter y Setter
-
-
     public int getId() {
         return id;
     }
@@ -61,7 +59,7 @@ public class SubTask {
 
     //metodo para marcar completado
     public void markCompleted(){
-        this.subTaskStatus = SubTaskStatus.COMPLETED;
+        this.subTaskStatus = SubTaskStatus.COMPLETA;
     }
 
     @Override

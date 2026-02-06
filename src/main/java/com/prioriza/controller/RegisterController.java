@@ -32,26 +32,46 @@ public class RegisterController {
         String password = passwordField.getText();
         String confirm = confirmPasswordField.getText();
 
-        //validaciones
-        if(username.isEmpty() || email.isEmpty() || password.isEmpty()){
-            showAlert("Todos los campos son obligatorios");
+        //validar campos vacíos
+        if(username == null || username.trim().isEmpty() ||
+                email == null || email.trim().isEmpty() ||
+                password == null || password.isEmpty() ||
+                confirm == null || confirm.isEmpty()){
+
+            showWarning("Todos los campos son obligatorios");
+            return;
+        }
+        //validar email básico
+        if(!email.contains("@") || !email.contains(".")){
+            showError("Introduce un correo electrónico válido");
+            return;
+        }
+        //validar contraseñas
+        if(!password.equals(confirm)){
+            showError("Las contraseñas no coinciden.");
             return;
         }
 
-        //crear usuario
-        User user = new User();
-        user.setName(username);
-        user.setEmail(email);
-        user.setPassword(password);
+        try{
+            //crear usuario
+            User user = new User();
+            user.setName(username);
+            user.setEmail(email);
+            user.setPassword(password);
 
-        //guardar usuario
-        userDAO.addUser(user);
+            //guardar usuario
+            userDAO.addUser(user);
 
-        showAlert("Usuario registrado correctamente");
+            showSuccess("Usuario registrado correctamente.\nYa puedes iniciar sesión");
 
-        //cerrar ventana y vovler a login
-        Stage stage = (Stage) usernameField.getScene().getWindow();
-        stage.close();
+            //cerrar ventana y vovler a login
+            Stage stage = (Stage) usernameField.getScene().getWindow();
+            stage.close();
+        } catch (Exception e) {
+            showError("No se pudo registrar el usuario.\nPuede que el nombre o email ya existan.");
+            e.printStackTrace();
+        }
+
     }
 
     //metodo volver a login
@@ -60,10 +80,28 @@ public class RegisterController {
         Stage stage = (Stage) usernameField.getScene().getWindow();
         stage.close();
     }
+    // metodos de alertas y mensajes
+    private void showWarning(String message){
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Atención");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 
-    private void showAlert(String msg){
+    private void showError(String message){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    private void showSuccess(String message){
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setContentText(msg);
+        alert.setTitle("Registro exitoso");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
         alert.showAndWait();
     }
 }

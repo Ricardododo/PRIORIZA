@@ -50,7 +50,7 @@ public class MainController {
 
         //comprobar si hay un usuario
         if (Session.getUser() == null){
-            System.out.println("No hay sesión iniciada todavía");
+            showError("Tu sesión no esta activa. Inicia sesión nuevamente.");
             return; //no sigue si no hay nadie
         }
         //mostrar usuario activo
@@ -97,6 +97,7 @@ public class MainController {
             taskListView.getItems().setAll(lists);
 
         } catch (Exception e) {
+            showError("No se pudieron cargar las listas");
             e.printStackTrace();
         }
     }
@@ -135,6 +136,7 @@ public class MainController {
             subTaskView.getItems().clear();
 
         } catch (Exception e) {
+            showError("No se pudieron cargar las tareas.");
             e.printStackTrace();
         }
     }
@@ -146,6 +148,7 @@ public class MainController {
             subTaskView.getItems().setAll(subs);
 
         } catch (Exception e) {
+            showError("No se pudieron cargar las subtareas");
             e.printStackTrace();
         }
     }
@@ -160,16 +163,19 @@ public class MainController {
 
         dialog.showAndWait().ifPresent(name -> {
 
-            if (name.trim().isEmpty()){
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setContentText("El nombre no puede estar vacío");
-                alert.showAndWait();
+            if (name == null || name.trim().isEmpty()){
+                showError("El nombre de la lista no puede estar vacío");
                 return;
             }
             try{
+                if (Session.getUser() == null){
+                    showError("Tu sesión ha expirado. Inicia sesión nuevamente.");
+                    return;
+                }
                 TaskList newList = new TaskList();
                 newList.setName(name);
-                newList.setUserId(1); //por ahora será fijo
+                //asignar lists al usuario login
+                newList.setUserId(Session.getUser().getId());
 
                 taskListDAO.insert(newList);
 
@@ -177,7 +183,10 @@ public class MainController {
                 loadTaskLists();
 
                 //selecciona automaticamente la nueva lista
-                taskListView.getSelectionModel().select(newList);
+                taskListView.getItems().stream()
+                        .filter(l -> l.getName().equals(name))
+                        .findFirst()
+                        .ifPresent(l -> taskListView.getSelectionModel().select(l));
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -192,10 +201,8 @@ public class MainController {
         TaskList selectedList = taskListView.getSelectionModel().getSelectedItem();
 
         if (selectedList == null) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setContentText("Selecciona una lista antes de crear una tarea");
-            alert.showAndWait();
-            return;
+           showWarning("Primero selecciona una lista para añadir una tarea.");
+           return;
         }
 
         try{
@@ -241,10 +248,8 @@ public class MainController {
 
         Task selectedTask = taskTableView.getSelectionModel().getSelectedItem();
         if (selectedTask == null){
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setContentText("Selecciona una tarea antes de crear una subtarea");
-            alert.showAndWait();
-            return;
+           showWarning("Primero selecciona una tarea para añadir una subtarea.");
+           return;
         }
 
         try{
@@ -281,8 +286,22 @@ public class MainController {
     @FXML
     private void handleLogout(){
 
+        //mensaje de confirmación al cerrar sesión
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Cerrar sesión");
+        alert.setHeaderText("¿Deseas cerrar la sesión?");
+        alert.setContentText("Tendrás que iniciar sesión nuevamente.");
+
+        //condicional para saber si cierra o continua (continua)
+        if (alert.showAndWait().orElse(ButtonType.CANCEL) !=ButtonType.OK){
+            return;
+        }
+
         //limpiar sesión
         Session.clear();
+        taskListView.getItems().clear();
+        taskTableView.getItems().clear();
+        subTaskView.getItems().clear();
 
         try{
             FXMLLoader loader = new FXMLLoader(
@@ -297,6 +316,22 @@ public class MainController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    //metodo para alertas
+    private void showWarning(String message){
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Atención");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+    //metodo para errores
+    private void  showError(String message){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
 

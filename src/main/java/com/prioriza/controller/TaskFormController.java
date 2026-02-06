@@ -27,7 +27,7 @@ public class TaskFormController {
         //cargar estados posibles del enum
         statusChoiceBox.getItems().setAll(TaskStatus.values());
         //valor por defecto
-        statusChoiceBox.setValue(TaskStatus.PENDING);
+        statusChoiceBox.setValue(TaskStatus.PENDIENTE);
         //la fecha por defecto
         datePicker.setValue(LocalDate.now());
     }

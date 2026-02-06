@@ -7,14 +7,14 @@ public class Task {
     private String title;
     private String description;
     private LocalDate dueDate;
-    private Priority priority; // recordar LOW, MEDIUM, HIGH, URGENT
-    private TaskStatus status; // PENDING, COMPLETED, CANCELLED
+    private Priority priority; // recordar BAJA, MEDIA, ALTA, URGENTE
+    private TaskStatus status; // PENDIENTE, COMPLETA, CANCELADA
     private int taskListId; // FK a TaskList
 
     //Constructor
     public Task() {
-        this.status = TaskStatus.PENDING;
-        this.priority = Priority.MEDIUM;
+        this.status = TaskStatus.PENDIENTE;
+        this.priority = Priority.MEDIA;
     }
 
     //constructor completo
@@ -34,8 +34,8 @@ public class Task {
         this.description = description;
         this.dueDate = dueDate;
         this.taskListId = taskListId;
-        this.status = TaskStatus.PENDING;
-        this.priority = Priority.MEDIUM;
+        this.status = TaskStatus.PENDIENTE;
+        this.priority = Priority.MEDIA;
     }
 
     //Getter y Setter

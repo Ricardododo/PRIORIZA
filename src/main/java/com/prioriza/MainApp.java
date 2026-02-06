@@ -28,7 +28,7 @@ public class MainApp extends Application {
                 getClass().getResource("/css/styles.css").toExternalForm()
         );
 
-        stage.setTitle("PRIORIZA - Login");
+        stage.setTitle("PRIORIZA");
         stage.setScene(scene);
         stage.show();
     }

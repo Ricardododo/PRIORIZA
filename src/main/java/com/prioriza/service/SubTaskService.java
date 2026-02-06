@@ -47,7 +47,7 @@ public class SubTaskService {
 
     //marcar como completada
     public void completeSubTask(SubTask subtask) throws SQLException {
-        subtask.setSubTaskStatus(SubTaskStatus.COMPLETED);
+        subtask.setSubTaskStatus(SubTaskStatus.COMPLETA);
         subTaskDAO.update(subtask);
     }
 

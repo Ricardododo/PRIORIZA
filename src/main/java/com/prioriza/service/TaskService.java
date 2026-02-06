@@ -71,10 +71,10 @@ public class TaskService {
     //metodo interno para covertir el score en enum Priority
     private Priority convertScoreToPriority(int score){
 
-        if (score >= 4) return Priority.URGENT;
-        if (score >= 2) return Priority.HIGH;
-        if (score >= 1) return Priority.MEDIUM;
+        if (score >= 4) return Priority.URGENTE;
+        if (score >= 2) return Priority.ALTA;
+        if (score >= 1) return Priority.MEDIA;
 
-        return Priority.LOW;
+        return Priority.BAJA;
     }
 }

@@ -11,10 +11,10 @@ public class ImportantRule implements Rule {
         if(task.getPriority() == null) return 0;
 
         return switch (task.getPriority()){
-            case URGENT -> 10;
-            case HIGH -> 5;
-            case MEDIUM -> 3;
-            case LOW -> 1;
+            case URGENTE -> 10;
+            case ALTA -> 5;
+            case MEDIA -> 3;
+            case BAJA -> 1;
         };
 
     }

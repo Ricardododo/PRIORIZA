@@ -22,7 +22,7 @@ public class SubTaskFormController {
         //carga enum en ChoiceBox
         statusChoiceBox.getItems().setAll(SubTaskStatus.values());
         //valor por defecto
-        statusChoiceBox.setValue(SubTaskStatus.PENDING);
+        statusChoiceBox.setValue(SubTaskStatus.PENDIENTE);
     }
 
     @FXML

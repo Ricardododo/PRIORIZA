@@ -68,13 +68,13 @@ public class TestService {
         subtasksT2.forEach(System.out::println);
 
         //cambiar prioridad de t1 a "Alta"
-        t1.setPriority(Priority.HIGH);
+        t1.setPriority(Priority.ALTA);
         taskService.updateTask(t1);
         System.out.println("\nTarea 1 actualizada por prioridad: ");
         System.out.println(t1);
 
         //cambiar estado de t1 a "Completada"
-        t1.setStatus(TaskStatus.COMPLETED);
+        t1.setStatus(TaskStatus.COMPLETA);
         taskService.updateTask(t1);
         System.out.println("\nTarea 1 actualizada por estado: ");
         System.out.println(t1);

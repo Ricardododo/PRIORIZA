@@ -1,8 +1,11 @@
-package com.prioriza.rule.rules;
+package com.prioriza.test;
 
 import com.prioriza.model.Priority;
 import com.prioriza.model.Task;
 import com.prioriza.rule.RuleEngine;
+import com.prioriza.rule.rules.DistantRule;
+import com.prioriza.rule.rules.ImportantRule;
+import com.prioriza.rule.rules.UrgentRule;
 
 import java.time.LocalDate;
 
@@ -17,7 +20,7 @@ public class TestRuleEngine {
                 1
         );
 
-        task.setPriority(Priority.HIGH);
+        task.setPriority(Priority.ALTA);
 
         RuleEngine engine = new RuleEngine();
 
