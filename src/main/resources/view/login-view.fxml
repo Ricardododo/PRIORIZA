@@ -3,9 +3,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox alignment="CENTER" prefHeight="199.0" prefWidth="299.0" spacing="10" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.prioriza.controller.LoginController">
+<VBox alignment="CENTER" prefHeight="199.0" prefWidth="299.0" spacing="10" stylesheets="@/css/styles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.prioriza.controller.LoginController">
 
-    <Label prefHeight="28.0" prefWidth="161.0" style="-fx-font-size: 20px" text="PRIORIZA LOGIN" textAlignment="CENTER" />
+    <Label text="PRIORIZA LOGIN" styleClass="title" />
 
     <TextField fx:id="userField" promptText="Usuario" />
     <PasswordField fx:id="passField" promptText="Contraseña" />

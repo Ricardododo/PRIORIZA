@@ -52,9 +52,13 @@ public class MainController {
         if (Session.getUser() == null){
             showError("Tu sesión no esta activa. Inicia sesión nuevamente.");
             return; //no sigue si no hay nadie
+        }else{
+            userLabel.setText(Session.getUser() != null ? Session.getUser().getName() : "Usuario");
         }
         //mostrar usuario activo
         userLabel.setText(" " + Session.getUser().getName());
+
+        taskTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         //conectar columnas con atributos del model/Task
         colTitle.setCellValueFactory(data ->

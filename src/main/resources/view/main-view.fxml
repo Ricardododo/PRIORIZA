@@ -3,60 +3,66 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
-<BorderPane
-        prefHeight="600.0"
-        prefWidth="800.0"
-        xmlns="http://javafx.com/javafx"
-        xmlns:fx="http://javafx.com/fxml/1"
-        fx:controller="com.prioriza.controller.MainController">
+<BorderPane prefHeight="600.0" prefWidth="800.0" stylesheets="@/css/styles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.prioriza.controller.MainController">
 
     <!--top-->
     <top>
-        <HBox spacing="10" styleClass="top-bar">
-            <Label prefHeight="62.0" prefWidth="425.0" text="PRIORIZA - Gestor Inteligente de Tareas" textAlignment="CENTER" BorderPane.alignment="CENTER"/>
-            <Pane HBox.hgrow="ALWAYS"/>
-            <Label fx:id="userLabel" text="Usuario" styleClass="user-label" layoutX="20" layoutY="10"/>
-            <Button text="Cerrar sesión" onAction="#handleLogout"/>
-        </HBox>
+        <BorderPane styleClass="top-bar" prefHeight="60">
+        <!-- centro -->
+            <center>
+                <StackPane>
+                    <Label styleClass="section-title"
+                           text="PRIORIZA - Gestor Inteligente de Tareas"
+                           BorderPane.alignment="CENTER" />
+                </StackPane>
+            </center>
+        <!-- derecha -->
+            <right>
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Label fx:id="userLabel"
+                           styleClass="user-label"
+                           text="Usuario" />
+                    <Button  text="Cerrar sesión"
+                             onAction="#handleLogout"/>
+                </HBox>
+            </right>
+        </BorderPane>
     </top>
     <center>
-        <HBox spacing="10">
+        <HBox alignment="CENTER" prefWidth="1000" spacing="10" styleClass="main-container" BorderPane.alignment="CENTER">
 
             <!--listas-->
-            <VBox spacing="5" prefWidth="200">
-                <Label text="Mis listas" styleClass="title" />
-                <ListView fx:id="taskListView"/>
-                <Button text="+ Nueva lista" onAction="#handleNewList"/>
+            <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
+                <Label styleClass="section-title" text="Mis listas" />
+                <ListView fx:id="taskListView" VBox.vgrow="ALWAYS" />
+                <Button onAction="#handleNewList" text="+ Nueva Lista" />
             </VBox>
 
             <!--tareas-->
-            <VBox spacing="5" prefWidth="200">
-                <Label text="Tareas" styleClass="title"/>
+            <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
+                <Label styleClass="section-title" text="Tareas" />
 
-                <TableView fx:id="taskTableView">
+                <TableView fx:id="taskTableView" VBox.vgrow="ALWAYS">
                     <columns>
                         <TableColumn fx:id="colTitle" text="Título" />
                         <TableColumn fx:id="colDescription" text="Descripción" />
                         <TableColumn fx:id="colPriority" text="Prioridad" />
-                        <TableColumn fx:id="colDueDate" text="Fecha"/>
-                        <TableColumn fx:id="colStatus" text="Estado"/>
+                        <TableColumn fx:id="colDueDate" text="Fecha" />
+                        <TableColumn fx:id="colStatus" text="Estado" />
                     </columns>
                 </TableView>
 
-                <Button text="+ Nueva Tarea" onAction="#handleNewTask"/>
+                <Button onAction="#handleNewTask" text="+ Nueva Tarea" />
             </VBox>
 
 
             <!-- subtareas -->
-            <VBox spacing="5" prefWidth="200">
-                <Label text="Subtareas" styleClass="title"/>
-                <ListView fx:id="subTaskView"/>
-                <Button text="+ Nueva Subtarea" onAction="#handleNewSubTask"/>
+            <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
+                <Label styleClass="section-title" text="Subtareas" />
+                <ListView fx:id="subTaskView" VBox.vgrow="ALWAYS" />
+                <Button onAction="#handleNewSubTask" text="+ Nueva Subtarea" />
             </VBox>
         </HBox>
     </center>
 
 </BorderPane>
-
-
