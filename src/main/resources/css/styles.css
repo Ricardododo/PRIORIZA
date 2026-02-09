@@ -7,13 +7,15 @@
  }
  /* top */
  .top-bar{
-    -fx-padding: 10 30 10 30;
+    -fx-padding: 10 20 10 20;
     -fx-background-color: #FBC260;
     -fx-border-color: #e0e0e0;
     -fx-border-width: 0 0 1 0;
  }
  /* usuario actual */
  .user-label{
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
     -fx-font-weight: bold;
  }
  /* tarjetas sesiones listas, tarea, subtareas */

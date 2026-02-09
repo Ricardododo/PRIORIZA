@@ -35,7 +35,12 @@
             <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
                 <Label styleClass="section-title" text="Mis listas" />
                 <ListView fx:id="taskListView" VBox.vgrow="ALWAYS" />
-                <Button onAction="#handleNewList" text="+ Nueva Lista" />
+                <HBox spacing="10">
+                    <Button text="+ Nueva Lista" onAction="#handleNewList"/>
+                    <Button text="Editar" onAction="#handleEditList"/>
+                    <Button text="Eliminar" onAction="#handleDeleteListTask"/>
+                </HBox>
+
             </VBox>
 
             <!--tareas-->
@@ -51,8 +56,11 @@
                         <TableColumn fx:id="colStatus" text="Estado" />
                     </columns>
                 </TableView>
-
-                <Button onAction="#handleNewTask" text="+ Nueva Tarea" />
+                <HBox spacing="10">
+                    <Button text="+ Nueva Tarea"  onAction="#handleNewTask" />
+                    <Button text="Editar" onAction="#handleEditTask"/>
+                    <Button text="Eliminar" onAction="#handleDeleteTask"/>
+                </HBox>
             </VBox>
 
 
@@ -60,7 +68,11 @@
             <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
                 <Label styleClass="section-title" text="Subtareas" />
                 <ListView fx:id="subTaskView" VBox.vgrow="ALWAYS" />
-                <Button onAction="#handleNewSubTask" text="+ Nueva Subtarea" />
+                <HBox spacing="10">
+                    <Button text="+ Nueva Subtarea"  onAction="#handleNewSubTask" />
+                    <Button text="Editar" onAction="#handleEditSubTask"/>
+                    <Button text="Eliminar" onAction="#handleDeleteSubTask"/>
+                </HBox>
             </VBox>
         </HBox>
     </center>

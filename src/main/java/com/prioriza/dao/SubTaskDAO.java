@@ -122,4 +122,7 @@ public class SubTaskDAO {
         return s;
     }
 
+    public void deleteByTaskId(int id) {
+
+    }
 }

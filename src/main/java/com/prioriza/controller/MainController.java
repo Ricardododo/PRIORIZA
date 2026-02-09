@@ -51,16 +51,16 @@ public class MainController {
         //comprobar si hay un usuario
         if (Session.getUser() == null){
             showError("Tu sesión no esta activa. Inicia sesión nuevamente.");
+            userLabel.setText("Invitado");
             return; //no sigue si no hay nadie
         }else{
-            userLabel.setText(Session.getUser() != null ? Session.getUser().getName() : "Usuario");
+            userLabel.setText(Session.getUser().getName());
         }
-        //mostrar usuario activo
-        userLabel.setText(" " + Session.getUser().getName());
 
+        //ajustar columnas automaticamente
         taskTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        //conectar columnas con atributos del model/Task
+        //columnas
         colTitle.setCellValueFactory(data ->
                 new javafx.beans.property.SimpleObjectProperty<>(data.getValue().getTitle())
         );
@@ -321,6 +321,206 @@ public class MainController {
             e.printStackTrace();
         }
     }
+    //metodo del botón eliminar lista
+    @FXML
+    private void handleDeleteListTask(){
+
+        TaskList selectedList = taskListView.getSelectionModel().getSelectedItem();
+
+        if(selectedList == null){
+            showWarning("Selecciona una lista para eliminar");
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Confirmar eliminación");
+        confirm.setHeaderText("¿Eliminar Lista?");
+        confirm.setContentText("Se eliminarán todas las tareas y subtareas de esta lista.");
+
+        if(confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+            try{
+                //borrar primero las subtareas y tares
+                List<Task> tasks = taskDAO.getByTaskListId(selectedList.getId());
+                for (Task t : tasks){
+                    subTaskDAO.deleteByTaskId(t.getId());
+                    taskDAO.delete(t.getId());
+                }
+
+                //luego borrar la lista
+                taskListDAO.delete(selectedList.getId());
+
+                //recargar ListView
+                loadTaskLists();
+                taskTableView.getItems().clear();
+                subTaskView.getItems().clear();
+
+                showInfo("Lista eliminada correctamente");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    //metodo del boton eliminar tarea
+    @FXML
+    private void handleDeleteTask(){
+
+        Task selectedTask = taskTableView.getSelectionModel().getSelectedItem();
+
+        if(selectedTask == null){
+            showWarning("Selecciona una tarea para eliminar");
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Confirmar eliminación");
+        confirm.setHeaderText("¿Eliminar tarea?");
+        confirm.setContentText("Esta acción no se puede deshacer.");
+
+        if(confirm.showAndWait().get() == ButtonType.OK){
+            try{
+                taskDAO.delete(selectedTask.getId());
+                loadTasks(selectedTask.getTaskListId());
+                showInfo("Tarea eliminada correctamente");
+            } catch (Exception e) {
+                e.printStackTrace();
+                showError("Error al eliminar tarea");
+            }
+        }
+    }
+    //metodo del boton eliminar subtarea
+    @FXML
+    private void handleDeleteSubTask(){
+
+        SubTask sub = subTaskView.getSelectionModel().getSelectedItem();
+
+        if (sub == null){
+            showWarning("Selecciona una subtarea para eliminar");
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Confirmación");
+        confirm.setHeaderText("¿Eliminar subtarea?");
+        confirm.setContentText("Esta acción no se puede deshacer.");
+
+        if(confirm.showAndWait().get() == ButtonType.OK){
+            try{
+                subTaskDAO.delete(sub.getId());
+                loadSubTasks(sub.getTaskId());
+                showInfo("Subtarea eliminada");
+            } catch (Exception e) {
+                e.printStackTrace();
+                showError("Error al eliminar subtarea");
+            }
+        }
+    }
+    //metodo del boton editar lista
+    @FXML
+    private void handleEditList(){
+
+        TaskList selectedList = taskListView.getSelectionModel().getSelectedItem();
+
+        if(selectedList == null){
+            showWarning("Selecciona una lista para editar");
+            return;
+        }
+
+        //reutilizar TextInputDialog como popup
+        TextInputDialog dialog = new TextInputDialog(selectedList.getName());
+        dialog.setTitle("Editar Lista");
+        dialog.setHeaderText("Modificar el Nombre de la lista");
+        dialog.setContentText("Nuevo nombre:");
+
+        dialog.showAndWait().ifPresent(name -> {
+            if (name == null || name.trim().isEmpty()){
+                showWarning("El nombre no puede estar vacío");
+                return;
+            }
+            try{
+                selectedList.setName(name);
+                taskListDAO.update(selectedList); //metodo update que actualiza solo el nombre
+                loadTaskLists();
+                taskListView.getSelectionModel().select(selectedList);
+                showInfo("Nombre de lista actualizado");
+            } catch (Exception e) {
+                e.printStackTrace();
+                showError("Error al actualizar la lista");
+            }
+        });
+    }
+    //metodo del boton editar tarea
+    @FXML
+    private void handleEditTask(){
+
+        Task selectedTask = taskTableView.getSelectionModel().getSelectedItem();
+        if(selectedTask == null){
+            showWarning("Selecciona una tarea para editar");
+            return;
+        }
+        //reutiliza task-form.fxml
+        try{
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/task-form.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            TaskFormController controller = loader.getController();
+            controller.setTaskToEdit(selectedTask);
+
+            Stage stage = new Stage();
+            stage.setTitle("Editar tarea");
+            stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+            Task updatedTask = controller.getTaskResult();
+
+            if(updatedTask != null){
+                updatedTask.setId(selectedTask.getId());
+                updatedTask.setTaskListId(selectedTask.getTaskListId());
+
+                taskDAO.update(updatedTask);
+                loadTasks(selectedTask.getTaskListId());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    //metodo del boton editar subtareas
+    @FXML
+    private void handleEditSubTask(){
+
+        SubTask selectedSubTask = subTaskView.getSelectionModel().getSelectedItem();
+        if(selectedSubTask == null){
+            showWarning("Selecciona una Subtarea para editar");
+            return;
+        }
+        //reutiliza subtask-form.fxml
+        try{
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/subtask-form.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            SubTaskFormController controller = loader.getController();
+            controller.setSubTaskToEdit(selectedSubTask);
+
+            Stage stage = new Stage();
+            stage.setTitle("Editar subtarea");
+            stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+            SubTask updatedSubTask = controller.getResult();
+
+            if(updatedSubTask != null){
+                updatedSubTask.setId(selectedSubTask.getId());
+                updatedSubTask.setTaskId(selectedSubTask.getTaskId());
+
+                subTaskDAO.update(updatedSubTask);
+                loadSubTasks(selectedSubTask.getTaskId());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     //metodo para alertas
     private void showWarning(String message){
         Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -330,12 +530,21 @@ public class MainController {
         alert.showAndWait();
     }
     //metodo para errores
-    private void  showError(String message){
+    private void showError(String message){
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
     }
+    //metodo para informar
+    private void showInfo(String message){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Información");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
 }
 
