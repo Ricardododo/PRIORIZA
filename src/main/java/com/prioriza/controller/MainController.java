@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.io.IOException;
@@ -25,6 +26,7 @@ public class MainController {
     private final TaskListDAO taskListDAO = new TaskListDAO();
     private final TaskDAO taskDAO = new TaskDAO();
     private final SubTaskDAO subTaskDAO = new SubTaskDAO();
+    private final TaskService taskService = new TaskService();
 
     @FXML
     private ListView<TaskList> taskListView;
@@ -44,6 +46,9 @@ public class MainController {
     private ListView<SubTask> subTaskView;
     @FXML
     private Label userLabel;
+    @FXML
+    private BorderPane rootpane;
+
 
     @FXML
     public void initialize() {
@@ -81,6 +86,24 @@ public class MainController {
                 new SimpleObjectProperty<>(data.getValue().getStatus())
         );
 
+        //Colores por prioridad
+        taskTableView.setRowFactory(tv -> new TableRow<Task>(){
+            @Override
+            protected void updateItem(Task task, boolean empty){
+                super.updateItem(task, empty);
+
+                if(task == null || empty){
+                    setStyle("");
+                }else if(task.getPriority() != null){
+                    switch (task.getPriority()){
+                        case URGENTE -> setStyle("-fx-background-color: #ffb3b3;");
+                        case ALTA -> setStyle("-fx-background-color: #ffd966;");
+                        case MEDIA -> setStyle("-fx-background-color: #c6efce;");
+                        case BAJA -> setStyle("-fx-background-color: #d9e1f2;");
+                    }
+                }
+            }
+        });
         loadTaskLists(); //cargar las listas de tareas(datos)
         setupListeners(); //activar listeners 8seleccio de listas, tareas, subtareas) para los clicks
     }
@@ -315,6 +338,11 @@ public class MainController {
 
             Stage stage = (Stage) taskTableView.getScene().getWindow();
             stage.setScene(scene);
+
+            //tamaño para login
+            stage.setWidth(400);
+            stage.setHeight(400);
+            stage.centerOnScreen();
             stage.show();
 
         } catch (Exception e) {
@@ -477,7 +505,7 @@ public class MainController {
                 updatedTask.setId(selectedTask.getId());
                 updatedTask.setTaskListId(selectedTask.getTaskListId());
 
-                taskDAO.update(updatedTask);
+                taskService.updateTask(updatedTask); //recalcular prioridad
                 loadTasks(selectedTask.getTaskListId());
             }
         } catch (Exception e) {
@@ -544,6 +572,15 @@ public class MainController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+    //modo oscuro
+    @FXML
+    public void toggleDarkMode(){
+        if (rootpane.getStyleClass().contains("dark")){
+            rootpane.getStyleClass().remove("dark");
+        }else{
+            rootpane.getStyleClass().add("dark");
+        }
     }
 
 }

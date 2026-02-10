@@ -19,9 +19,19 @@ public class RuleEngine {
     public int evaluate(Task task) {
         int priority = 0; //arranca desde cero
 
+        System.out.println("==== EVALUANDO TAREA ====");
+        System.out.println("Título: " + task.getTitle());
+        System.out.println("Fecha: " + task.getDueDate());
+
         for (Rule rule : rules){
-            priority += rule.evaluate(task);
+            int ruleScore = rule.evaluate(task);
+            System.out.println(rule.getClass().getSimpleName() + " -> " + ruleScore);
+            priority += ruleScore;
         }
+
+        System.out.println("SCORE FINAL: " + priority);
+        System.out.println("=========================");
+
         return priority;
     }
 }

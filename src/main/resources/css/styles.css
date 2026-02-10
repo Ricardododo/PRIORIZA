@@ -1,81 +1,261 @@
+/* =====================================================
+   GLOBAL
+   ===================================================== */
+
 .root {
     -fx-font-family: "Segoe UI";
     -fx-background-color: #f4f6f8;
- }
- .main-container{
-    -fx-padding: 30;
- }
- /* top */
- .top-bar{
-    -fx-padding: 10 20 10 20;
-    -fx-background-color: #FBC260;
-    -fx-border-color: #e0e0e0;
-    -fx-border-width: 0 0 1 0;
- }
- /* usuario actual */
- .user-label{
+    -fx-text-fill: #111827;
+}
+
+/* Dark mode toggle */
+.root.dark {
+    -fx-background-color: #0f172a;
+    -fx-text-fill: #e5e7eb;
+}
+
+
+/* =====================================================
+   LAYOUT PRINCIPAL
+   ===================================================== */
+
+.main-container {
+    -fx-padding: 40;
+    -fx-spacing: 20;
+}
+
+
+/* =====================================================
+   TOP BAR
+   ===================================================== */
+
+.top-bar {
+    -fx-padding: 18 30 18 30;
+    -fx-background-color: linear-gradient(to right, #2563eb, #1e40af);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);
+}
+.image-view{
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 5, 0, 0, 1);
+    -fx-background-radius: 50%;
+    -fx-border-radius: 50%;
+}
+.app-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+.app-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #dbeafe;
+}
+.root.dark .top-bar {
+    -fx-background-color: #020617;
+}
+/* User box container */
+.user-box {
+    -fx-alignment: CENTER_RIGHT;
+    -fx-padding: 6 10;
+    -fx-background-color: rgba(255,255,255,0.12);
+    -fx-background-radius: 20;
+}
+/* Usuario */
+.user-label {
     -fx-text-fill: white;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
- }
- /* tarjetas sesiones listas, tarea, subtareas */
- .card {
-     -fx-background-color: white;
-     -fx-background-radius: 12;
-     -fx-padding: 15;
-     -fx-border-radius: 12;
-     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0, 0, 4);
- }
-.section-title{
-     -fx-font-size: 18px;
-     -fx-font-weight: bold;
 }
-/* Títulos */
- .label.title {
+/* punto de estar en linea */
+.user-status {
+    -fx-text-fill: #22c55e;
+    -fx-font-size: 12px;
+}
+
+/* boton cerrar sesion */
+.logout-button {
+    -fx-background-color: #EF4444;
+    -fx-text-fill: white;
+    -fx-background-radius: 16;
+    -fx-padding: 6 14;
+    -fx-font-size: 12px;
+}
+
+.logout-button:hover {
+    -fx-background-color: #DC2626;
+}
+
+/* =====================================================
+   TARJETAS (CARDS)
+   ===================================================== */
+
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 18, 0, 0, 6);
+}
+.root.dark .card {
+    -fx-background-color: #020617;
+    -fx-border-color: #1e293b;
+}
+/* =====================================================
+   TÍTULOS
+   ===================================================== */
+
+.section-title {
     -fx-font-size: 18px;
     -fx-font-weight: bold;
- }
- /* Listas y tablas */
- .list-view, .table-view {
+}
+.label.title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+.subtitle{
+    -fx-text-fill: #e5e7eb;
+    -fx-font-size: 12px;
+}
+/* =====================================================
+   LISTAS Y TABLAS
+   ===================================================== */
+
+.list-view,
+.table-view {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #e5e7eb;
+}
+
+.root.dark .list-view,
+.root.dark .table-view {
+    -fx-background-color: #020617;
+    -fx-border-color: #1e293b;
+}
+
+/* Header tabla */
+.table-view .column-header {
+    -fx-background-color: #eef2ff;
+    -fx-font-weight: bold;
+}
+
+.root.dark .table-view .column-header {
+    -fx-background-color: #020617;
+}
+
+/* Hover filas */
+.table-row-cell:hover {
+    -fx-background-color: #f1f5f9;
+}
+
+.root.dark .table-row-cell:hover {
+    -fx-background-color: #1e293b;
+}
+
+/* Texto largo */
+.table-cell {
+    -fx-wrap-text: true;
+    -fx-padding: 6;
+}
+/* =====================================================
+   BOTONES (NOTION STYLE)
+   ===================================================== */
+.icon-button {
+    -fx-background-color: transparent;
+    -fx-padding: 6;
+    -fx-cursor: hand;
+}
+.icon-button:hover {
+    -fx-background-color: rgba(0,0,0,0.08);
+    -fx-background-radius: 50;
+}
+.icon-button:presses{
+    -fx-background-color: rgba(0,0,0,0.15);
+}
+.icon-button.danger {
+    -fx-background-color: #dc2626;
+}
+/* =====================================================
+   PRIORIDADES (BADGES)
+   ===================================================== */
+
+.priority-URGENTE {
+    -fx-text-fill: white;
+    -fx-background-color: #dc2626;
+    -fx-background-radius: 10;
+    -fx-padding: 2 8;
+    -fx-font-weight: bold;
+}
+.priority-HIGH {
+    -fx-text-fill: white;
+    -fx-background-color: #ea580c;
+    -fx-background-radius: 10;
+    -fx-padding: 2 8;
+}
+.priority-MEDIUM {
+    -fx-text-fill: white;
+    -fx-background-color: #ca8a04;
+    -fx-background-radius: 10;
+    -fx-padding: 2 8;
+}
+.priority-LOW {
+    -fx-text-fill: white;
+    -fx-background-color: #16a34a;
+    -fx-background-radius: 10;
+    -fx-padding: 2 8;
+}
+/* =====================================================
+   INPUTS
+   ===================================================== */
+
+.text-field, .choice-box {
     -fx-background-radius: 10;
     -fx-border-radius: 10;
-    -fx-background-color: white;
-    -fx-border-color: #E5E7EB;
- }
- /* columnas de Tablas */
- .table-view .column-header {
-    -fx-background-color: #EEF2FF;
-    -fx-font-weight: bold;
- }
- .table-column{
-    -fx-alignment: CENTER_LEFT;
- }
- /*si una descripción es larga*/
- .table-cell{
-    -fx-wrap-text: true;
- }
- /* Botones */
- .button {
-    -fx-background-color: #4DA3FF;
+    -fx-border-color: #e5e7eb;
+    -fx-padding: 6 10;
+}
+
+.root.dark .text-field,
+.root.dark .choice-box {
+    -fx-background-color: #020617;
+    -fx-border-color: #1e293b;
     -fx-text-fill: white;
+}
+/* =====================================================
+   LOGIN (Ususario y Contraseña)
+   ===================================================== */
+.login-container{
+    -fx-padding: 30px;
+}
+.login-title{
+    -fx-font-size: 32px;
     -fx-font-weight: bold;
+    -fx-text-fill: #111827;
+    -fx-padding: 0 0 10 0;
+}
+.text-field, .password-field {
     -fx-background-radius: 8;
-    -fx-padding: 8 14;
- }
- .button:hover {
-    -fx-background-color: #6BB7FF ;
- }
- /* prioridades */
- .priority-URGENTE {
-    -fx-text-fill: #dc2626;
+    -fx-border-radius: 8;
+    -fx-border-color: #E5E7EB;
+    -fx-font-size: 14px;
+    -fx-padding: 10 14;
+}
+/* botones del login */
+.login-button {
+    -fx-background-color: linear-gradient(to right, #4DA3FF, #2563EB);
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
     -fx-font-weight: bold;
- }
- .priority-HIGH {
-     -fx-text-fill: #ea580c;
- }
- .priority-MEDIUM {
-     -fx-text-fill: #ca8a04;
- }
- .priority-LOW {
-     -fx-text-fill: #16a34a;
- }
+    -fx-padding: 8 30;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 4);
+}
+
+.login-button:hover {
+    -fx-background-color: linear-gradient(to right, #6BB7FF, #3B82F6);
+}
+
+.login-button:pressed {
+    -fx-background-color: #1E40AF;
+    -fx-translate-y: 1;
+}

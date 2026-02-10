@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -27,7 +28,12 @@ public class MainApp extends Application {
         scene.getStylesheets().add(
                 getClass().getResource("/css/styles.css").toExternalForm()
         );
-
+        stage.getIcons().add(
+                new Image(getClass().getResourceAsStream("/img/prioriza-icono.png"))
+        );
+        stage.setWidth(420);
+        stage.setHeight(360);
+        stage.setResizable(false);
         stage.setTitle("PRIORIZA");
         stage.setScene(scene);
         stage.show();

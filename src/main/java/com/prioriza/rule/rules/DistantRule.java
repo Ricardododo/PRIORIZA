@@ -15,8 +15,11 @@ public class DistantRule implements Rule {
 
         long daysLeft = ChronoUnit.DAYS.between(LocalDate.now(), task.getDueDate());
 
+        if (daysLeft > 30){
+            return -10; //nada urgente
+        }
         if (daysLeft > 10){
-            return -2; // no es urgente
+            return -2; // un poco urgente
         }
 
         return 0;

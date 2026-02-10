@@ -3,13 +3,13 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox alignment="CENTER" prefHeight="199.0" prefWidth="299.0" spacing="10" stylesheets="@/css/styles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.prioriza.controller.LoginController">
+<VBox alignment="CENTER" spacing="20" styleClass="login-container" stylesheets="@/css/styles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.prioriza.controller.LoginController">
 
-    <Label text="PRIORIZA LOGIN" styleClass="title" />
+    <Label text="PRIORIZA LOGIN" styleClass="login-title" />
 
     <TextField fx:id="userField" promptText="Usuario" />
     <PasswordField fx:id="passField" promptText="Contraseña" />
 
-    <Button onAction="#handleLogin" text="Iniciar sesión" />
-    <Button onAction="#handleOpenRegister" text="Crear Cuenta" />
+    <Button onAction="#handleLogin" text="Iniciar sesión" styleClass="login-button"/>
+    <Button onAction="#handleOpenRegister" text="Crear Cuenta" styleClass="login-button"/>
 </VBox>

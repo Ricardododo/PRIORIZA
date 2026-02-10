@@ -5,6 +5,7 @@ import com.prioriza.model.User;
 import com.prioriza.session.Session;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
@@ -23,7 +24,8 @@ public class LoginController {
     private final UserDAO userDAO = new UserDAO();
 
     @FXML
-    private void handleLogin(){
+    private void handleLogin() {
+
 
         String username = userField.getText();
         String password = passField.getText();
@@ -48,14 +50,21 @@ public class LoginController {
             //guardar sesión
             Session.setUser(user);
 
+            Stage stage = (Stage) userField.getScene().getWindow();
+
             //cargar vista principal
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/view/main-view.fxml")
             );
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+            stage.setScene(scene);
 
-            Stage stage = (Stage) userField.getScene().getWindow();
-            stage.setScene(new Scene(loader.load()));
-            stage.show();
+            //tamaño distinto para la ventana principal
+            stage.setWidth(1200);
+            stage.setHeight(800);
+            stage.centerOnScreen();
 
         } catch (Exception e) {
             showError("Error al intentar iniciar sesión.\nInténtalo de nuevo.");
