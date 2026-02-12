@@ -50,6 +50,13 @@
             <version>${sqlite.version}</version>
         </dependency>
 
+        <!-- Java Mail API -->
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+
         <!-- Logger para debugging de reglas heurísticas -->
         <dependency>
             <groupId>org.slf4j</groupId>
