@@ -88,7 +88,7 @@ public class EmailNotificationDAO {
     }
 
     //Marcar como envio-fallido
-    public void markASFailed(int id, String error){
+    public void markAsFailed(int id, String error){
         String sql = """
                 UPDATE email_notificacions SET status = 'FAILED', error_message = ? 
                 WHERE id = ?
