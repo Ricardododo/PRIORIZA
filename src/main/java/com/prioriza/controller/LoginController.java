@@ -1,5 +1,6 @@
 package com.prioriza.controller;
 
+import com.prioriza.dao.TaskListDAO;
 import com.prioriza.dao.UserDAO;
 import com.prioriza.model.User;
 import com.prioriza.session.Session;
@@ -17,32 +18,33 @@ import javafx.stage.Stage;
 public class LoginController {
 
     @FXML
-    private TextField userField;
+    private TextField emailField; //cambio a emailField, más seguro
     @FXML
     private PasswordField passField;
 
     private final UserDAO userDAO = new UserDAO();
+    private final TaskListDAO taskListDAO = new TaskListDAO();
 
     @FXML
     private void handleLogin() {
 
 
-        String username = userField.getText();
+        String email = emailField.getText();
         String password = passField.getText();
 
         //validar campos vacíos
-        if(username == null || username.trim().isEmpty() ||
+        if(email == null || email.trim().isEmpty() ||
             password == null || password.isEmpty()){
 
-            showWarning("Introduce usuario y contraseña.");
+            showWarning("Introduce email y contraseña.");
             return;
         }
 
         try{
-            User user = userDAO.login(username.trim(), password);
+            User user = userDAO.login(email.trim(), password);
 
             if(user == null){
-                showError("Usuario o contraseña incorrectos.");
+                showError("Email o contraseña incorrectos.");
                 passField.clear();
                 return;
             }
@@ -50,7 +52,10 @@ public class LoginController {
             //guardar sesión
             Session.setUser(user);
 
-            Stage stage = (Stage) userField.getScene().getWindow();
+            //crear lista por defecto para nuevo usuario (TaskListDAO)
+            taskListDAO.createDefaultListsForUser(user.getId());
+
+            Stage stage = (Stage) emailField.getScene().getWindow();
 
             //cargar vista principal
             FXMLLoader loader = new FXMLLoader(

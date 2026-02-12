@@ -4,15 +4,19 @@ public class User {
     private int id;
     private String name;
     private String email;
-    private String password;
+    private String password; //paswordHash
+    private UserRole role;
 
-    //constructores
+    //constructores jdbc
     public User() {
     }
 
-    public User(String name, String emai) {
+    //constructor registro
+    public User(String name, String email, String password) {
         this.name = name;
         this.email = email;
+        this.password = password;
+        this.role = UserRole.USER;
     }
 
     public User(int id, String name, String email) {
@@ -21,12 +25,29 @@ public class User {
         this.email = email;
     }
 
+    public User(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
+
+    //constructor completo
+    public User(int id, String name, String email, String password, UserRole role) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
     public User(int id, String name) {
         this.id = id;
         this.name = name;
     }
 
+
+
     // Getter y Setter
+
     public int getId() {
         return id;
     }
@@ -58,6 +79,15 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
+    }
+
 
     //toString para poder imprimir mostrar
 

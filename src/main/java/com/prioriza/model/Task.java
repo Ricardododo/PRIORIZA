@@ -1,42 +1,47 @@
 package com.prioriza.model;
 
+import com.prioriza.priority.model.PriorityLevel;
+
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Task {
     private int id;
     private String title;
     private String description;
     private LocalDate dueDate;
-    private Priority priority; // recordar BAJA, MEDIA, ALTA, URGENTE
-    private TaskStatus status; // PENDIENTE, COMPLETA, CANCELADA
+
+    private boolean important;
+    private TaskStatus status;
     private int taskListId; // FK a TaskList
+
+    private List<SubTask> subTasks =  new ArrayList<>();
+
+    // campos derivados (no dominio persistente)
+    private int priorityScore;              // heuristica
+    private Priority priority;             // UI
+    private PriorityLevel priorityLevel;  // motor
 
     //Constructor
     public Task() {
         this.status = TaskStatus.PENDIENTE;
         this.priority = Priority.MEDIA;
+        this.priorityLevel = PriorityLevel.MEDIO;
     }
 
     //constructor completo
-    public Task(int id, String title, String description, LocalDate dueDate, Priority priority, TaskStatus status, int taskListId) {
-        this.id = id;
+    public Task(String title, String description, LocalDate dueDate, Priority priority, TaskStatus status, int taskListId, boolean important) {
+        this();
         this.title = title;
         this.description = description;
         this.dueDate = dueDate;
         this.priority = priority;
         this.status = status;
         this.taskListId = taskListId;
+        this.important = important;
     }
 
-    //constructor para crear tareas
-    public Task(String title, String description, LocalDate dueDate, int taskListId) {
-        this.title = title;
-        this.description = description;
-        this.dueDate = dueDate;
-        this.taskListId = taskListId;
-        this.status = TaskStatus.PENDIENTE;
-        this.priority = Priority.MEDIA;
-    }
 
     //Getter y Setter
 
@@ -73,12 +78,12 @@ public class Task {
         this.dueDate = dueDate;
     }
 
-    public Priority getPriority() {
-        return priority;
+    public boolean isImportant() {
+        return important;
     }
 
-    public void setPriority(Priority priority) {
-        this.priority = priority;
+    public void setImportant(boolean important) {
+        this.important = important;
     }
 
     public TaskStatus getStatus() {
@@ -97,8 +102,43 @@ public class Task {
         this.taskListId = taskListId;
     }
 
+    public List<SubTask> getSubTasks() {
+        return subTasks;
+    }
+
+    public void setSubTasks(List<SubTask> subTasks) {
+        this.subTasks = subTasks;
+    }
+
+    public int getPriorityScore() {
+        return priorityScore;
+    }
+
+    public void setPriorityScore(int priorityScore) {
+        this.priorityScore = priorityScore;
+    }
+
+    public Priority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Priority priority) {
+        this.priority = priority;
+    }
+
+    public PriorityLevel getPriorityLevel() {
+        return priorityLevel;
+    }
+
+    public void setPriorityLevel(PriorityLevel priorityLevel) {
+        this.priorityLevel = priorityLevel;
+    }
+
     @Override
     public String toString() {
         return title + " (" + priority + "(";
     }
+
+
+
 }

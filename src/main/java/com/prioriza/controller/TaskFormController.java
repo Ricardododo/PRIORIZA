@@ -1,5 +1,6 @@
 package com.prioriza.controller;
 
+import com.prioriza.model.Priority;
 import com.prioriza.model.SubTask;
 import com.prioriza.model.Task;
 import com.prioriza.model.TaskStatus;
@@ -18,22 +19,31 @@ public class TaskFormController {
     @FXML
     private DatePicker datePicker;
     @FXML
+    private ChoiceBox<Priority> priorityChoiceBox;
+    @FXML
     private ChoiceBox<TaskStatus> statusChoiceBox;
+    @FXML
+    private CheckBox importantCheckBox;
 
     private Task taskResult; //Tarea creada
     private boolean editMode = false;
     private Task taskToEdit;
-    private SubTask subTaskToEdit;
 
     @FXML
     public void initialize(){
+        //cargar prioridades
+        priorityChoiceBox.getItems().setAll(Priority.values());
+        priorityChoiceBox.setValue(Priority.MEDIA); //valores por defecto
 
-        //cargar estados posibles del enum
+        //cargar estados
         statusChoiceBox.getItems().setAll(TaskStatus.values());
         //valor por defecto
         statusChoiceBox.setValue(TaskStatus.PENDIENTE);
-        //la fecha por defecto
+        //la fecha por defecto (hoy)
         datePicker.setValue(LocalDate.now());
+
+        //checkBox por defecto: false
+        importantCheckBox.setSelected(false);
     }
 
     //cuando se pulsa guardar - editar
@@ -43,11 +53,18 @@ public class TaskFormController {
         String title = titleField.getText();
         String description = descriptionField.getText();
         LocalDate date = datePicker.getValue();
+        Priority priority = priorityChoiceBox.getValue();
         TaskStatus status = statusChoiceBox.getValue();
+        boolean important = importantCheckBox.isSelected();
 
         //validación
         if(title == null || title.trim().isEmpty()){
             showError("El título no puede estar vacío");
+            return;
+        }
+
+        if (priority == null){
+            showError("Debe seleccionar una prioridad");
             return;
         }
 
@@ -56,7 +73,9 @@ public class TaskFormController {
             taskToEdit.setTitle(title);
             taskToEdit.setDescription(description);
             taskToEdit.setDueDate(date);
+            taskToEdit.setPriority(priority);
             taskToEdit.setStatus(status);
+            taskToEdit.setImportant(important);
             taskResult = taskToEdit;
         }else{
             //crear nueva
@@ -64,7 +83,9 @@ public class TaskFormController {
             task.setTitle(title);
             task.setDescription(description);
             task.setDueDate(date);
+            task.setPriority(priority);
             task.setStatus(status);
+            task.setImportant(important);
             taskResult = task;
         }
         //cerrar ventana
@@ -97,13 +118,15 @@ public class TaskFormController {
         titleField.setText(selectedTask.getTitle());
         descriptionField.setText(selectedTask.getDescription());
         datePicker.setValue(selectedTask.getDueDate());
+        priorityChoiceBox.setValue(selectedTask.getPriority());
         statusChoiceBox.setValue(selectedTask.getStatus());
+        importantCheckBox.setSelected(selectedTask.isImportant());
     }
 
 
     private void showError(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Información");
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("ERROR");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();

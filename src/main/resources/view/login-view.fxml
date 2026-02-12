@@ -7,7 +7,7 @@
 
     <Label text="PRIORIZA LOGIN" styleClass="login-title" />
 
-    <TextField fx:id="userField" promptText="Usuario" />
+    <TextField fx:id="emailField" promptText="Email" />
     <PasswordField fx:id="passField" promptText="Contraseña" />
 
     <Button onAction="#handleLogin" text="Iniciar sesión" styleClass="login-button"/>

@@ -1,30 +1,31 @@
 package com.prioriza.model;
 
+import java.time.LocalDate;
+
 public class SubTask {
     private int id;
     private String title;
     private SubTaskStatus subTaskStatus;
     private int taskId; // esta es la FK a la clase Task para la BD
 
+    private LocalDate dueDate;
+    private boolean important;
+
     //Constructor
     public SubTask() {
         this.subTaskStatus = SubTaskStatus.PENDIENTE;
     }
 
-    public SubTask(int id, String title, SubTaskStatus subTaskStatus, int taskId) {
-        this.id = id;
-        this.title = title;
-        this.subTaskStatus = subTaskStatus;
-        this.taskId = taskId;
-    }
-
     public SubTask(String title, int taskId) {
         this.title = title;
-        this.subTaskStatus = SubTaskStatus.PENDIENTE;
         this.taskId = taskId;
+        this.subTaskStatus = SubTaskStatus.PENDIENTE;
     }
 
+
     //Getter y Setter
+
+
     public int getId() {
         return id;
     }
@@ -55,6 +56,22 @@ public class SubTask {
 
     public void setTaskId(int taskId) {
         this.taskId = taskId;
+    }
+
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public boolean isImportant() {
+        return important;
+    }
+
+    public void setImportant(boolean important) {
+        this.important = important;
     }
 
     //metodo para marcar completado

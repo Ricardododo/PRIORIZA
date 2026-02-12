@@ -4,15 +4,19 @@ import com.prioriza.model.SubTask;
 import com.prioriza.model.SubTaskStatus;
 import com.prioriza.model.TaskStatus;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
+
+import java.time.LocalDate;
 
 public class SubTaskFormController {
 
     @FXML
     private TextField titleField;
+    @FXML
+    private DatePicker dueDatePicker;
+    @FXML
+    private CheckBox importantCheckBox;
     @FXML
     private ChoiceBox<SubTaskStatus> statusChoiceBox;
 
@@ -26,25 +30,37 @@ public class SubTaskFormController {
         statusChoiceBox.getItems().setAll(SubTaskStatus.values());
         //valor por defecto
         statusChoiceBox.setValue(SubTaskStatus.PENDIENTE);
+        //fecha por defecto
+        dueDatePicker.setValue(LocalDate.now());
+        //checkBox por defecto: false
+        importantCheckBox.setSelected(false);
     }
 
     @FXML
     private void handleSave() {
 
         String title = titleField.getText();
+        LocalDate dueDate = dueDatePicker.getValue();
+        boolean important = importantCheckBox.isSelected();
+        SubTaskStatus status = statusChoiceBox.getValue();
 
         if (title == null || title.trim().isEmpty()) {
             showError("El título no puede estar vacío");
             return;
         }
+
         if(editMode){
             subTaskToEdit.setTitle(title);
-            subTaskToEdit.setSubTaskStatus(statusChoiceBox.getValue());
+            subTaskToEdit.setDueDate(dueDate);
+            subTaskToEdit.setImportant(important);
+            subTaskToEdit.setSubTaskStatus(status);
             result = subTaskToEdit;
         }else{
             SubTask subtask = new SubTask();
             subtask.setTitle(title);
-            subtask.setSubTaskStatus(statusChoiceBox.getValue());
+            subtask.setDueDate(dueDate);
+            subtask.setImportant(important);
+            subtask.setSubTaskStatus(status);
             result = subtask;
         }
         //cerrar el popup
@@ -71,6 +87,8 @@ public class SubTaskFormController {
         this.result = selectedSubTask;
 
         titleField.setText(selectedSubTask.getTitle());
+        dueDatePicker.setValue(selectedSubTask.getDueDate());
+        importantCheckBox.setSelected(selectedSubTask.isImportant());
         statusChoiceBox.setValue(selectedSubTask.getSubTaskStatus());
     }
     private void showError(String msg) {

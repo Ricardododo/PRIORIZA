@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class DatabaseConnection {
 
     private static final String URL =
-            "jdbc:sqlite:C:/Users/Usuario/Desktop/PRIORIZA/prioriza.db";
+            System.getProperty("db.url", "jdbc:sqlite:prioriza.db");
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL);

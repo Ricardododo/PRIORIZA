@@ -1,5 +1,6 @@
 package com.prioriza.controller;
 
+import com.prioriza.dao.TaskListDAO;
 import com.prioriza.dao.UserDAO;
 import com.prioriza.model.User;
 import javafx.fxml.FXML;
@@ -62,9 +63,15 @@ public class RegisterController {
             //guardar usuario
             userDAO.addUser(user);
 
+            //Crear listas por defecto automaticamente
+            if(user.getId() > 0){
+                TaskListDAO taskListDAO = new TaskListDAO();
+                taskListDAO.createDefaultListsForUser(user.getId());
+            }
+
             showSuccess("Usuario registrado correctamente.\nYa puedes iniciar sesión");
 
-            //cerrar ventana y vovler a login
+            //cerrar ventana y volver a login
             Stage stage = (Stage) usernameField.getScene().getWindow();
             stage.close();
         } catch (Exception e) {

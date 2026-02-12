@@ -3,49 +3,34 @@ package com.prioriza.service;
 import com.prioriza.dao.TaskDAO;
 import com.prioriza.model.Priority;
 import com.prioriza.model.Task;
-import com.prioriza.rule.RuleEngine;
-import com.prioriza.rule.rules.DistantRule;
-import com.prioriza.rule.rules.ImportantRule;
-import com.prioriza.rule.rules.UrgentRule;
+import com.prioriza.priority.engine.PriorityEngine;
+import com.prioriza.priority.model.PriorityLevel;
 
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.List;
 
 public class TaskService {
 
     private final TaskDAO taskDAO;
-    private final RuleEngine engine;
+    private final PriorityEngine priorityEngine;
 
     public TaskService() {
         this.taskDAO = new TaskDAO();
 
         //motor de reglas
-        this.engine = new RuleEngine();
-        engine.addRule(new UrgentRule());
-        engine.addRule(new ImportantRule());
-        engine.addRule(new DistantRule());
+        this.priorityEngine = new PriorityEngine();
+
     }
 
     //crear tarea aplicando las reglas automaticas
     public Task createTask(Task task) throws SQLException{
-
-        //1. evaluar tarea
-        int score = engine.evaluate(task);
-
-        //2. convertir score a Priority enum
-        Priority priority = convertScoreToPriority(score);
-
-        //3. asignar prioridad final
-        task.setPriority(priority);
-
-        //4. guardar en BD
+        applyPriorityRules(task);
         taskDAO.insert(task);
         return task;
     }
 
     //buscar tarea por id
-    public Task getByTaskId(int id) throws SQLException{
+    public Task getById(int id) throws SQLException{
         return taskDAO.getById(id);
     }
 
@@ -54,27 +39,50 @@ public class TaskService {
         return taskDAO.getByTaskListId(taskListId);
     }
 
-    //actualizar tarea calculando prioridad
+    //actualizar tarea recalculando prioridad
     public void updateTask(Task task) throws SQLException {
-
-        int score = engine.evaluate(task);
-        task.setPriority(convertScoreToPriority(score));
-
+        applyPriorityRules(task);
         taskDAO.update(task);
     }
-
     //Eliminar tarea
     public void deleteTask(int taskId) throws SQLException {
         taskDAO.delete(taskId);
     }
 
-    //metodo interno para covertir el score en enum Priority
-    private Priority convertScoreToPriority(int score){
+    //metodo calcular motor heuristico
 
-        if (score >= 4) return Priority.URGENTE;
-        if (score >= 2) return Priority.ALTA;
-        if (score >= 1) return Priority.MEDIA;
+    public PriorityLevel calculatePriorityLevel(Task task) {
+        return priorityEngine.calculate(task);
+    }
 
-        return Priority.BAJA;
+    public int calculatePriorityScore(Task task) {
+        return priorityEngine.calculateScore(task);
+    }
+
+    public Priority convertToUIPriority(PriorityLevel level) {
+        if (level == null) return Priority.MEDIA;
+        return switch(level) {
+            case CRITICO, URGENTE -> Priority.URGENTE;
+            case ALTO -> Priority.ALTA;
+            case MEDIO -> Priority.MEDIA;
+            case BAJO -> Priority.BAJA;
+        };
+    }
+
+    public PriorityLevel convertToEnginePriority(Priority uiPriority) {
+        if (uiPriority == null) return PriorityLevel.MEDIO;
+        return switch(uiPriority) {
+            case URGENTE -> PriorityLevel.URGENTE;
+            case ALTA -> PriorityLevel.ALTO;
+            case MEDIA -> PriorityLevel.MEDIO;
+            case BAJA -> PriorityLevel.BAJO;
+        };
+    }
+    //metodo privado
+    private void applyPriorityRules(Task task) {
+        PriorityLevel level = priorityEngine.calculate(task);
+        task.setPriorityLevel(level);
+        task.setPriority(convertToUIPriority(level));
+        task.setPriorityScore(priorityEngine.calculateScore(task));
     }
 }

@@ -4,6 +4,8 @@ import com.prioriza.dao.SubTaskDAO;
 import com.prioriza.dao.TaskDAO;
 import com.prioriza.dao.TaskListDAO;
 import com.prioriza.model.*;
+import com.prioriza.priority.engine.PriorityEngine;
+import com.prioriza.priority.model.PriorityLevel;
 import com.prioriza.service.TaskService;
 import com.prioriza.session.Session;
 import javafx.beans.property.SimpleObjectProperty;
@@ -14,6 +16,9 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 
 
@@ -22,6 +27,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class MainController {
+
+    private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 
     private final TaskListDAO taskListDAO = new TaskListDAO();
     private final TaskDAO taskDAO = new TaskDAO();
@@ -49,6 +56,12 @@ public class MainController {
     @FXML
     private BorderPane rootpane;
 
+    //aplicar en los métodos
+    public void aplicarReglasHeuristicas(){
+        logger.debug("Aplicando reglas heurísticas...");
+        // Tu código
+        logger.info("Reglas aplicadas exitosamente");
+    }
 
     @FXML
     public void initialize() {
@@ -505,10 +518,14 @@ public class MainController {
                 updatedTask.setId(selectedTask.getId());
                 updatedTask.setTaskListId(selectedTask.getTaskListId());
 
+
                 taskService.updateTask(updatedTask); //recalcular prioridad
                 loadTasks(selectedTask.getTaskListId());
+
+                showInfo("Tarea actualizada correctamente");
             }
         } catch (Exception e) {
+            showError("Error al editar la tarea");
             e.printStackTrace();
         }
     }
@@ -548,6 +565,34 @@ public class MainController {
             e.printStackTrace();
         }
     }
+    //recalcular o refrescar prioridades de todas las tareas
+    @FXML
+    private void handleRecalculatePriorities() {
+        TaskList selectedList = taskListView.getSelectionModel().getSelectedItem();
+        if (selectedList == null) {
+            showWarning("Selecciona una lista para recalcular prioridades");
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Recalcular prioridades");
+        confirm.setHeaderText("¿Recalcular prioridades de todas las tareas?");
+        confirm.setContentText("Esto actualizará las prioridades según las reglas heurísticas.");
+
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+            try {
+                List<Task> tasks = taskDAO.getByTaskListId(selectedList.getId());
+                for (Task task : tasks) {
+                    taskService.updateTask(task);
+                }
+                loadTasks(selectedList.getId());
+                showInfo("Prioridades recalculadas correctamente");
+            } catch (Exception e) {
+                showError("Error al recalcular prioridades");
+                e.printStackTrace();
+            }
+        }
+    }
 
     //metodo para alertas
     private void showWarning(String message){
@@ -581,6 +626,25 @@ public class MainController {
         }else{
             rootpane.getStyleClass().add("dark");
         }
+    }
+    //metodo prueba del motor
+    @FXML
+    private void testPriorityEngine() {
+        Task selectedTask = taskTableView.getSelectionModel().getSelectedItem();
+        if (selectedTask == null) {
+            showWarning("Selecciona una tarea para probar");
+            return;
+        }
+
+        //TODO AHORA ES CLARO Y ACCESIBLE
+        PriorityLevel level = taskService.calculatePriorityLevel(selectedTask);
+        int score = taskService.calculatePriorityScore(selectedTask);
+        Priority uiPriority = taskService.convertToUIPriority(level);
+
+        showInfo(String.format(
+                " Puntuación: %d\n Nivel motor: %s\n Prioridad UI: %s",
+                score, level, uiPriority
+        ));
     }
 
 }

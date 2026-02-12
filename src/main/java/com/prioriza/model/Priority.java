@@ -1,7 +1,7 @@
 package com.prioriza.model;
 
 public enum Priority {
-    //prioridad de la tarea
+    //No es lógica/ es presentación (UI)
     BAJA,
     MEDIA,
     ALTA,

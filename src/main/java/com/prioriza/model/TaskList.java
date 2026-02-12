@@ -15,19 +15,12 @@ public class TaskList {
     public TaskList() {
     }
     //constructor completo (lectura desde BD)
-    public TaskList(int id, String name, int userId) {
-        this.id = id;
-        this.name = name;
-        this.userId = userId;
-    }
-    //constructor para crear desde la app
     public TaskList(String name, int userId) {
         this.name = name;
         this.userId = userId;
     }
 
     //Getter y Setter
-
 
     public int getId() {
         return id;
@@ -61,13 +54,7 @@ public class TaskList {
         this.tasks = tasks;
     }
 
-    public void addTask(Task task) {
-        this.tasks.add(task);
-    }
-
-
     //toString
-
     @Override
     public String toString() {
 
