@@ -45,6 +45,10 @@ public class EmailNotification {
         this.status = "PENDING";
         this.createdAt = LocalDateTime.now();
     }
+    //constructor vacío para JDBC/mapResultSet (DAO)
+    public EmailNotification() {
+
+    }
 
     public int getId() {
         return id;
