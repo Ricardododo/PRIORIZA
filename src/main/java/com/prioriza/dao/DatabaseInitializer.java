@@ -92,13 +92,42 @@ public class DatabaseInitializer {
                 System.out.println("Usuario ADMIN creado");
             }
 
+            // 9. Notificaciones
+            String createNotifications =
+                    "CREATE TABLE IF NOT EXISTS email_notifications (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "user_id INTEGER NOT NULL, " +
+                    "user_email TEXT NOT NULL, " +
+                    "task_id INTEGER, " +
+                    "subtask_id INTEGER, " +
+                    "item_type TEXT NOT NULL, " +
+                    "item_title TEXT NOT NULL, " +
+                    "due_date TEXT NOT NULL, " +
+                    "days_remaining INTEGER NOT NULL, " +
+                    "status TEXT DEFAULT 'PENDING', " +
+                    "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+                    "sent_at TIMESTAMP, " +
+                    "error_message TEXT, " +
+                    "FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE" +
+                    ");";
+
+            stmt.executeUpdate(createNotifications);
+            System.out.println("Tabla 'email_notifications' creada");
+
+            //Índice de búsqueda rápida para notificaciones
+            stmt.executeUpdate(
+                    "CREATE INDEX IF NOT EXISTS idx_notifications_status ON " +
+                    "email_notifications(status, due_date);"
+            );
+
+
             System.out.println("¡TODO CORRECTO! Base de datos lista");
 
         } catch (SQLException e) {
             System.err.println("ERROR: " + e.getMessage());
             e.printStackTrace();
 
-            // 9. DIAGNÓSTICO AUTOMÁTICO
+            // DIAGNÓSTICO AUTOMÁTICO
             System.err.println("\nDIAGNÓSTICO:");
             System.err.println("   Versión SQLite: " + findSQLiteVersion());
             System.err.println("   Java Version: " + System.getProperty("java.version"));
