@@ -76,7 +76,7 @@ public class UserDAO {
                         rs.getString("name"),
                         rs.getString("email"),
                         "",
-                        UserRole.valueOf(rs.getString("use_role"))
+                        UserRole.valueOf(rs.getString("user_role"))
                 );
                 users.add(user);
             }

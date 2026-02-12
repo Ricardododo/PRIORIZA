@@ -2,6 +2,7 @@ package com.prioriza;
 
 import com.prioriza.dao.DatabaseConnection;
 import com.prioriza.dao.DatabaseInitializer;
+import com.prioriza.service.NotificationProcessor;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,59 +17,57 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 public class MainApp extends Application {
+
+    private NotificationProcessor notificationProcessor;
+
     @Override
     public void start(Stage stage) throws Exception{
 
-        //crear las tablas al iniciar
+        //1. Inicializar Base de Datos
         DatabaseInitializer.initialize();
 
+        //2. Iniciar Sistema de Notificaciones
+        notificationProcessor = new NotificationProcessor();
+        notificationProcessor.start();
+
+        //3. cargar UI
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("/view/login-view.fxml")
         );
-
-        Parent root = loader.load(); //linea donde se aplica el CSS
-
+        Parent root = loader.load();
         Scene scene = new Scene(root);
 
+        //CSS
         scene.getStylesheets().add(
                 getClass().getResource("/css/styles.css").toExternalForm()
         );
+        //Icono
         stage.getIcons().add(
                 new Image(getClass().getResourceAsStream("/img/prioriza-icono.png"))
         );
+
         stage.setWidth(420);
         stage.setHeight(360);
         stage.setResizable(false);
         stage.setTitle("PRIORIZA");
         stage.setScene(scene);
         stage.show();
+
+        //4. Detener notificaciones al cerrar
+        stage.setOnCloseRequest(event -> {
+            if (notificationProcessor != null){
+                notificationProcessor.stop();
+            }
+        });
     }
-    //metodo para verificar la estructura
-    private void verifyDatabaseStructure() {
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            DatabaseMetaData meta = conn.getMetaData();
-
-            System.out.println("VERIFICANDO ESTRUCTURA:");
-
-            // Verificar tabla users
-            var rs = meta.getColumns(null, null, "users", null);
-            boolean hasUserRole = false;
-            while (rs.next()) {
-                String colName = rs.getString("COLUMN_NAME");
-                if ("user_role".equals(colName)) hasUserRole = true;
-                System.out.println("   - " + colName);
-            }
-
-            if (!hasUserRole) {
-                System.err.println("ERROR: columna 'user_role' no encontrada!");
-            } else {
-                System.out.println("Estructura correcta");
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+    @Override
+    public void stop()throws Exception{
+        if (notificationProcessor != null){
+            notificationProcessor.stop();
         }
+        super.stop();
     }
+
 
     public static void main(String[] args) {
         launch();

@@ -6,6 +6,7 @@ import com.prioriza.dao.TaskListDAO;
 import com.prioriza.model.*;
 import com.prioriza.priority.engine.PriorityEngine;
 import com.prioriza.priority.model.PriorityLevel;
+import com.prioriza.service.NotificationProcessor;
 import com.prioriza.service.TaskService;
 import com.prioriza.session.Session;
 import javafx.beans.property.SimpleObjectProperty;
@@ -593,6 +594,36 @@ public class MainController {
             }
         }
     }
+    //metodo de prueba para notificaciones
+    @FXML
+    private void handleTestNotifications(){
+        try{
+            NotificationProcessor processor = new NotificationProcessor();
+
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Prueba de Notificaciones");
+            confirm.setHeaderText("¿Qué deseas probar?");
+
+            ButtonType btnScan = new ButtonType("Escanear tareas");
+            ButtonType btnSend = new ButtonType("Enviar emails");
+            ButtonType btnCancel = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+            confirm.getButtonTypes().setAll(btnScan, btnSend, btnCancel);
+
+            confirm.showAndWait().ifPresent(response -> {
+                if (response == btnScan){
+                    processor.scanNow();
+                    showInfo("Escaneo completado. Revisa la consola.");
+                }else if(response == btnSend){
+                    processor.sendNow();
+                    showInfo("Envío completado. Revisa la consola.");
+                }
+            });
+        } catch (Exception e) {
+            showError("Error: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
     //metodo para alertas
     private void showWarning(String message){
@@ -627,25 +658,5 @@ public class MainController {
             rootpane.getStyleClass().add("dark");
         }
     }
-    //metodo prueba del motor
-    @FXML
-    private void testPriorityEngine() {
-        Task selectedTask = taskTableView.getSelectionModel().getSelectedItem();
-        if (selectedTask == null) {
-            showWarning("Selecciona una tarea para probar");
-            return;
-        }
-
-        //TODO AHORA ES CLARO Y ACCESIBLE
-        PriorityLevel level = taskService.calculatePriorityLevel(selectedTask);
-        int score = taskService.calculatePriorityScore(selectedTask);
-        Priority uiPriority = taskService.convertToUIPriority(level);
-
-        showInfo(String.format(
-                " Puntuación: %d\n Nivel motor: %s\n Prioridad UI: %s",
-                score, level, uiPriority
-        ));
-    }
-
 }
 

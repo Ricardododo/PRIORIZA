@@ -177,5 +177,5 @@
             </VBox>
         </HBox>
     </center>
-
+    <Button onAction="#handleTestNotifications" text="Probar Notificaciones"/>
 </BorderPane>
