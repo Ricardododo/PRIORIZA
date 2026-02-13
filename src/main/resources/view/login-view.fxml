@@ -3,13 +3,32 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox alignment="CENTER" spacing="20" styleClass="login-container" stylesheets="@/css/styles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.prioriza.controller.LoginController">
+<VBox alignment="CENTER" spacing="0" styleClass="login-simple"
+      stylesheets="/css/styles.css"
+      xmlns="http://javafx.com/javafx/17.0.12"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.prioriza.controller.LoginController">
 
-    <Label text="PRIORIZA LOGIN" styleClass="login-title" />
+    <VBox alignment="CENTER" VBox.vgrow="ALWAYS" styleClass="login-simple-container">
 
-    <TextField fx:id="emailField" promptText="Email" />
-    <PasswordField fx:id="passField" promptText="Contraseña" />
+        <VBox alignment="CENTER" spacing="30" maxWidth="340" styleClass="login-simple-card">
 
-    <Button onAction="#handleLogin" text="Iniciar sesión" styleClass="login-button"/>
-    <Button onAction="#handleOpenRegister" text="Crear Cuenta" styleClass="login-button"/>
+            <VBox alignment="CENTER" spacing="5">
+                <Label text="PRIORIZA" styleClass="login-simple-title" />
+                <Label text="Bienvenido de nuevo" styleClass="login-simple-subtitle" />
+            </VBox>
+
+            <VBox spacing="15" prefWidth="300">
+                <TextField fx:id="emailField" promptText="Email" styleClass="login-simple-field" />
+                <PasswordField fx:id="passField" promptText="Contraseña" styleClass="login-simple-field" />
+            </VBox>
+
+            <Button text="Iniciar sesión" onAction="#handleLogin" styleClass="login-simple-button" />
+
+            <HBox alignment="CENTER" spacing="5" styleClass="login-simple-footer">
+                <Label text="¿No tienes cuenta?" style="-fx-text-fill: #718096;" />
+                <Button text="Regístrate" onAction="#handleOpenRegister" styleClass="login-simple-link" />
+            </HBox>
+        </VBox>
+    </VBox>
 </VBox>

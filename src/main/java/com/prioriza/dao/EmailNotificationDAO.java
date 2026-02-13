@@ -129,6 +129,96 @@ public class EmailNotificationDAO {
         }
         return false;
     }
+    // MÉTODOS PARA USUARIO NORMAL
+
+    // Obtener notificaciones de un usuario específico
+    public List<EmailNotification> getByUserId(int userId) {
+        List<EmailNotification> list = new ArrayList<>();
+        String sql = "SELECT * FROM email_notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 50";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                list.add(mapResultSet(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    // Contar notificaciones no leídas
+    public int getUnreadCount(int userId) {
+        String sql = "SELECT COUNT(*) FROM email_notifications WHERE user_id = ? AND read_by_user = 0";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    // Marcar como leída
+    public void markAsRead(int notificationId) {
+        String sql = "UPDATE email_notifications SET read_by_user = 1 WHERE id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, notificationId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Marcar todas como leídas
+    public void markAllAsRead(int userId) {
+        String sql = "UPDATE email_notifications SET read_by_user = 1 WHERE user_id = ? AND read_by_user = 0";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    //CONTAR NOTIFICACIONES DE HOY PARA UN USUARIO
+    public int getTodayCount(int userId) {
+        String sql = """
+        SELECT COUNT(*) FROM email_notifications
+        WHERE user_id = ? AND date(created_at) = date('now')
+        """;
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error contando notificaciones de hoy: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return 0;
+    }
 
     //Mapeo ResultSet -> Objeto
     private EmailNotification mapResultSet(ResultSet rs) throws SQLException{

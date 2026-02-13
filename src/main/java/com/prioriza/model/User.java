@@ -30,7 +30,7 @@ public class User {
         this.email = email;
     }
 
-    //constructor completo
+    //constructor completo - role
     public User(int id, String name, String email, String password, UserRole role) {
         this.id = id;
         this.name = name;

@@ -26,6 +26,34 @@ public class LoginController {
     private final TaskListDAO taskListDAO = new TaskListDAO();
 
     @FXML
+    public void initialize() {
+        System.out.println("Inicializando LoginController...");
+
+        javafx.application.Platform.runLater(() -> {
+            try {
+                Scene scene = emailField.getScene();
+                if (scene != null) {
+                    // Limpiar caché y forzar recarga
+                    scene.getStylesheets().clear();
+                    String css = getClass().getResource("/css/styles.css").toExternalForm();
+                    scene.getStylesheets().add(css);
+
+                    // Forzar re-aplicación de estilos
+                    scene.getRoot().applyCss();
+                    scene.getRoot().layout();
+
+                    System.out.println("CSS cargado correctamente");
+                    System.out.println("Ruta: " + css);
+                } else {
+                    System.out.println("Scene aún no disponible, se cargará después");
+                }
+            } catch (Exception e) {
+                System.err.println("Error cargando CSS: " + e.getMessage());
+            }
+        });
+    }
+
+    @FXML
     private void handleLogin() {
 
 

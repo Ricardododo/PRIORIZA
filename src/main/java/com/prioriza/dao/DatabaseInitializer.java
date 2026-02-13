@@ -120,6 +120,30 @@ public class DatabaseInitializer {
                     "email_notifications(status, due_date);"
             );
 
+            //Tabla configuración de Usuario normal (Notificaciones)
+            String createUserSettings =
+                    "CREATE TABLE IF NOT EXISTS user_settings (" +
+                            "user_id INTEGER PRIMARY KEY, " +
+                            "email_enabled INTEGER DEFAULT 1, " +           // 0 = false, 1 = true (SQLite no tiene boolean)
+                            "days_before_alert INTEGER DEFAULT 1, " +
+                            "alert_for_subtasks INTEGER DEFAULT 1, " +
+                            "alert_only_working_days INTEGER DEFAULT 0, " +
+                            "max_alerts_per_day INTEGER DEFAULT 5, " +
+                            "notification_hour INTEGER DEFAULT 9, " +       // Hora del día para enviar (9 AM)
+                            "last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+                            "FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE" +
+                            ");";
+
+            stmt.executeUpdate(createUserSettings);
+            System.out.println("Tabla 'user_settings' creada");
+
+            // Crear configuración POR DEFECTO para usuarios existentes
+            String initSettings =
+                    "INSERT OR IGNORE INTO user_settings (user_id) " +
+                            "SELECT id FROM users;";
+            stmt.executeUpdate(initSettings);
+            System.out.println("Configuraciones por defecto inicializadas");
+
 
             System.out.println("¡TODO CORRECTO! Base de datos lista");
 

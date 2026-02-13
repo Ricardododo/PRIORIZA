@@ -37,20 +37,19 @@ public class MainApp extends Application {
         Parent root = loader.load();
         Scene scene = new Scene(root);
 
-        //CSS
-        scene.getStylesheets().add(
-                getClass().getResource("/css/styles.css").toExternalForm()
-        );
+        //CSS ya no hace falta acá --- ahora esta en FXML
+
         //Icono
         stage.getIcons().add(
                 new Image(getClass().getResourceAsStream("/img/prioriza-icono.png"))
         );
 
-        stage.setWidth(420);
-        stage.setHeight(360);
-        stage.setResizable(false);
-        stage.setTitle("PRIORIZA");
         stage.setScene(scene);
+        stage.sizeToScene(); //tamaño ajustable automatico
+        stage.setResizable(false);
+        stage.setMinWidth(400);
+        stage.setMinHeight(500);
+        stage.setTitle("PRIORIZA");
         stage.show();
 
         //4. Detener notificaciones al cerrar

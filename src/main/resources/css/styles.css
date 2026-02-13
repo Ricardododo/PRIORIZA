@@ -1,261 +1,305 @@
-/* =====================================================
-   GLOBAL
-   ===================================================== */
-
+/* ============= ESTILOS GENERALES ============= */
 .root {
-    -fx-font-family: "Segoe UI";
-    -fx-background-color: #f4f6f8;
-    -fx-text-fill: #111827;
+    -fx-font-family: 'Segoe UI', 'Arial', sans-serif;
+    -fx-background-color: #f5f7fa;
 }
 
-/* Dark mode toggle */
-.root.dark {
-    -fx-background-color: #0f172a;
-    -fx-text-fill: #e5e7eb;
+/* ============= TOP BAR CON MENÚ INTEGRADO ============= */
+.top-bar-container {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 2);
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #e0e0e0;
 }
 
-
-/* =====================================================
-   LAYOUT PRINCIPAL
-   ===================================================== */
-
-.main-container {
-    -fx-padding: 40;
-    -fx-spacing: 20;
+/* ----- MENÚ BAR ----- */
+.menu-bar {
+    -fx-background-color: white;
+    -fx-padding: 5 20 5 20;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #edf2f7;
 }
 
+.menu-bar .menu {
+    -fx-padding: 8 15 8 15;
+}
 
-/* =====================================================
-   TOP BAR
-   ===================================================== */
-
-.top-bar {
-    -fx-padding: 18 30 18 30;
-    -fx-background-color: linear-gradient(to right, #2563eb, #1e40af);
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);
-}
-.image-view{
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 5, 0, 0, 1);
-    -fx-background-radius: 50%;
-    -fx-border-radius: 50%;
-}
-.app-title {
-    -fx-font-size: 18px;
-    -fx-font-weight: bold;
-    -fx-text-fill: white;
-}
-.app-subtitle {
+.menu-bar .menu .label {
+    -fx-text-fill: #4a5568;
     -fx-font-size: 13px;
-    -fx-text-fill: #dbeafe;
+    -fx-font-weight: 600;
 }
-.root.dark .top-bar {
-    -fx-background-color: #020617;
+
+.menu-bar .menu:hover {
+    -fx-background-color: #f7fafc;
 }
-/* User box container */
-.user-box {
-    -fx-alignment: CENTER_RIGHT;
-    -fx-padding: 6 10;
-    -fx-background-color: rgba(255,255,255,0.12);
-    -fx-background-radius: 20;
+
+.menu-bar .menu:hover .label {
+    -fx-text-fill: #3498db;
 }
-/* Usuario */
-.user-label {
-    -fx-text-fill: white;
-    -fx-font-size: 14px;
+
+.menu-bar .menu:showing {
+    -fx-background-color: #f7fafc;
+}
+
+/* ----- CONTEXT MENU (DESPLEGABLE) ----- */
+.menu-bar .context-menu {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
+    -fx-padding: 8 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 15, 0, 0, 5);
+}
+
+.menu-bar .menu-item {
+    -fx-padding: 8 25 8 25;
+}
+
+.menu-bar .menu-item .label {
+    -fx-text-fill: #2d3748;
+    -fx-font-size: 13px;
+    -fx-font-weight: normal;
+}
+
+.menu-bar .menu-item:hover {
+    -fx-background-color: #ebf8ff;
+}
+
+.menu-bar .menu-item:hover .label {
+    -fx-text-fill: #3182ce;
+}
+
+.menu-bar .separator .line {
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 0.5;
+}
+
+/* ----- TOP BAR (TU DISEÑO ORIGINAL) ----- */
+.top-bar {
+    -fx-background-color: white;
+    -fx-padding: 12 25 12 25;
+    -fx-alignment: center-left;
+    -fx-spacing: 15;
+}
+
+/* Logo y título */
+.app-title {
+    -fx-font-size: 20px;
     -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
 }
-/* punto de estar en linea */
+
+.app-subtitle {
+    -fx-font-size: 11px;
+    -fx-text-fill: #7f8c8d;
+}
+
+/* User box */
+.user-box {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 30;
+    -fx-padding: 6 15 6 15;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 30;
+    -fx-border-width: 1;
+}
+
 .user-status {
-    -fx-text-fill: #22c55e;
+    -fx-text-fill: #48bb78;
     -fx-font-size: 12px;
 }
 
-/* boton cerrar sesion */
+.user-label {
+    -fx-text-fill: #2d3748;
+    -fx-font-weight: 600;
+    -fx-font-size: 13px;
+}
+
+/* Botón logout */
 .logout-button {
-    -fx-background-color: #EF4444;
-    -fx-text-fill: white;
-    -fx-background-radius: 16;
-    -fx-padding: 6 14;
+    -fx-background-color: transparent;
+    -fx-text-fill: #e53e3e;
+    -fx-font-weight: 600;
     -fx-font-size: 12px;
+    -fx-padding: 5 10 5 10;
+    -fx-border-color: #feb2b2;
+    -fx-border-radius: 15;
+    -fx-border-width: 1;
+    -fx-cursor: hand;
 }
 
 .logout-button:hover {
-    -fx-background-color: #DC2626;
+    -fx-background-color: #fff5f5;
+    -fx-border-color: #fc8181;
 }
 
-/* =====================================================
-   TARJETAS (CARDS)
-   ===================================================== */
+/* ============= CARDS (TUS LISTAS, TAREAS, SUBTAREAS) ============= */
+.main-container {
+    -fx-padding: 20;
+    -fx-spacing: 20;
+    -fx-background-color: #f5f7fa;
+}
 
 .card {
     -fx-background-color: white;
-    -fx-background-radius: 18;
-    -fx-border-radius: 18;
+    -fx-background-radius: 12;
     -fx-padding: 20;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 18, 0, 0, 6);
+    -fx-spacing: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.03), 8, 0, 0, 2);
+    -fx-border-color: #edf2f7;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
 }
-.root.dark .card {
-    -fx-background-color: #020617;
-    -fx-border-color: #1e293b;
-}
-/* =====================================================
-   TÍTULOS
-   ===================================================== */
 
 .section-title {
-    -fx-font-size: 18px;
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
+    -fx-text-fill: #2d3748;
+    -fx-padding: 0 0 5 0;
+    -fx-border-width: 0 0 2 0;
+    -fx-border-color: #e2e8f0;
 }
-.label.title {
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-}
-.subtitle{
-    -fx-text-fill: #e5e7eb;
-    -fx-font-size: 12px;
-}
-/* =====================================================
-   LISTAS Y TABLAS
-   ===================================================== */
 
-.list-view,
-.table-view {
+/* ============= LISTVIEW Y TABLEVIEW ============= */
+.list-view, .table-view {
+    -fx-background-color: transparent;
+    -fx-border-color: #edf2f7;
+    -fx-border-radius: 8;
+    -fx-padding: 0;
+}
+
+.list-view .list-cell, .table-view .cell {
+    -fx-padding: 10;
     -fx-background-color: white;
-    -fx-background-radius: 12;
-    -fx-border-radius: 12;
-    -fx-border-color: #e5e7eb;
 }
 
-.root.dark .list-view,
-.root.dark .table-view {
-    -fx-background-color: #020617;
-    -fx-border-color: #1e293b;
+.list-view .list-cell:hover {
+    -fx-background-color: #f7fafc;
 }
 
-/* Header tabla */
-.table-view .column-header {
-    -fx-background-color: #eef2ff;
-    -fx-font-weight: bold;
+.list-view .list-cell:selected {
+    -fx-background-color: #ebf8ff;
+    -fx-text-fill: #2c3e50;
 }
 
-.root.dark .table-view .column-header {
-    -fx-background-color: #020617;
-}
-
-/* Hover filas */
-.table-row-cell:hover {
-    -fx-background-color: #f1f5f9;
-}
-
-.root.dark .table-row-cell:hover {
-    -fx-background-color: #1e293b;
-}
-
-/* Texto largo */
-.table-cell {
-    -fx-wrap-text: true;
-    -fx-padding: 6;
-}
-/* =====================================================
-   BOTONES (NOTION STYLE)
-   ===================================================== */
+/* ============= ICONOS ============= */
 .icon-button {
     -fx-background-color: transparent;
-    -fx-padding: 6;
+    -fx-padding: 8;
     -fx-cursor: hand;
 }
+
 .icon-button:hover {
-    -fx-background-color: rgba(0,0,0,0.08);
-    -fx-background-radius: 50;
-}
-.icon-button:presses{
-    -fx-background-color: rgba(0,0,0,0.15);
-}
-.icon-button.danger {
-    -fx-background-color: #dc2626;
-}
-/* =====================================================
-   PRIORIDADES (BADGES)
-   ===================================================== */
-
-.priority-URGENTE {
-    -fx-text-fill: white;
-    -fx-background-color: #dc2626;
-    -fx-background-radius: 10;
-    -fx-padding: 2 8;
-    -fx-font-weight: bold;
-}
-.priority-HIGH {
-    -fx-text-fill: white;
-    -fx-background-color: #ea580c;
-    -fx-background-radius: 10;
-    -fx-padding: 2 8;
-}
-.priority-MEDIUM {
-    -fx-text-fill: white;
-    -fx-background-color: #ca8a04;
-    -fx-background-radius: 10;
-    -fx-padding: 2 8;
-}
-.priority-LOW {
-    -fx-text-fill: white;
-    -fx-background-color: #16a34a;
-    -fx-background-radius: 10;
-    -fx-padding: 2 8;
-}
-/* =====================================================
-   INPUTS
-   ===================================================== */
-
-.text-field, .choice-box {
-    -fx-background-radius: 10;
-    -fx-border-radius: 10;
-    -fx-border-color: #e5e7eb;
-    -fx-padding: 6 10;
-}
-
-.root.dark .text-field,
-.root.dark .choice-box {
-    -fx-background-color: #020617;
-    -fx-border-color: #1e293b;
-    -fx-text-fill: white;
-}
-/* =====================================================
-   LOGIN (Ususario y Contraseña)
-   ===================================================== */
-.login-container{
-    -fx-padding: 30px;
-}
-.login-title{
-    -fx-font-size: 32px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #111827;
-    -fx-padding: 0 0 10 0;
-}
-.text-field, .password-field {
+    -fx-background-color: #f7fafc;
     -fx-background-radius: 8;
-    -fx-border-radius: 8;
-    -fx-border-color: #E5E7EB;
-    -fx-font-size: 14px;
-    -fx-padding: 10 14;
 }
-/* botones del login */
-.login-button {
-    -fx-background-color: linear-gradient(to right, #4DA3FF, #2563EB);
-    -fx-text-fill: white;
-    -fx-font-size: 14px;
+
+/* ============= PRIORIDADES ============= */
+.priority-urgente {
+    -fx-text-fill: #e53e3e;
     -fx-font-weight: bold;
-    -fx-padding: 8 30;
-    -fx-background-radius: 10;
+}
+
+.priority-alta {
+    -fx-text-fill: #ed8936;
+    -fx-font-weight: bold;
+}
+
+.priority-media {
+    -fx-text-fill: #48bb78;
+    -fx-font-weight: bold;
+}
+
+.priority-baja {
+    -fx-text-fill: #718096;
+}
+
+/* ============= DARK MODE ============= */
+.root.dark {
+    -fx-background-color: #1a202c;
+}
+
+.root.dark .top-bar-container,
+.root.dark .top-bar,
+.root.dark .menu-bar {
+    -fx-background-color: #2d3748;
+}
+
+.root.dark .menu-bar .menu .label {
+    -fx-text-fill: #e2e8f0;
+}
+
+.root.dark .card {
+    -fx-background-color: #2d3748;
+    -fx-border-color: #4a5568;
+}
+
+.root.dark .section-title {
+    -fx-text-fill: #f7fafc;
+    -fx-border-color: #4a5568;
+}
+/* ============= LOGIN MINIMALISTA - TAMAÑO AJUSTADO ============= */
+.login-simple {
+    -fx-background-color: #f8fafc;
+    -fx-padding: 40 0;              /* Reducido de 80 a 40 */
+}
+
+.login-simple-container {
+    -fx-padding: 30 20;            /* Reducido de 60 a 30 */
+}
+
+.login-simple-card {
+    -fx-background-color: white;
+    -fx-background-radius: 28;      /* Reducido de 32 a 28 */
+    -fx-padding: 32 32 40 32;      /* Reducido de 48-60 a 32-40 */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.02), 20, 0, 0, 0);
+    -fx-max-width: 360;            /* Reducido de 380 a 360 */
+    -fx-min-width: 320;
+}
+
+.login-simple-title {
+    -fx-font-size: 42px;           /* Reducido de 48 a 42 */
+    -fx-font-weight: 900;
+    -fx-text-fill: #0a0f1a;
+    -fx-letter-spacing: 3;         /* Reducido de 4 a 3 */
+    -fx-padding: 0 0 5 0;
+}
+
+.login-simple-subtitle {
+    -fx-font-size: 15px;           /* Reducido de 16 a 15 */
+    -fx-text-fill: #475569;
+    -fx-font-weight: 500;
+}
+
+.login-simple-field {
+    -fx-background-color: #f1f5f9;
+    -fx-background-radius: 12;     /* Reducido de 14 a 12 */
+    -fx-padding: 14 18;           /* Reducido de 16-20 a 14-18 */
+    -fx-font-size: 14px;          /* Reducido de 15 a 14 */
+    -fx-pref-width: 280;          /* Reducido de 300 a 280 */
+}
+
+.login-simple-button {
+    -fx-background-color: #0f172a;
+    -fx-text-fill: white;
+    -fx-font-size: 15px;          /* Reducido de 16 a 15 */
+    -fx-font-weight: 700;
+    -fx-padding: 14;             /* Reducido de 16 a 14 */
+    -fx-background-radius: 12;    /* Reducido de 14 a 12 */
+    -fx-pref-width: 280;         /* Reducido de 300 a 280 */
+}
+
+.login-simple-footer {
+    -fx-padding: 20 0 0 0;       /* Reducido de 25 a 20 */
+}
+
+.login-simple-link {
+    -fx-background-color: transparent;
+    -fx-text-fill: #2563eb;
+    -fx-font-weight: 700;
+    -fx-font-size: 14px;         /* Reducido de 15 a 14 */
     -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 4);
-}
-
-.login-button:hover {
-    -fx-background-color: linear-gradient(to right, #6BB7FF, #3B82F6);
-}
-
-.login-button:pressed {
-    -fx-background-color: #1E40AF;
-    -fx-translate-y: 1;
+    -fx-padding: 5 12;           /* Reducido de 8-15 a 5-12 */
 }

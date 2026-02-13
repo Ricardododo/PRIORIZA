@@ -19,6 +19,7 @@ public class EmailNotification {
     private LocalDateTime createdAt;
     private LocalDateTime sentAt;
     private String errorMessage;
+    private boolean readByUser = false; // por si el usuario ya vio la notificación
 
     //Constructor para tareas
     public EmailNotification(User user, Task task, int daysRemaining) {
@@ -154,4 +155,11 @@ public class EmailNotification {
         this.errorMessage = errorMessage;
     }
 
+    public boolean isReadByUser() {
+        return readByUser;
+    }
+
+    public void setReadByUser(boolean readByUser) {
+        this.readByUser = readByUser;
+    }
 }
