@@ -3,8 +3,8 @@ package com.prioriza.controller;
 import com.prioriza.dao.TaskListDAO;
 import com.prioriza.dao.UserDAO;
 import com.prioriza.model.User;
+import com.prioriza.util.AlertUtil;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -39,17 +39,17 @@ public class RegisterController {
                 password == null || password.isEmpty() ||
                 confirm == null || confirm.isEmpty()){
 
-            showWarning("Todos los campos son obligatorios");
+            AlertUtil.showWarning("Atención", "Todos los campos son obligatorios");
             return;
         }
         //validar email básico
         if(!email.contains("@") || !email.contains(".")){
-            showError("Introduce un correo electrónico válido");
+            AlertUtil.showError("Error", "Introduce un correo electrónico válido");
             return;
         }
         //validar contraseñas
         if(!password.equals(confirm)){
-            showError("Las contraseñas no coinciden.");
+            AlertUtil.showError("Error", "Las contraseñas no coinciden.");
             return;
         }
 
@@ -69,13 +69,13 @@ public class RegisterController {
                 taskListDAO.createDefaultListsForUser(user.getId());
             }
 
-            showSuccess("Usuario registrado correctamente.\nYa puedes iniciar sesión");
+            AlertUtil.showInfo("Información", "Usuario registrado correctamente.\nYa puedes iniciar sesión");
 
             //cerrar ventana y volver a login
             Stage stage = (Stage) usernameField.getScene().getWindow();
             stage.close();
         } catch (Exception e) {
-            showError("No se pudo registrar el usuario.\nPuede que el nombre o email ya existan.");
+            AlertUtil.showError("Error", "No se pudo registrar el usuario.\nPuede que el nombre o email ya existan.");
             e.printStackTrace();
         }
 
@@ -86,29 +86,5 @@ public class RegisterController {
     private void handleBackToLogin(){
         Stage stage = (Stage) usernameField.getScene().getWindow();
         stage.close();
-    }
-    // metodos de alertas y mensajes
-    private void showWarning(String message){
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Atención");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
-    private void showError(String message){
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
-    private void showSuccess(String message){
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Registro exitoso");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }

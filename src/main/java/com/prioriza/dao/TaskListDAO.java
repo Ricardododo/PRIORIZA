@@ -1,6 +1,5 @@
 package com.prioriza.dao;
 
-import com.prioriza.model.Task;
 import com.prioriza.model.TaskList;
 
 import java.sql.Connection;

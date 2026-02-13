@@ -6,8 +6,8 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.borders.SolidBorder;
-import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Div;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.TextAlignment;
@@ -16,12 +16,13 @@ import com.prioriza.dao.*;
 import com.prioriza.model.*;
 import com.prioriza.service.*;
 import com.prioriza.session.Session;
+import com.prioriza.util.AlertUtil;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.scene.control.*;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
@@ -40,9 +41,6 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -110,7 +108,7 @@ public class MainController {
 
         //comprobar si hay un usuario
         if (Session.getUser() == null){
-            showError("Tu sesión no esta activa. Inicia sesión nuevamente.");
+            AlertUtil.showError("Error", "Tu sesión no esta activa. Inicia sesión nuevamente.");
             userLabel.setText("Invitado");
             return; //no sigue si no hay nadie
         }else{
@@ -208,10 +206,10 @@ public class MainController {
     @FXML
     private void handleGlobalStats() {
         if (!isAdmin()) {
-            showError("No tienes permisos para esta acción");
+            AlertUtil.showError("Error", "No tienes permisos para esta acción");
             return;
         }
-        showInfo("Estadísticas globales - Próximamente");
+        AlertUtil.showInfo("Información", "Estadísticas globales - Próximamente");
     }
 
     //Verificar si es admin
@@ -236,7 +234,7 @@ public class MainController {
             taskListView.getItems().setAll(lists);
 
         } catch (Exception e) {
-            showError("No se pudieron cargar las listas");
+            AlertUtil.showError("Error", "No se pudieron cargar las listas");
             e.printStackTrace();
         }
     }
@@ -274,7 +272,7 @@ public class MainController {
             subTaskView.getItems().clear();
 
         } catch (Exception e) {
-            showError("No se pudieron cargar las tareas.");
+            AlertUtil.showError("Error", "No se pudieron cargar las tareas.");
             e.printStackTrace();
         }
     }
@@ -286,7 +284,7 @@ public class MainController {
             subTaskView.getItems().setAll(subs);
 
         } catch (Exception e) {
-            showError("No se pudieron cargar las subtareas");
+            AlertUtil.showError("Error", "No se pudieron cargar las subtareas");
             e.printStackTrace();
         }
     }
@@ -294,7 +292,7 @@ public class MainController {
     @FXML
     private void handleScanNow() {
         if(!isAdmin()){
-            showError("No tienes permiso para esta acción");
+            AlertUtil.showError("Error", "No tienes permiso para esta acción");
             return;
         }
         try {
@@ -308,12 +306,12 @@ public class MainController {
             confirm.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
                     processor.scanNow();
-                    showInfo("Escaneo completado.\nRevisa la consola para ver los resultados.");
+                    AlertUtil.showInfo("Información", "Escaneo completado.\nRevisa la consola para ver los resultados.");
                 }
             });
 
         } catch (Exception e) {
-            showError("Error en escaneo: " + e.getMessage());
+            AlertUtil.showError("Error", "Error en escaneo: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -321,7 +319,7 @@ public class MainController {
     @FXML
     private void handleSendNow() {
         if (!isAdmin()) {
-            showError("No tienes permisos para esta acción");
+            AlertUtil.showError("Error", "No tienes permisos para esta acción");
             return;
         }
         try {
@@ -335,19 +333,19 @@ public class MainController {
             confirm.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
                     processor.sendNow();
-                    showInfo("Envío completado.\nRevisa la consola para ver los resultados.");
+                    AlertUtil.showInfo("Información", "Envío completado.\nRevisa la consola para ver los resultados.");
                 }
             });
 
         } catch (Exception e) {
-            showError("Error en envío: " + e.getMessage());
+            AlertUtil.showError("Error", "Error en envío: " + e.getMessage());
             e.printStackTrace();
         }
     }
     @FXML
     private void handleTestNotifications() {
         if (!isAdmin()) {
-            showError("No tienes permisos para esta acción");
+            AlertUtil.showError("Error", "No tienes permisos para esta acción");
             return;
         }
         try {
@@ -366,17 +364,17 @@ public class MainController {
             confirm.showAndWait().ifPresent(response -> {
                 if (response == btnScan) {
                     processor.scanNow();
-                    showInfo("Escaneo completado. Revisa la consola.");
+                    AlertUtil.showInfo("Información", "Escaneo completado. Revisa la consola.");
                 } else if (response == btnSend) {
                     processor.sendNow();
-                    showInfo("Envío completado. Revisa la consola.");
+                    AlertUtil.showInfo("Información", "Envío completado. Revisa la consola.");
                 } else if (response == btnStats) {
                     NotificationStats stats = NotificationStats.getInstance();
-                    showInfo(stats.getReport());
+                    AlertUtil.showInfo("Estadísticas de Notificaciones",stats.getReport());
                 }
             });
         } catch (Exception e) {
-            showError("Error: " + e.getMessage());
+            AlertUtil.showError("Error", "Error: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -392,12 +390,12 @@ public class MainController {
         dialog.showAndWait().ifPresent(name -> {
 
             if (name == null || name.trim().isEmpty()){
-                showError("El nombre de la lista no puede estar vacío");
+                AlertUtil.showError("Error", "El nombre de la lista no puede estar vacío");
                 return;
             }
             try{
                 if (Session.getUser() == null){
-                    showError("Tu sesión ha expirado. Inicia sesión nuevamente.");
+                    AlertUtil.showError("Error", "Tu sesión ha expirado. Inicia sesión nuevamente.");
                     return;
                 }
                 TaskList newList = new TaskList();
@@ -429,7 +427,7 @@ public class MainController {
         TaskList selectedList = taskListView.getSelectionModel().getSelectedItem();
 
         if (selectedList == null) {
-           showWarning("Primero selecciona una lista para añadir una tarea.");
+           AlertUtil.showWarning("Atención", "Primero selecciona una lista para añadir una tarea.");
            return;
         }
 
@@ -476,7 +474,7 @@ public class MainController {
 
         Task selectedTask = taskTableView.getSelectionModel().getSelectedItem();
         if (selectedTask == null){
-           showWarning("Primero selecciona una tarea para añadir una subtarea.");
+           AlertUtil.showWarning("Atención", "Primero selecciona una tarea para añadir una subtarea.");
            return;
         }
 
@@ -557,7 +555,7 @@ public class MainController {
         TaskList selectedList = taskListView.getSelectionModel().getSelectedItem();
 
         if(selectedList == null){
-            showWarning("Selecciona una lista para eliminar");
+            AlertUtil.showWarning("Atención", "Selecciona una lista para eliminar");
             return;
         }
 
@@ -583,7 +581,7 @@ public class MainController {
                 taskTableView.getItems().clear();
                 subTaskView.getItems().clear();
 
-                showInfo("Lista eliminada correctamente");
+                AlertUtil.showInfo("Información", "Lista eliminada correctamente");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -596,7 +594,7 @@ public class MainController {
         Task selectedTask = taskTableView.getSelectionModel().getSelectedItem();
 
         if(selectedTask == null){
-            showWarning("Selecciona una tarea para eliminar");
+            AlertUtil.showWarning("Atención", "Selecciona una tarea para eliminar");
             return;
         }
 
@@ -609,10 +607,10 @@ public class MainController {
             try{
                 taskDAO.delete(selectedTask.getId());
                 loadTasks(selectedTask.getTaskListId());
-                showInfo("Tarea eliminada correctamente");
+                AlertUtil.showInfo("Información", "Tarea eliminada correctamente");
             } catch (Exception e) {
                 e.printStackTrace();
-                showError("Error al eliminar tarea");
+                AlertUtil.showError("Error", "Error al eliminar tarea");
             }
         }
     }
@@ -623,7 +621,7 @@ public class MainController {
         SubTask sub = subTaskView.getSelectionModel().getSelectedItem();
 
         if (sub == null){
-            showWarning("Selecciona una subtarea para eliminar");
+            AlertUtil.showWarning("Atención", "Selecciona una subtarea para eliminar");
             return;
         }
 
@@ -636,10 +634,10 @@ public class MainController {
             try{
                 subTaskDAO.delete(sub.getId());
                 loadSubTasks(sub.getTaskId());
-                showInfo("Subtarea eliminada");
+                AlertUtil.showInfo("Información", "Subtarea eliminada");
             } catch (Exception e) {
                 e.printStackTrace();
-                showError("Error al eliminar subtarea");
+                AlertUtil.showError("Error", "Error al eliminar subtarea");
             }
         }
     }
@@ -650,7 +648,7 @@ public class MainController {
         TaskList selectedList = taskListView.getSelectionModel().getSelectedItem();
 
         if(selectedList == null){
-            showWarning("Selecciona una lista para editar");
+            AlertUtil.showWarning("Atención", "Selecciona una lista para editar");
             return;
         }
 
@@ -662,7 +660,7 @@ public class MainController {
 
         dialog.showAndWait().ifPresent(name -> {
             if (name == null || name.trim().isEmpty()){
-                showWarning("El nombre no puede estar vacío");
+                AlertUtil.showWarning("Atención", "El nombre no puede estar vacío");
                 return;
             }
             try{
@@ -670,10 +668,10 @@ public class MainController {
                 taskListDAO.update(selectedList); //metodo update que actualiza solo el nombre
                 loadTaskLists();
                 taskListView.getSelectionModel().select(selectedList);
-                showInfo("Nombre de lista actualizado");
+                AlertUtil.showInfo("Información", "Nombre de lista actualizado");
             } catch (Exception e) {
                 e.printStackTrace();
-                showError("Error al actualizar la lista");
+                AlertUtil.showError("Error", "Error al actualizar la lista");
             }
         });
     }
@@ -683,7 +681,7 @@ public class MainController {
 
         Task selectedTask = taskTableView.getSelectionModel().getSelectedItem();
         if(selectedTask == null){
-            showWarning("Selecciona una tarea para editar");
+            AlertUtil.showWarning("Atención", "Selecciona una tarea para editar");
             return;
         }
         //reutiliza task-form.fxml
@@ -710,10 +708,10 @@ public class MainController {
                 taskService.updateTask(updatedTask); //recalcular prioridad
                 loadTasks(selectedTask.getTaskListId());
 
-                showInfo("Tarea actualizada correctamente");
+                AlertUtil.showInfo("Información", "Tarea actualizada correctamente");
             }
         } catch (Exception e) {
-            showError("Error al editar la tarea");
+            AlertUtil.showError("Error", "Error al editar la tarea");
             e.printStackTrace();
         }
     }
@@ -723,7 +721,7 @@ public class MainController {
 
         SubTask selectedSubTask = subTaskView.getSelectionModel().getSelectedItem();
         if(selectedSubTask == null){
-            showWarning("Selecciona una Subtarea para editar");
+            AlertUtil.showWarning("Atención", "Selecciona una Subtarea para editar");
             return;
         }
         //reutiliza subtask-form.fxml
@@ -758,7 +756,7 @@ public class MainController {
     private void handleRecalculatePriorities() {
         TaskList selectedList = taskListView.getSelectionModel().getSelectedItem();
         if (selectedList == null) {
-            showWarning("Selecciona una lista para recalcular prioridades");
+            AlertUtil.showWarning("Atención", "Selecciona una lista para recalcular prioridades");
             return;
         }
 
@@ -774,9 +772,9 @@ public class MainController {
                     taskService.updateTask(task);
                 }
                 loadTasks(selectedList.getId());
-                showInfo("Prioridades recalculadas correctamente");
+                AlertUtil.showInfo("Información", "Prioridades recalculadas correctamente");
             } catch (Exception e) {
-                showError("Error al recalcular prioridades");
+                AlertUtil.showError("Error", "Error al recalcular prioridades");
                 e.printStackTrace();
             }
         }
@@ -804,7 +802,7 @@ public class MainController {
             });
 
         } catch (Exception e) {
-            showError("Error al cargar estadísticas: " + e.getMessage());
+            AlertUtil.showError("Error", "Error al cargar estadísticas: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -896,11 +894,10 @@ public class MainController {
         dialog.showAndWait().ifPresent(response -> {
             if (response == markReadButton) {
                 emailNotificationDAO.markAllAsRead(Session.getUser().getId());
-                showInfo("Todas las notificaciones marcadas como leídas");
+                AlertUtil.showInfo("Información", "Todas las notificaciones marcadas como leídas");
             }
         });
     }
-
     //Próximas tareas - Ver tareas que vencen pronto
     @FXML
     private void handleUpcomingTasks() {
@@ -984,7 +981,7 @@ public class MainController {
                     emailNotificationDAO.insert(notification);
                 }
             }
-            showInfo("Notificaciones creadas para " + upcomingTasks.size() + " tareas");
+            AlertUtil.showInfo("Información", "Notificaciones creadas para " + upcomingTasks.size() + " tareas");
             dialog.close();
         });
 
@@ -1078,7 +1075,7 @@ public class MainController {
         // Guardar configuración
         dialog.showAndWait().ifPresent(newSettings -> {
             settingsDAO.update(newSettings);
-            showInfo("Configuración guardada correctamente");
+            AlertUtil.showInfo("Información", "Configuración guardada correctamente");
 
             // Aplicar cambios en tiempo real al sistema de notificaciones
             aplicarConfiguracionNotificaciones(newSettings);
@@ -1100,7 +1097,7 @@ public class MainController {
         TaskList selectedList = taskListView.getSelectionModel().getSelectedItem();
 
         if (selectedList == null) {
-            showWarning("Selecciona una lista para exportar");
+            AlertUtil.showWarning("Atención", "Selecciona una lista para exportar");
             return;
         }
 
@@ -1115,7 +1112,7 @@ public class MainController {
             String pdfPath = pdfService.exportTaskList(selectedList, tasks, Session.getUser());
 
             if (pdfPath != null) {
-                showSuccess("PDF generado:\n" + pdfPath);
+                AlertUtil.showInfo("Éxito", "PDF generado:\n" + pdfPath);
 
                 // Preguntar qué hacer
                 Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
@@ -1136,13 +1133,13 @@ public class MainController {
                             shareService.shareViaWhatsApp(selectedList, tasks, Session.getUser());
                         }
                     } catch (Exception e) {
-                        showError("Error: " + e.getMessage());
+                        AlertUtil.showError("Error", "Error: " + e.getMessage());
                     }
                 });
             }
 
         } catch (Exception e) {
-            showError("Error exportando PDF: " + e.getMessage());
+            AlertUtil.showError("Error", "Error exportando PDF: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -1152,7 +1149,7 @@ public class MainController {
         Task selectedTask = taskTableView.getSelectionModel().getSelectedItem();
 
         if (selectedTask == null) {
-            showWarning("Selecciona una tarea para exportar");
+            AlertUtil.showWarning("Atención", "Selecciona una tarea para exportar");
             return;
         }
 
@@ -1160,7 +1157,7 @@ public class MainController {
 
         String pdfPath = pdfService.exportSingleTask(selectedTask, Session.getUser());
         if (pdfPath != null) {
-            showSuccess("PDF guardado en:\n" + pdfPath);
+            AlertUtil.showInfo("Éxito", "PDF guardado en:\n" + pdfPath);
 
             try {
                 Desktop.getDesktop().open(new File(pdfPath).getParentFile());
@@ -1175,7 +1172,7 @@ public class MainController {
         SubTask selectedSubtask = subTaskView.getSelectionModel().getSelectedItem();
 
         if (selectedSubtask == null) {
-            showWarning("Selecciona una subtarea para exportar");
+            AlertUtil.showWarning("Atención", "Selecciona una subtarea para exportar");
             return;
         }
 
@@ -1197,7 +1194,7 @@ public class MainController {
             String pdfPath = exportSingleTaskToPDF(tempTask, Session.getUser());
 
             if (pdfPath != null) {
-                showSuccess("PDF de subtarea guardado en:\n" + pdfPath);
+                AlertUtil.showInfo("Información", "PDF de subtarea guardado en:\n" + pdfPath);
 
                 // Preguntar si quiere abrir la carpeta
                 Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
@@ -1214,13 +1211,13 @@ public class MainController {
                         try {
                             Desktop.getDesktop().open(new File(pdfPath).getParentFile());
                         } catch (Exception e) {
-                            showError("No se pudo abrir la carpeta");
+                            AlertUtil.showError("Error", "No se pudo abrir la carpeta");
                         }
                     }
                 });
             }
         } catch (Exception e) {
-            showError("Error exportando subtarea: " + e.getMessage());
+            AlertUtil.showError("Error", "Error exportando subtarea: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -1235,7 +1232,7 @@ public class MainController {
             List<TaskList> allLists = taskListDAO.getByUserId(currentUser.getId());
 
             if (allLists.isEmpty()) {
-                showWarning("No hay listas para exportar");
+                AlertUtil.showWarning("Atención", "No hay listas para exportar");
                 return;
             }
 
@@ -1302,7 +1299,7 @@ public class MainController {
 
             document.close();
 
-            showSuccess("Exportación completa guardada en:\n" + filePath);
+            AlertUtil.showInfo("Información", "Exportación completa guardada en:\n" + filePath);
 
             // Preguntar si quiere abrir la carpeta
             Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
@@ -1318,13 +1315,13 @@ public class MainController {
                     try {
                         Desktop.getDesktop().open(new File(filePath).getParentFile());
                     } catch (Exception e) {
-                        showError("No se pudo abrir la carpeta");
+                        AlertUtil.showError("Error", "No se pudo abrir la carpeta");
                     }
                 }
             });
 
         } catch (Exception e) {
-            showError("Error en exportación completa: " + e.getMessage());
+            AlertUtil.showError("Error", "Error en exportación completa: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -1334,7 +1331,7 @@ public class MainController {
         TaskList selectedList = taskListView.getSelectionModel().getSelectedItem();
 
         if (selectedList == null) {
-            showWarning("Selecciona una lista para compartir");
+            AlertUtil.showWarning("Atención", "Selecciona una lista para compartir");
             return;
         }
 
@@ -1362,7 +1359,7 @@ public class MainController {
                     case "Solo guardar PDF":
                         String pdfPath = exportTaskListToPDF(selectedList, tasks, Session.getUser());
                         if (pdfPath != null) {
-                            showSuccess("PDF guardado en:\n" + pdfPath);
+                            AlertUtil.showInfo("Información", "PDF guardado en:\n" + pdfPath);
                             try {
                                 Desktop.getDesktop().open(new File(pdfPath).getParentFile());
                             } catch (Exception e) {
@@ -1374,7 +1371,7 @@ public class MainController {
             });
 
         } catch (Exception e) {
-            showError("Error al compartir lista: " + e.getMessage());
+            AlertUtil.showError("Error","Error al compartir lista: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -1385,7 +1382,7 @@ public class MainController {
         Task selectedTask = taskTableView.getSelectionModel().getSelectedItem();
 
         if (selectedTask == null) {
-            showWarning("Selecciona una tarea para compartir");
+            AlertUtil.showWarning("Atención", "Selecciona una tarea para compartir");
             return;
         }
 
@@ -1416,7 +1413,7 @@ public class MainController {
             } else if (response == btnPDF) {
                 String pdfPath = pdfService.exportSingleTask(selectedTask, Session.getUser());
                 if (pdfPath != null) {
-                    showSuccess("PDF guardado en:\n" + pdfPath);
+                    AlertUtil.showInfo("Información", "PDF guardado en:\n" + pdfPath);
                 }
             }
         });
@@ -1426,7 +1423,7 @@ public class MainController {
         SubTask selectedSubtask = subTaskView.getSelectionModel().getSelectedItem();
 
         if (selectedSubtask == null) {
-            showWarning("Selecciona una subtarea para compartir");
+            AlertUtil.showWarning("Atención", "Selecciona una subtarea para compartir");
             return;
         }
 
@@ -1463,7 +1460,7 @@ public class MainController {
                     case "Solo guardar PDF":
                         String pdfPath = exportSingleTaskToPDF(tempTask, Session.getUser());
                         if (pdfPath != null) {
-                            showSuccess("PDF guardado en:\n" + pdfPath);
+                            AlertUtil.showInfo("Información", "PDF guardado en:\n" + pdfPath);
                             try {
                                 Desktop.getDesktop().open(new File(pdfPath).getParentFile());
                             } catch (Exception e) {
@@ -1475,7 +1472,7 @@ public class MainController {
             });
 
         } catch (Exception e) {
-            showError("Error al compartir subtarea: " + e.getMessage());
+            AlertUtil.showError("Error", "Error al compartir subtarea: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -1777,40 +1774,6 @@ public class MainController {
         } catch (Exception e) {
             return new DeviceRgb(0, 0, 0);
         }
-    }
-
-
-    private void showSuccess(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Éxito");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
-    //metodo para alertas
-    private void showWarning(String message){
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Atención");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-    //metodo para errores
-    private void showError(String message){
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-    //metodo para informar
-    private void showInfo(String message){
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Información");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
     //modo oscuro
     @FXML

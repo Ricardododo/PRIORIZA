@@ -4,6 +4,7 @@ import com.prioriza.dao.TaskListDAO;
 import com.prioriza.dao.UserDAO;
 import com.prioriza.model.User;
 import com.prioriza.session.Session;
+import com.prioriza.util.AlertUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -64,7 +65,7 @@ public class LoginController {
         if(email == null || email.trim().isEmpty() ||
             password == null || password.isEmpty()){
 
-            showWarning("Introduce email y contraseña.");
+            AlertUtil.showWarning("Atención", "Introduce email y contraseña.");
             return;
         }
 
@@ -72,7 +73,7 @@ public class LoginController {
             User user = userDAO.login(email.trim(), password);
 
             if(user == null){
-                showError("Email o contraseña incorrectos.");
+                AlertUtil.showError("Error", "Email o contraseña incorrectos.");
                 passField.clear();
                 return;
             }
@@ -100,7 +101,7 @@ public class LoginController {
             stage.centerOnScreen();
 
         } catch (Exception e) {
-            showError("Error al intentar iniciar sesión.\nInténtalo de nuevo.");
+            AlertUtil.showError("Error", "Error al intentar iniciar sesión.\nInténtalo de nuevo.");
             e.printStackTrace();
         }
     }
@@ -121,25 +122,8 @@ public class LoginController {
             stage.showAndWait();
 
         } catch (Exception e) {
-            showError("No se pudo abrir la ventana de registro.");
+            AlertUtil.showError("Error", "No se pudo abrir la ventana de registro.");
             e.printStackTrace();
         }
     }
-    //metodos alerta , mensajes
-    private void showWarning(String message){
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Atención");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
-    private void showError(String message){
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
 }

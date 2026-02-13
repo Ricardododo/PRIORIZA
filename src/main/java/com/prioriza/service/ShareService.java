@@ -1,7 +1,7 @@
 package com.prioriza.service;
 
 import com.prioriza.model.*;
-import javafx.scene.control.Alert;
+import com.prioriza.util.AlertUtil;
 
 import java.awt.*;
 import java.io.File;
@@ -21,7 +21,7 @@ public class ShareService {
             String pdfPath = pdfService.exportTaskList(taskList, tasks, user);
 
             if (pdfPath == null) {
-                showError("No se pudo generar el PDF");
+                AlertUtil.showError("Error", "No se pudo generar el PDF");
                 return;
             }
 
@@ -36,13 +36,13 @@ public class ShareService {
             // Abrir carpeta con el PDF
             Desktop.getDesktop().open(new File(pdfPath).getParentFile());
 
-            showInfo(
-                    "PDF generado: " + pdfPath + "\n" +
+            AlertUtil.showInfo(
+                    "Información", "PDF generado: " + pdfPath + "\n" +
                             "WhatsApp Web abierto - Pega el mensaje y adjunta el PDF"
             );
 
         } catch (Exception e) {
-            showError("Error al compartir: " + e.getMessage());
+            AlertUtil.showError("Error", "Error al compartir: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -54,7 +54,7 @@ public class ShareService {
             String pdfPath = pdfService.exportSingleTask(task, user);
 
             if (pdfPath == null) {
-                showError("No se pudo generar el PDF");
+                AlertUtil.showError("Error", "No se pudo generar el PDF");
                 return;
             }
 
@@ -67,10 +67,10 @@ public class ShareService {
 
             Desktop.getDesktop().open(new File(pdfPath).getParentFile());
 
-            showInfo("PDF generado - Comparte el archivo desde la carpeta Descargas");
+            AlertUtil.showInfo("Información", "PDF generado - Comparte el archivo desde la carpeta Descargas");
 
         } catch (Exception e) {
-            showError("Error al compartir: " + e.getMessage());
+            AlertUtil.showError("Error", "Error al compartir: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -81,7 +81,7 @@ public class ShareService {
             String pdfPath = pdfService.exportTaskList(taskList, tasks, user);
 
             if (pdfPath == null) {
-                showError("No se pudo generar el PDF");
+                AlertUtil.showError("Error", "No se pudo generar el PDF");
                 return;
             }
 
@@ -91,10 +91,10 @@ public class ShareService {
             String mailto = String.format("mailto:?subject=%s&body=%s", subject, body);
             Desktop.getDesktop().mail(new URI(mailto));
 
-            showInfo("✅ Se abrirá tu cliente de email con el mensaje preparado");
+            AlertUtil.showInfo("Información", "Se abrirá tu cliente de email con el mensaje preparado");
 
         } catch (Exception e) {
-            showError("Error al enviar email: " + e.getMessage());
+            AlertUtil.showError("Error", "Error al enviar email: " + e.getMessage());
         }
     }
 
@@ -154,21 +154,5 @@ public class ShareService {
         }
 
         return msg.toString();
-    }
-
-    private void showInfo(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Compartir");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
-    private void showError(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }

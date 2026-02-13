@@ -1,20 +1,13 @@
 package com.prioriza;
 
-import com.prioriza.dao.DatabaseConnection;
 import com.prioriza.dao.DatabaseInitializer;
 import com.prioriza.service.NotificationProcessor;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
 
 public class MainApp extends Application {
 

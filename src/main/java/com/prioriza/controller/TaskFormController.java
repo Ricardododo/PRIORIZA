@@ -1,9 +1,9 @@
 package com.prioriza.controller;
 
 import com.prioriza.model.Priority;
-import com.prioriza.model.SubTask;
 import com.prioriza.model.Task;
 import com.prioriza.model.TaskStatus;
+import com.prioriza.util.AlertUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
@@ -59,12 +59,12 @@ public class TaskFormController {
 
         //validación
         if(title == null || title.trim().isEmpty()){
-            showError("El título no puede estar vacío");
+            AlertUtil.showError("Error", "El título no puede estar vacío");
             return;
         }
 
         if (priority == null){
-            showError("Debe seleccionar una prioridad");
+            AlertUtil.showError("Error", "Debe seleccionar una prioridad");
             return;
         }
 
@@ -121,14 +121,5 @@ public class TaskFormController {
         priorityChoiceBox.setValue(selectedTask.getPriority());
         statusChoiceBox.setValue(selectedTask.getStatus());
         importantCheckBox.setSelected(selectedTask.isImportant());
-    }
-
-
-    private void showError(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("ERROR");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }

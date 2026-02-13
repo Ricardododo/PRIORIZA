@@ -2,9 +2,12 @@ package com.prioriza.controller;
 
 import com.prioriza.model.SubTask;
 import com.prioriza.model.SubTaskStatus;
-import com.prioriza.model.TaskStatus;
+import com.prioriza.util.AlertUtil;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.time.LocalDate;
@@ -45,7 +48,7 @@ public class SubTaskFormController {
         SubTaskStatus status = statusChoiceBox.getValue();
 
         if (title == null || title.trim().isEmpty()) {
-            showError("El título no puede estar vacío");
+            AlertUtil.showError("Error", "El título no puede estar vacío");
             return;
         }
 
@@ -90,12 +93,5 @@ public class SubTaskFormController {
         dueDatePicker.setValue(selectedSubTask.getDueDate());
         importantCheckBox.setSelected(selectedSubTask.isImportant());
         statusChoiceBox.setValue(selectedSubTask.getSubTaskStatus());
-    }
-    private void showError(String msg) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
-        alert.setHeaderText(null);
-        alert.setContentText(msg);
-        alert.showAndWait();
     }
 }

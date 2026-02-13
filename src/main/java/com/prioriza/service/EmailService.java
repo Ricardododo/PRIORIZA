@@ -3,7 +3,6 @@ package com.prioriza.service;
 import com.prioriza.model.EmailNotification;
 
 import javax.mail.*;
-
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Properties;
@@ -36,10 +35,9 @@ public class EmailService {
         }
     }
 
-    /**
-     * Envía un email de notificación
-     * @return true si se envió (o se simuló) correctamente
-     */
+    //Envía un email de notificación
+     //return true si se envió (o se simuló) correctamente
+
     public boolean sendNotification(EmailNotification notification) {
 
         //MODO SIMULACIÓN - Solo muestra en consola
