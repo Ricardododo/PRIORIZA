@@ -5,7 +5,8 @@ import com.prioriza.model.Task;
 import com.prioriza.model.TaskStatus;
 
 import java.sql.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,15 @@ public class TaskDAO {
 
             ps.setString(1, task.getTitle());
             ps.setString(2, task.getDescription());
-            ps.setString(3, task.getDueDate() != null ? task.getDueDate().toString() : null);
+
+            //formato fecha/hora para SQLite
+            if (task.getDueDateTime() != null){
+                ps.setString(3, task.getDueDateTime()
+                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            }else{
+                ps.setNull(3, Types.VARCHAR);
+            }
+
             ps.setString(4, task.getPriority() != null ? task.getPriority().name() : "MEDIA");
             ps.setString(5, task.getStatus() != null ? task.getStatus().name() : "PENDIENTE");
             ps.setBoolean(6, task.isImportant());
@@ -233,7 +242,14 @@ public class TaskDAO {
 
             ps.setString(1, task.getTitle());
             ps.setString(2, task.getDescription());
-            ps.setString(3, task.getDueDate() != null ? task.getDueDate().toString() : null);
+
+            //formato fecha/hora para SQLite
+            if (task.getDueDateTime() != null){
+                ps.setString(3, task.getDueDateTime()
+                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            }else{
+                ps.setNull(3, Types.VARCHAR);
+            }
             ps.setString(4, task.getPriority() != null ? task.getPriority().name() : Priority.MEDIA.name());
             ps.setString(5, task.getStatus() != null ? task.getStatus().name() : TaskStatus.PENDIENTE.name());
             ps.setBoolean(6, task.isImportant());
@@ -353,7 +369,13 @@ public class TaskDAO {
 
         String dueDate = rs.getString("due_date");
         if (dueDate != null) {
-            task.setDueDate(LocalDate.parse(dueDate));
+            if (dueDate.length() == 10) { //solo fecha (YYYY-MM-DD)
+                task.setDueDateTime(LocalDateTime.parse(dueDate).toLocalDate().atStartOfDay());
+            }else{ //fecha y hora
+                task.setDueDateTime(LocalDateTime.parse(
+                        dueDate, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            }
+
         }
 
         task.setPriority(Priority.valueOf(rs.getString("priority")));

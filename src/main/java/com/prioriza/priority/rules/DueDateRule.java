@@ -4,23 +4,22 @@ import com.prioriza.model.Task;
 import com.prioriza.priority.config.RuleWeights;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 public class DueDateRule implements PriorityRule {
 
     @Override
     public int evaluate(Task task) {
-        if (task.getDueDate() == null)  return 0;
+        if (task.getDueDateTime() == null)  return 0;
 
-        long days = ChronoUnit.DAYS.between(LocalDate.now(), task.getDueDate());
+        LocalDateTime now = LocalDateTime.now();
+        long hoursUntil = ChronoUnit.HOURS.between(now, task.getDueDateTime());
 
-        // si ya esta vencida, la regla OverdueRule ya lo aplica
-        // Aquí solo las que NO están vencidas pero vencen pronto
-        if (days <= 0) return 0; // Ya lo maneja OverdueRule
-
-        if (days <= 3) return RuleWeights.DUE_SOON;      // 30 pts
-        if (days <= 7) return RuleWeights.DUE_MID;       // 15 pts
-        if (days <= 14) return 5;                        // 5 pts (próximas 2 semanas)
+        if (hoursUntil <= 3) return 40;      // Próximas 3 horas
+        if (hoursUntil <= 8) return 30;      // Hoy
+        if (hoursUntil <= 24) return 20;     // Mañana
+        if (hoursUntil <= 72) return 10;     // Próximos 3 días
 
         return 0;
     }

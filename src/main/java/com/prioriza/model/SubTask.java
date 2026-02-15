@@ -1,6 +1,6 @@
 package com.prioriza.model;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class SubTask {
     private int id;
@@ -8,7 +8,7 @@ public class SubTask {
     private SubTaskStatus subTaskStatus;
     private int taskId; // esta es la FK a la clase Task para la BD
 
-    private LocalDate dueDate;
+    private LocalDateTime dueDateTime;
     private boolean important;
 
     //Constructor
@@ -22,10 +22,7 @@ public class SubTask {
         this.subTaskStatus = SubTaskStatus.PENDIENTE;
     }
 
-
     //Getter y Setter
-
-
     public int getId() {
         return id;
     }
@@ -58,12 +55,12 @@ public class SubTask {
         this.taskId = taskId;
     }
 
-    public LocalDate getDueDate() {
-        return dueDate;
+    public LocalDateTime getDueDateTime() {
+        return dueDateTime;
     }
 
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
+    public void setDueDateTime(LocalDateTime dueDateTime) {
+        this.dueDateTime = dueDateTime;
     }
 
     public boolean isImportant() {

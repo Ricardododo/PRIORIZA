@@ -5,6 +5,8 @@ import com.prioriza.model.SubTaskStatus;
 
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +24,15 @@ public class SubTaskDAO {
 
                 ps.setString(1, subTask.getTitle());
                 ps.setString(2, subTask.getSubTaskStatus().name()); //enum
-                ps.setString(3, subTask.getDueDate() != null ? subTask.getDueDate().toString() : null);
+
+            //formato fecha/hora para SQLite
+            if (subTask.getDueDateTime() != null){
+                ps.setString(3, subTask.getDueDateTime()
+                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            }else{
+                ps.setNull(3, Types.VARCHAR);
+            }
+
                 ps.setBoolean(4, subTask.isImportant());
                 ps.setInt(5, subTask.getTaskId());
 
@@ -90,7 +100,14 @@ public class SubTaskDAO {
 
             ps.setString(1, subTask.getTitle());
             ps.setString(2, subTask.getSubTaskStatus().name());
-            ps.setString(3, subTask.getDueDate() != null ? subTask.getDueDate().toString() : null);
+            //formato fecha/hora para SQLite
+            if (subTask.getDueDateTime() != null){
+                ps.setString(3, subTask.getDueDateTime()
+                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            }else{
+                ps.setNull(3, Types.VARCHAR);
+            }
+
             ps.setBoolean(4, subTask.isImportant());
             ps.setInt(5, subTask.getId());
 
@@ -131,18 +148,22 @@ public class SubTaskDAO {
     }
 
     private SubTask mapResultSet(ResultSet rs) throws SQLException{
-        SubTask s = new SubTask();
-        s.setId(rs.getInt("id"));
-        s.setTitle(rs.getString("title"));
-        s.setSubTaskStatus(SubTaskStatus.valueOf(rs.getString("sub_task_status")));
-        s.setTaskId(rs.getInt("task_id"));
+        SubTask subTask = new SubTask();
+        subTask.setId(rs.getInt("id"));
+        subTask.setTitle(rs.getString("title"));
+        subTask.setSubTaskStatus(SubTaskStatus.valueOf(rs.getString("sub_task_status")));
+        subTask.setTaskId(rs.getInt("task_id"));
 
         String dueDate = rs.getString("due_date");
-        if(dueDate != null){
-            s.setDueDate(LocalDate.parse(dueDate));
+        if (dueDate != null) {
+            if (dueDate.length() == 10) { // Solo fecha (YYYY-MM-DD)
+                subTask.setDueDateTime(LocalDate.parse(dueDate).atStartOfDay());
+            } else { // Fecha y hora
+                subTask.setDueDateTime(LocalDateTime.parse(
+                        dueDate, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            }
         }
-        s.setImportant(rs.getBoolean("important"));
-        return s;
+        return subTask;
     }
 
 }

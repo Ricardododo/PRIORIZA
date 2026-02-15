@@ -1,6 +1,5 @@
 package com.prioriza.model;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -13,7 +12,7 @@ public class EmailNotification {
     private Integer subtaskId;
     private String itemType; //TASK, SUBTASK
     private String itemTitle;
-    private LocalDate dueDate;
+    private LocalDateTime dueDateTime;
     private int daysRemaining;
     private String status; // PENDING, SENT, FAILED
     private LocalDateTime createdAt;
@@ -28,7 +27,7 @@ public class EmailNotification {
         this.taskId = task.getId();
         this.itemType = "TASK";
         this.itemTitle = task.getTitle();
-        this.dueDate = task.getDueDate();
+        this.dueDateTime = task.getDueDateTime();
         this.daysRemaining = daysRemaining;
         this.status = "PENDING";
         this.createdAt = LocalDateTime.now();
@@ -41,7 +40,7 @@ public class EmailNotification {
         this.subtaskId = subtask.getId();
         this.itemType = "SUBTASK";
         this.itemTitle = subtask.getTitle();
-        this.dueDate = subtask.getDueDate();
+        this.dueDateTime = subtask.getDueDateTime();
         this.daysRemaining = daysRemaining;
         this.status = "PENDING";
         this.createdAt = LocalDateTime.now();
@@ -107,12 +106,12 @@ public class EmailNotification {
         this.itemTitle = itemTitle;
     }
 
-    public LocalDate getDuedate() {
-        return dueDate;
+    public LocalDateTime getDueDateTime() {
+        return dueDateTime;
     }
 
-    public void setDuedate(LocalDate duedate) {
-        this.dueDate = duedate;
+    public void setDueDateTime(LocalDateTime dueDateTime) {
+        this.dueDateTime = dueDateTime;
     }
 
     public int getDaysRemaining() {

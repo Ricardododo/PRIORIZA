@@ -2,7 +2,7 @@ package com.prioriza.model;
 
 import com.prioriza.priority.model.PriorityLevel;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +10,7 @@ public class Task {
     private int id;
     private String title;
     private String description;
-    private LocalDate dueDate;
-
+    private LocalDateTime dueDateTime;
     private boolean important;
     private TaskStatus status;
     private int taskListId; // FK a TaskList
@@ -31,11 +30,11 @@ public class Task {
     }
 
     //constructor completo
-    public Task(String title, String description, LocalDate dueDate, Priority priority, TaskStatus status, int taskListId, boolean important) {
+    public Task(String title, String description, LocalDateTime dueDateTime, Priority priority, TaskStatus status, int taskListId, boolean important) {
         this();
         this.title = title;
         this.description = description;
-        this.dueDate = dueDate;
+        this.dueDateTime = dueDateTime;
         this.priority = priority;
         this.status = status;
         this.taskListId = taskListId;
@@ -70,12 +69,12 @@ public class Task {
         this.description = description;
     }
 
-    public LocalDate getDueDate() {
-        return dueDate;
+    public LocalDateTime getDueDateTime() {
+        return dueDateTime;
     }
 
-    public void setDueDate(LocalDate dueDate) {
-        this.dueDate = dueDate;
+    public void setDueDateTime(LocalDateTime dueDateTime) {
+        this.dueDateTime = dueDateTime;
     }
 
     public boolean isImportant() {
