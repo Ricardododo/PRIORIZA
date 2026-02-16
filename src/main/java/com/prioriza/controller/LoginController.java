@@ -1,15 +1,14 @@
 package com.prioriza.controller;
 
-import com.prioriza.dao.TaskListDAO;
-import com.prioriza.dao.UserDAO;
 import com.prioriza.model.User;
+import com.prioriza.service.TaskListService;
+import com.prioriza.service.UserService;
 import com.prioriza.session.Session;
 import com.prioriza.util.AlertUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
@@ -23,8 +22,8 @@ public class LoginController {
     @FXML
     private PasswordField passField;
 
-    private final UserDAO userDAO = new UserDAO();
-    private final TaskListDAO taskListDAO = new TaskListDAO();
+    private final UserService userService = new UserService();
+    private final TaskListService taskListService = new TaskListService();
 
     @FXML
     public void initialize() {
@@ -70,7 +69,7 @@ public class LoginController {
         }
 
         try{
-            User user = userDAO.login(email.trim(), password);
+            User user = userService.login(email.trim(), password);
 
             if(user == null){
                 AlertUtil.showError("Error", "Email o contraseña incorrectos.");
@@ -82,7 +81,7 @@ public class LoginController {
             Session.setUser(user);
 
             //crear lista por defecto para nuevo usuario (TaskListDAO)
-            taskListDAO.createDefaultListsForUser(user.getId());
+            taskListService.createDefaultLists(user.getId());
 
             Stage stage = (Stage) emailField.getScene().getWindow();
 

@@ -12,7 +12,8 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
-import com.prioriza.dao.*;
+import com.prioriza.dao.EmailNotificationDAO;
+import com.prioriza.dao.UserSettingsDAO;
 import com.prioriza.model.*;
 import com.prioriza.service.*;
 import com.prioriza.session.Session;
@@ -22,6 +23,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -32,6 +34,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -54,10 +57,10 @@ public class MainController {
 
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
 
-    private final TaskListDAO taskListDAO = new TaskListDAO();
-    private final TaskDAO taskDAO = new TaskDAO();
-    private final SubTaskDAO subTaskDAO = new SubTaskDAO();
+    private final TaskListService taskListService = new TaskListService();
+    private final SubTaskService subTaskService = new SubTaskService();
     private final TaskService taskService = new TaskService();
+
     private final EmailNotificationDAO emailNotificationDAO = new EmailNotificationDAO();
     private final PDFExportService pdfService = new PDFExportService();
     private final ShareService shareService = new ShareService();
@@ -263,12 +266,11 @@ public class MainController {
             int userId = Session.getUser().getId();
 
             //cargar listas solo de ese uusuario
-            List<TaskList> lists = taskListDAO.getByUserId(userId);
+            List<TaskList> lists = taskListService.getListsByUserId(userId);
+            taskListView.getItems().setAll(lists);
 
             System.out.println("LISTAS ENCONTRADAS: " + lists.size());
 
-            //mostrar en el ListView
-            taskListView.getItems().setAll(lists);
 
         } catch (Exception e) {
             AlertUtil.showError("Error", "No se pudieron cargar las listas");
@@ -300,7 +302,7 @@ public class MainController {
     private void loadTasks(int taskListId) {
 
         try {
-            List<Task> tasks = taskDAO.getByTaskListId(taskListId);
+            List<Task> tasks = taskService.getByTasksListId(taskListId);
 
             //la tabla se llena
             taskTableView.getItems().setAll(tasks);
@@ -317,7 +319,7 @@ public class MainController {
     private void loadSubTasks(int taskId){
 
         try{
-            List<SubTask> subs = subTaskDAO.getByTaskId(taskId);
+            List<SubTask> subs = subTaskService.getSubTasksByTaskId(taskId);
             subTaskView.getItems().setAll(subs);
 
         } catch (Exception e) {
@@ -435,12 +437,7 @@ public class MainController {
                     AlertUtil.showError("Error", "Tu sesión ha expirado. Inicia sesión nuevamente.");
                     return;
                 }
-                TaskList newList = new TaskList();
-                newList.setName(name);
-                //asignar lists al usuario login
-                newList.setUserId(Session.getUser().getId());
-
-                taskListDAO.insert(newList);
+                TaskList newList = taskListService.createList(name, Session.getUser().getId());
 
                 //refrescar listas
                 loadTaskLists();
@@ -535,7 +532,12 @@ public class MainController {
                 newSub.setTaskId(selectedTask.getId());
 
                 //guardar bd
-                subTaskDAO.insert(newSub);
+                subTaskService.createSubTask(
+                        newSub.getTitle(),
+                        selectedTask.getId(),
+                        newSub.getDueDateTime(),
+                        newSub.isImportant()
+                );
 
                 //refrescar lista
                 loadSubTasks(selectedTask.getId());
@@ -604,14 +606,14 @@ public class MainController {
         if(confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
             try{
                 //borrar primero las subtareas y tares
-                List<Task> tasks = taskDAO.getByTaskListId(selectedList.getId());
+                List<Task> tasks = taskService.getByTasksListId(selectedList.getId());
                 for (Task t : tasks){
-                    subTaskDAO.deleteByTaskId(t.getId());
-                    taskDAO.delete(t.getId());
+                    subTaskService.deleteByTaskId(t.getId());
+                    taskService.deleteTask(t.getId());
                 }
 
                 //luego borrar la lista
-                taskListDAO.delete(selectedList.getId());
+                taskListService.deleteList(selectedList.getId());
 
                 //recargar ListView
                 loadTaskLists();
@@ -642,7 +644,7 @@ public class MainController {
 
         if(confirm.showAndWait().get() == ButtonType.OK){
             try{
-                taskDAO.delete(selectedTask.getId());
+                taskService.deleteTask(selectedTask.getId());
                 loadTasks(selectedTask.getTaskListId());
                 AlertUtil.showInfo("Información", "Tarea eliminada correctamente");
             } catch (Exception e) {
@@ -669,7 +671,7 @@ public class MainController {
 
         if(confirm.showAndWait().get() == ButtonType.OK){
             try{
-                subTaskDAO.delete(sub.getId());
+                subTaskService.deleteSubTask(sub.getId());
                 loadSubTasks(sub.getTaskId());
                 AlertUtil.showInfo("Información", "Subtarea eliminada");
             } catch (Exception e) {
@@ -702,7 +704,7 @@ public class MainController {
             }
             try{
                 selectedList.setName(name);
-                taskListDAO.update(selectedList); //metodo update que actualiza solo el nombre
+                taskListService.updateList(selectedList); //metodo update que actualiza solo el nombre
                 loadTaskLists();
                 taskListView.getSelectionModel().select(selectedList);
                 AlertUtil.showInfo("Información", "Nombre de lista actualizado");
@@ -783,7 +785,7 @@ public class MainController {
                 updatedSubTask.setId(selectedSubTask.getId());
                 updatedSubTask.setTaskId(taskId);  // Usar el ID guardado
 
-                subTaskDAO.update(updatedSubTask);
+                subTaskService.updateSubTask(updatedSubTask);
 
                 // RECARGAR SUBTAREAS
                 loadSubTasks(taskId);
@@ -812,7 +814,7 @@ public class MainController {
 
         if (confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
             try {
-                List<Task> tasks = taskDAO.getByTaskListId(selectedList.getId());
+                List<Task> tasks = taskService.getByTasksListId(selectedList.getId());
                 for (Task task : tasks) {
                     taskService.updateTask(task);
                 }
@@ -948,112 +950,139 @@ public class MainController {
         User currentUser = Session.getUser();
         if (currentUser == null) return;
 
-        List<Task> allTasks = taskDAO.getByUserId(currentUser.getId());
-        LocalDateTime now = LocalDateTime.now();
+        try {
+            // USAR TaskService en lugar de taskDAO
+            List<Task> allTasks = taskService.getByTasksListId(currentUser.getId());
+            LocalDateTime now = LocalDateTime.now();
 
-        List<Task> upcomingTasks = allTasks.stream()
-                .filter(t -> t.getDueDateTime() != null)
-                .filter(t -> t.getStatus() != TaskStatus.COMPLETA)
-                .filter(t -> {
-                    long hoursUntil = ChronoUnit.HOURS.between(now, t.getDueDateTime());
-                    return hoursUntil >= 0 && hoursUntil <= 168; // 7 días
-                })
-                .sorted((t1, t2) -> {
-                    if (t1.getDueDateTime() == null) return 1;
-                    if (t2.getDueDateTime() == null) return -1;
-                    return t1.getDueDateTime().compareTo(t2.getDueDateTime());
-                })
-                .collect(Collectors.toList());
+            List<Task> upcomingTasks = allTasks.stream()
+                    .filter(t -> t.getDueDateTime() != null)
+                    .filter(t -> t.getStatus() != TaskStatus.COMPLETA)
+                    .filter(t -> {
+                        long hoursUntil = ChronoUnit.HOURS.between(now, t.getDueDateTime());
+                        return hoursUntil >= 0 && hoursUntil <= 168; // 7 días * 24 horas
+                    })
+                    .sorted((t1, t2) -> {
+                        if (t1.getDueDateTime() == null) return 1;
+                        if (t2.getDueDateTime() == null) return -1;
+                        return t1.getDueDateTime().compareTo(t2.getDueDateTime());
+                    })
+                    .collect(Collectors.toList());
 
-        Dialog<ButtonType> dialog = new Dialog<>();
-        dialog.setTitle("Próximas tareas");
-        dialog.setHeaderText("Tareas que vencen en los próximos 7 días");
+            // Crear diálogo
+            Dialog<ButtonType> dialog = new Dialog<>();
+            dialog.setTitle("Próximas tareas");
+            dialog.setHeaderText("Tareas que vencen en los próximos 7 días");
 
-        VBox content = new VBox(10);
-        content.setPadding(new Insets(20));
+            VBox content = new VBox(10);
+            content.setPadding(new Insets(20));
 
-        if (upcomingTasks.isEmpty()) {
-            content.getChildren().add(new Label("No tienes tareas próximas a vencer"));
+            if (upcomingTasks.isEmpty()) {
+                content.getChildren().add(new Label("¡Bien! No tienes tareas próximas a vencer"));
+            } else {
+                for (Task task : upcomingTasks) {
+                    content.getChildren().add(createTaskCardForDialog(task, now));
+                }
+            }
+
+            Button notifyButton = new Button("Recordarme estas tareas");
+            notifyButton.setOnAction(e -> {
+                for (Task task : upcomingTasks) {
+                    long hoursUntil = ChronoUnit.HOURS.between(now, task.getDueDateTime());
+                    long daysUntil = hoursUntil / 24;
+                    if (hoursUntil >= 0) {
+                        //USAR EmailNotificationDAO (no tiene servicio)
+                        EmailNotification notification = new EmailNotification(currentUser, task, (int) daysUntil);
+                        emailNotificationDAO.insert(notification);
+                    }
+                }
+                AlertUtil.showInfo("Información",
+                        "Notificaciones creadas para " + upcomingTasks.size() + " tareas");
+                dialog.close();
+            });
+
+            if (!upcomingTasks.isEmpty()) {
+                content.getChildren().add(notifyButton);
+            }
+
+            dialog.getDialogPane().setContent(content);
+            dialog.getDialogPane().getButtonTypes().add(
+                    new ButtonType("Cerrar", ButtonBar.ButtonData.CANCEL_CLOSE));
+            dialog.showAndWait();
+
+        } catch (Exception e) {
+            AlertUtil.showError("Error", "Error al cargar tareas próximas: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /*
+     * Crea una tarjeta visual para mostrar una tarea en el diálogo de próximas tareas
+     */
+    private Node createTaskCardForDialog(Task task, LocalDateTime now) {
+        VBox card = new VBox(5);
+        card.setPadding(new Insets(10));
+        card.setStyle("-fx-background-color: #f8f9fa; -fx-background-radius: 8; -fx-border-color: #dee2e6; -fx-border-radius: 8;");
+
+        long hoursUntil = ChronoUnit.HOURS.between(now, task.getDueDateTime());
+        long daysUntil = ChronoUnit.DAYS.between(now.toLocalDate(), task.getDueDateTime().toLocalDate());
+
+        String urgencia;
+        String color;
+        String emoji = ""; // Sin emojis, como solicitaste
+
+        if (hoursUntil < 0) {
+            urgencia = "VENCIDA";
+            color = "#dc3545"; // Rojo
+        } else if (daysUntil == 0) {
+            urgencia = "VENCE HOY (" + hoursUntil + "h)";
+            color = "#dc3545"; // Rojo
+        } else if (daysUntil == 1) {
+            urgencia = "VENCE MAÑANA (" + hoursUntil + "h)";
+            color = "#fd7e14"; // Naranja
+        } else if (daysUntil <= 3) {
+            urgencia = "VENCE EN " + daysUntil + " DÍAS";
+            color = "#ffc107"; // Amarillo
         } else {
-            for (Task task : upcomingTasks) {
-                long hoursUntil = ChronoUnit.HOURS.between(now, task.getDueDateTime());
-                long daysUntil = ChronoUnit.DAYS.between(now.toLocalDate(), task.getDueDateTime().toLocalDate());
-
-                String urgencia;
-                String color;
-
-                if (hoursUntil < 0) {
-                    urgencia = "VENCIDA";
-                    color = "#ff0000";
-                } else if (daysUntil == 0) {
-                    // MISMO DÍA
-                    urgencia = "VENCE HOY (" + hoursUntil + "h)";
-                    color = "#ff6b6b";
-                } else if (daysUntil == 1) {
-                    // vence mañana
-                    LocalDateTime mananaMismoHora = now.plusDays(1);
-                    long horasExactas = ChronoUnit.HOURS.between(now, task.getDueDateTime());
-
-                    //días y horas
-                    long diasCompletos = horasExactas / 24;
-                    long horasRestantes = horasExactas % 24;
-
-                    urgencia = String.format("VENCE MAÑANA (%d h)", horasExactas);
-                    color = "#ffb347";
-
-                    // Mensaje
-                    System.out.println("Cálculo preciso: " + task.getTitle() +
-                            " | Horas totales: " + horasExactas +
-                            " | Días: " + diasCompletos +
-                            " | Horas: " + horasRestantes);
-                } else {
-                    //2 o más días
-                    urgencia = "VENCE EN " + daysUntil + " DÍAS";
-                    color = daysUntil <= 3 ? "#ffd966" : "#4caf50";
-                }
-
-                String fechaStr = DateUtil.formatDateTime(task.getDueDateTime());
-
-                Label taskLabel = new Label(String.format("%s - %s [%s]",
-                        task.getTitle(), fechaStr, urgencia));
-                taskLabel.setStyle("-fx-text-fill: " + color + "; -fx-font-weight: bold;");
-                taskLabel.setPadding(new Insets(5));
-
-                List<SubTask> subs = subTaskDAO.getByTaskId(task.getId());
-                long pendingSubs = subs.stream()
-                        .filter(s -> s.getSubTaskStatus() != SubTaskStatus.COMPLETA)
-                        .count();
-
-                if (pendingSubs > 0) {
-                    Label subLabel = new Label("   • " + pendingSubs + " subtareas pendientes");
-                    subLabel.setStyle("-fx-text-fill: #666666; -fx-font-size: 11px;");
-                    content.getChildren().addAll(taskLabel, subLabel);
-                } else {
-                    content.getChildren().add(taskLabel);
-                }
-            }
-        }
-        Button notifyButton = new Button("Recordarme estas tareas");
-        notifyButton.setOnAction(e -> {
-            for (Task task : upcomingTasks) {
-                long hoursUntil = ChronoUnit.HOURS.between(now, task.getDueDateTime());
-                long daysUntil = hoursUntil / 24;
-                if (hoursUntil >= 0) {
-                    EmailNotification notification = new EmailNotification(currentUser, task, (int) daysUntil);
-                    emailNotificationDAO.insert(notification);
-                }
-            }
-            AlertUtil.showInfo("Información", "Notificaciones creadas para " + upcomingTasks.size() + " tareas");
-            dialog.close();
-        });
-
-        if (!upcomingTasks.isEmpty()) {
-            content.getChildren().add(notifyButton);
+            urgencia = "PROGRAMADA";
+            color = "#28a745"; // Verde
         }
 
-        dialog.getDialogPane().setContent(content);
-        dialog.getDialogPane().getButtonTypes().add(new ButtonType("Cerrar", ButtonBar.ButtonData.CANCEL_CLOSE));
-        dialog.showAndWait();
+        // Título
+        Label titleLabel = new Label(task.getTitle());
+        titleLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+
+        // Fecha
+        Label dateLabel = new Label(DateUtil.formatDateTime(task.getDueDateTime()));
+        dateLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #6c757d;");
+
+        // Urgencia
+        Label urgencyLabel = new Label("[" + urgencia + "]");
+        urgencyLabel.setStyle("-fx-text-fill: " + color + "; -fx-font-weight: bold; -fx-font-size: 12px;");
+
+        // Contenedor para fecha y urgencia
+        HBox metaBox = new HBox(10);
+        metaBox.getChildren().addAll(dateLabel, urgencyLabel);
+
+        card.getChildren().addAll(titleLabel, metaBox);
+
+        // Subtareas pendientes (usando SubTaskService)
+        try {
+            List<SubTask> subs = subTaskService.getSubTasksByTaskId(task.getId());
+            long pendingSubs = subs.stream()
+                    .filter(s -> s.getSubTaskStatus() != SubTaskStatus.COMPLETA)
+                    .count();
+
+            if (pendingSubs > 0) {
+                Label subLabel = new Label("📋 " + pendingSubs + " subtareas pendientes");
+                subLabel.setStyle("-fx-text-fill: #6c757d; -fx-font-size: 11px;");
+                card.getChildren().add(subLabel);
+            }
+        } catch (Exception e) {
+            // Ignorar errores al cargar subtareas
+        }
+
+        return card;
     }
 
     //Configurar alertas - Preferencias de notificación
@@ -1164,46 +1193,59 @@ public class MainController {
         }
 
         try {
-            List<Task> tasks = taskDAO.getByTaskListId(selectedList.getId());
+            // USAR TaskService en lugar de taskDAO
+            List<Task> tasks = taskService.getByTasksListId(selectedList.getId());
 
-            // Cargar subtareas
+            // Cargar subtareas usando SubTaskService
             for (Task task : tasks) {
-                task.setSubTasks(subTaskDAO.getByTaskId(task.getId()));
+                task.setSubTasks(subTaskService.getSubTasksByTaskId(task.getId()));
             }
 
             String pdfPath = pdfService.exportTaskList(selectedList, tasks, Session.getUser());
 
             if (pdfPath != null) {
-                AlertUtil.showInfo("Éxito", "PDF generado:\n" + pdfPath);
-
-                // Preguntar qué hacer
-                Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-                confirm.setTitle("PDF Generado");
-                confirm.setHeaderText("¿Qué deseas hacer?");
-
-                ButtonType btnOpen = new ButtonType("Abrir carpeta");
-                ButtonType btnShare = new ButtonType("Compartir");
-                ButtonType btnClose = new ButtonType("Cerrar", ButtonBar.ButtonData.CANCEL_CLOSE);
-
-                confirm.getButtonTypes().setAll(btnOpen, btnShare, btnClose);
-
-                confirm.showAndWait().ifPresent(response -> {
-                    try {
-                        if (response == btnOpen) {
-                            Desktop.getDesktop().open(new File(pdfPath).getParentFile());
-                        } else if (response == btnShare) {
-                            shareService.shareViaWhatsApp(selectedList, tasks, Session.getUser());
-                        }
-                    } catch (Exception e) {
-                        AlertUtil.showError("Error", "Error: " + e.getMessage());
-                    }
-                });
+                // Mostrar éxito con opción de abrir carpeta directamente
+                showPdfSuccess(pdfPath, selectedList, tasks);
             }
 
         } catch (Exception e) {
             AlertUtil.showError("Error", "Error exportando PDF: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    /*
+     * Muestra diálogo de éxito con opciones para el PDF generado
+     */
+    private void showPdfSuccess(String pdfPath, TaskList selectedList, List<Task> tasks) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("PDF Generado");
+        confirm.setHeaderText("PDF generado correctamente");
+        confirm.setContentText("¿Qué deseas hacer con el archivo?");
+
+        ButtonType btnOpen = new ButtonType("Abrir carpeta");
+        ButtonType btnShare = new ButtonType("Compartir por WhatsApp");
+        ButtonType btnEmail = new ButtonType("Enviar por email");
+        ButtonType btnClose = new ButtonType("Cerrar", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        confirm.getButtonTypes().setAll(btnOpen, btnShare, btnEmail, btnClose);
+
+        confirm.showAndWait().ifPresent(response -> {
+            try {
+                if (response == btnOpen) {
+                    Desktop.getDesktop().open(new File(pdfPath).getParentFile());
+                    AlertUtil.showInfo("Información", "Archivo guardado en:\n" + pdfPath);
+
+                } else if (response == btnShare) {
+                    shareService.shareViaWhatsApp(selectedList, tasks, Session.getUser());
+
+                } else if (response == btnEmail) {
+                    shareService.shareViaEmail(selectedList, tasks, Session.getUser());
+                }
+            } catch (Exception e) {
+                AlertUtil.showError("Error", "Error al procesar el archivo: " + e.getMessage());
+            }
+        });
     }
     //Exportar tarea seleccionada a PDF (botón rápido)
     @FXML
@@ -1215,18 +1257,50 @@ public class MainController {
             return;
         }
 
-        selectedTask.setSubTasks(subTaskDAO.getByTaskId(selectedTask.getId()));
+        try {
+            // ✅ USAR SubTaskService en lugar de subTaskDAO
+            List<SubTask> subtasks = subTaskService.getSubTasksByTaskId(selectedTask.getId());
+            selectedTask.setSubTasks(subtasks);
 
-        String pdfPath = pdfService.exportSingleTask(selectedTask, Session.getUser());
-        if (pdfPath != null) {
-            AlertUtil.showInfo("Éxito", "PDF guardado en:\n" + pdfPath);
+            String pdfPath = pdfService.exportSingleTask(selectedTask, Session.getUser());
 
-            try {
-                Desktop.getDesktop().open(new File(pdfPath).getParentFile());
-            } catch (Exception e) {
-                // Ignorar
+            if (pdfPath != null) {
+                // Mostrar éxito con opciones
+                showTaskPdfSuccess(pdfPath, selectedTask);
             }
+
+        } catch (Exception e) {
+            AlertUtil.showError("Error", "Error exportando tarea a PDF: " + e.getMessage());
+            e.printStackTrace();
         }
+    }
+
+    /*
+     * Muestra diálogo de éxito para PDF de tarea
+     */
+    private void showTaskPdfSuccess(String pdfPath, Task task) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("PDF Generado");
+        confirm.setHeaderText("PDF de tarea generado correctamente");
+        confirm.setContentText("Tarea: " + task.getTitle() + "\n\n" + pdfPath);
+
+        ButtonType btnOpen = new ButtonType("Abrir carpeta");
+        ButtonType btnShare = new ButtonType("Compartir");
+        ButtonType btnClose = new ButtonType("Cerrar", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        confirm.getButtonTypes().setAll(btnOpen, btnShare, btnClose);
+
+        confirm.showAndWait().ifPresent(response -> {
+            try {
+                if (response == btnOpen) {
+                    Desktop.getDesktop().open(new File(pdfPath).getParentFile());
+                } else if (response == btnShare) {
+                    shareService.shareTaskViaWhatsApp(task, Session.getUser());
+                }
+            } catch (Exception e) {
+                AlertUtil.showError("Error", "Error al abrir carpeta: " + e.getMessage());
+            }
+        });
     }
     //Exportar Subtask seleccionada a PDF
     @FXML
@@ -1283,15 +1357,15 @@ public class MainController {
             e.printStackTrace();
         }
     }
-    //Exportar
+    //Exporta TODAS las listas del usuario a un único PDF
     @FXML
     private void handleExportEverythingToPDF() {
         User currentUser = Session.getUser();
         if (currentUser == null) return;
 
         try {
-            // Obtener todas las listas del usuario
-            List<TaskList> allLists = taskListDAO.getByUserId(currentUser.getId());
+            //USAR TaskListService en lugar de taskListDAO
+            List<TaskList> allLists = taskListService.getListsByUserId(currentUser.getId());
 
             if (allLists.isEmpty()) {
                 AlertUtil.showWarning("Atención", "No hay listas para exportar");
@@ -1300,92 +1374,139 @@ public class MainController {
 
             // Crear PDF combinado
             String fileName = String.format("PRIORIZA_COMPLETO_%s.pdf",
-                    LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                    LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")));
             String filePath = System.getProperty("user.home") + "/Downloads/" + fileName;
 
-            PdfWriter writer = new PdfWriter(new FileOutputStream(filePath));
-            PdfDocument pdf = new PdfDocument(writer);
-            Document document = new Document(pdf);
+            try (PdfWriter writer = new PdfWriter(new FileOutputStream(filePath));
+                 PdfDocument pdf = new PdfDocument(writer);
+                 Document document = new Document(pdf)) {
 
-            // Encabezado general
-            document.add(new Paragraph("PRIORIZA")
-                    .setFontSize(24)
-                    .setBold()
-                    .setFontColor(ColorConstants.BLUE));
+                // Encabezado general
+                addDocumentHeader(document, currentUser);
 
-            document.add(new Paragraph("Exportación completa - Usuario: " + currentUser.getName())
-                    .setFontSize(14));
+                int totalLists = 0;
+                int totalTasks = 0;
+                int totalSubtasks = 0;
 
-            document.add(new Paragraph("Fecha: " + LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMyyyy")))
-                    .setFontSize(12)
-                    .setFontColor(ColorConstants.GRAY));
+                // Exportar cada lista
+                for (TaskList list : allLists) {
+                    //USAR TaskService en lugar de taskDAO
+                    List<Task> tasks = taskService.getByTasksListId(list.getId());
 
-            document.add(new Paragraph("\n"));
-
-            int totalLists = 0;
-            int totalTasks = 0;
-            int totalSubtasks = 0;
-
-            // Exportar cada lista
-            for (TaskList list : allLists) {
-                List<Task> tasks = taskDAO.getByTaskListId(list.getId());
-
-                // Cargar subtareas para cada tarea
-                for (Task task : tasks) {
-                    task.setSubTasks(subTaskDAO.getByTaskId(task.getId()));
-                    totalSubtasks += task.getSubTasks().size();
-                }
-
-                totalLists++;
-                totalTasks += tasks.size();
-
-                // Título de la lista
-                document.add(new Paragraph("LISTA: " + list.getName())
-                        .setFontSize(16)
-                        .setBold()
-                        .setFontColor(ColorConstants.DARK_GRAY));
-
-                // Tareas de la lista
-                for (Task task : tasks) {
-                    document.add(createTaskCard(task));
-                }
-                document.add(new Paragraph("\n"));
-            }
-
-            // Resumen final
-            document.add(new Paragraph("RESUMEN TOTAL:")
-                    .setFontSize(14)
-                    .setBold());
-            document.add(new Paragraph("Listas: " + totalLists + " | Tareas: " + totalTasks + " | Subtareas: " + totalSubtasks)
-                    .setFontSize(12));
-
-            document.close();
-
-            AlertUtil.showInfo("Información", "Exportación completa guardada en:\n" + filePath);
-
-            // Preguntar si quiere abrir la carpeta
-            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-            confirm.setTitle("Exportación completada");
-            confirm.setHeaderText("¿Deseas abrir la carpeta?");
-
-            ButtonType btnOpen = new ButtonType("Abrir carpeta");
-            ButtonType btnClose = new ButtonType("Cerrar", ButtonBar.ButtonData.CANCEL_CLOSE);
-            confirm.getButtonTypes().setAll(btnOpen, btnClose);
-
-            confirm.showAndWait().ifPresent(response -> {
-                if (response == btnOpen) {
-                    try {
-                        Desktop.getDesktop().open(new File(filePath).getParentFile());
-                    } catch (Exception e) {
-                        AlertUtil.showError("Error", "No se pudo abrir la carpeta");
+                    // Cargar subtareas para cada tarea
+                    for (Task task : tasks) {
+                        //USAR SubTaskService en lugar de subTaskDAO
+                        task.setSubTasks(subTaskService.getSubTasksByTaskId(task.getId()));
+                        totalSubtasks += task.getSubTasks().size();
                     }
+
+                    totalLists++;
+                    totalTasks += tasks.size();
+
+                    // Añadir lista al documento
+                    addListToDocument(document, list, tasks);
                 }
-            });
+
+                // Añadir resumen final
+                addSummaryToDocument(document, totalLists, totalTasks, totalSubtasks);
+
+            } // El try-with-resources cierra automáticamente document, pdf y writer
+
+            // Mostrar éxito y preguntar qué hacer
+            showExportCompleteDialog(filePath, allLists);
 
         } catch (Exception e) {
             AlertUtil.showError("Error", "Error en exportación completa: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    //Añade el encabezado al documento PDF
+    private void addDocumentHeader(Document document, User user) {
+        document.add(new Paragraph("PRIORIZA")
+                .setFontSize(24)
+                .setBold()
+                .setFontColor(ColorConstants.BLUE));
+
+        document.add(new Paragraph("Exportación completa - Usuario: " + user.getName())
+                .setFontSize(14));
+
+        document.add(new Paragraph("Fecha: " + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")))
+                .setFontSize(12)
+                .setFontColor(ColorConstants.GRAY));
+
+        document.add(new Paragraph("\n"));
+    }
+
+    //Añade una lista completa con sus tareas al documento
+    private void addListToDocument(Document document, TaskList list, List<Task> tasks) {
+        // Título de la lista
+        document.add(new Paragraph("LISTA: " + list.getName())
+                .setFontSize(16)
+                .setBold()
+                .setFontColor(ColorConstants.DARK_GRAY));
+
+        // Tareas de la lista
+        if (tasks.isEmpty()) {
+            document.add(new Paragraph("   (Sin tareas)")
+                    .setFontSize(12)
+                    .setFontColor(ColorConstants.GRAY));
+        } else {
+            for (Task task : tasks) {
+                document.add(createTaskCard(task));
+            }
+        }
+        document.add(new Paragraph("\n"));
+    }
+
+    //Añade el resumen final al documento
+    private void addSummaryToDocument(Document document, int totalLists, int totalTasks, int totalSubtasks) {
+        document.add(new Paragraph("RESUMEN TOTAL:")
+                .setFontSize(14)
+                .setBold());
+
+        Table summaryTable = new Table(2);
+        summaryTable.setWidth(UnitValue.createPercentValue(100));
+
+        summaryTable.addCell(createCell("Listas:", true));
+        summaryTable.addCell(createCell(String.valueOf(totalLists), false));
+
+        summaryTable.addCell(createCell("Tareas:", true));
+        summaryTable.addCell(createCell(String.valueOf(totalTasks), false));
+
+        summaryTable.addCell(createCell("Subtareas:", true));
+        summaryTable.addCell(createCell(String.valueOf(totalSubtasks), false));
+
+        document.add(summaryTable);
+    }
+
+    //Muestra diálogo de éxito con opciones para el PDF generado
+    private void showExportCompleteDialog(String filePath, List<TaskList> allLists) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Exportación completada");
+        confirm.setHeaderText("PDF generado correctamente");
+        confirm.setContentText("Se han exportado " + allLists.size() + " listas\n\n" + filePath);
+
+        ButtonType btnOpen = new ButtonType("📂 Abrir carpeta");
+        ButtonType btnShare = new ButtonType("📱 Compartir todo");
+        ButtonType btnClose = new ButtonType("Cerrar", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        confirm.getButtonTypes().setAll(btnOpen, btnShare, btnClose);
+
+        confirm.showAndWait().ifPresent(response -> {
+            try {
+                if (response == btnOpen) {
+                    Desktop.getDesktop().open(new File(filePath).getParentFile());
+                } else if (response == btnShare) {
+                    // Aquí podrías implementar compartir el PDF completo
+                    AlertUtil.showInfo("Información",
+                            "Compartir PDF completo - Función en desarrollo\n\n" +
+                                    "El archivo está en:\n" + filePath);
+                }
+            } catch (Exception e) {
+                AlertUtil.showError("Error", "No se pudo abrir la carpeta: " + e.getMessage());
+            }
+        });
     }
     //compartir lista
     @FXML
@@ -1398,9 +1519,9 @@ public class MainController {
         }
 
         try {
-            List<Task> tasks = taskDAO.getByTaskListId(selectedList.getId());
+            List<Task> tasks = taskService.getByTasksListId(selectedList.getId());
             for (Task task : tasks) {
-                task.setSubTasks(subTaskDAO.getByTaskId(task.getId()));
+                task.setSubTasks(subTaskService.getSubTasksByTaskId(task.getId()));
             }
 
             // Preguntar metodo de compartición
@@ -1449,7 +1570,7 @@ public class MainController {
         }
 
         // Cargar subtareas
-        selectedTask.setSubTasks(subTaskDAO.getByTaskId(selectedTask.getId()));
+        selectedTask.setSubTasks(subTaskService.getSubTasksByTaskId(selectedTask.getId()));
 
         // Mostrar opciones de compartir
         Alert choice = new Alert(Alert.AlertType.CONFIRMATION);

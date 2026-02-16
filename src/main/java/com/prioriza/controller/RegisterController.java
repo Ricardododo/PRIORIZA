@@ -1,8 +1,9 @@
 package com.prioriza.controller;
 
 import com.prioriza.dao.TaskListDAO;
-import com.prioriza.dao.UserDAO;
 import com.prioriza.model.User;
+import com.prioriza.service.TaskListService;
+import com.prioriza.service.UserService;
 import com.prioriza.util.AlertUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
@@ -22,7 +23,8 @@ public class RegisterController {
     @FXML
     private PasswordField confirmPasswordField;
 
-    private final UserDAO userDAO = new UserDAO();
+    private final UserService userService = new UserService();
+    private final TaskListService taskListService = new TaskListService();
 
     //metodo cuando se hace click al registrarse
     @FXML
@@ -54,24 +56,12 @@ public class RegisterController {
         }
 
         try{
-            //crear usuario
-            User user = new User();
-            user.setName(username);
-            user.setEmail(email);
-            user.setPassword(password);
+            User user = userService.registerUser(username.trim(), email.trim(), password);
+            taskListService.createDefaultLists(user.getId());
 
-            //guardar usuario
-            userDAO.addUser(user);
+            AlertUtil.showInfo("Información",
+                    "Usuario registrado correctamente.\nYa puedes iniciar sesión");
 
-            //Crear listas por defecto automaticamente
-            if(user.getId() > 0){
-                TaskListDAO taskListDAO = new TaskListDAO();
-                taskListDAO.createDefaultListsForUser(user.getId());
-            }
-
-            AlertUtil.showInfo("Información", "Usuario registrado correctamente.\nYa puedes iniciar sesión");
-
-            //cerrar ventana y volver a login
             Stage stage = (Stage) usernameField.getScene().getWindow();
             stage.close();
         } catch (Exception e) {
