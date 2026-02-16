@@ -17,6 +17,7 @@ import com.prioriza.model.*;
 import com.prioriza.service.*;
 import com.prioriza.session.Session;
 import com.prioriza.util.AlertUtil;
+import com.prioriza.util.DateUtil;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -42,6 +43,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -72,7 +74,7 @@ public class MainController {
     @FXML
     private TableColumn<Task, Priority> colPriority;
     @FXML
-    private TableColumn<Task, LocalDate> colDueDate;
+    private TableColumn<Task, String> colDueDateTime;
     @FXML
     private TableColumn<Task, TaskStatus> colStatus;
     @FXML
@@ -139,9 +141,12 @@ public class MainController {
                 new SimpleObjectProperty<>(data.getValue().getPriority())
         );
 
-        colDueDate.setCellValueFactory(data ->
-                new SimpleObjectProperty<>(data.getValue().getDueDate())
-        );
+        colDueDateTime.setCellValueFactory(data -> {
+            LocalDateTime dateTime = data.getValue().getDueDateTime();
+            String formatted = dateTime != null ?
+                    DateUtil.formatDateTime(dateTime) : "";
+            return new SimpleObjectProperty<>(formatted);
+        });
 
         colStatus.setCellValueFactory(data ->
                 new SimpleObjectProperty<>(data.getValue().getStatus())
@@ -161,6 +166,38 @@ public class MainController {
                         case ALTA -> setStyle("-fx-background-color: #ffd966;");
                         case MEDIA -> setStyle("-fx-background-color: #c6efce;");
                         case BAJA -> setStyle("-fx-background-color: #d9e1f2;");
+                    }
+                }
+            }
+
+        });
+        subTaskView.setCellFactory(param -> new ListCell<SubTask>() {
+            @Override
+            protected void updateItem(SubTask subTask, boolean empty) {
+                super.updateItem(subTask, empty);
+
+                if (empty || subTask == null) {
+                    setText(null);
+                    setGraphic(null);
+                    setStyle("");
+                } else {
+                    // Formato de fecha
+                    String fecha = subTask.getDueDateTime() != null ?
+                            " [" + subTask.getDueDateTime().format(DateTimeFormatter.ofPattern("dd/MM HH:mm")) + "]" : "";
+
+                    // Texto según estado
+                    String estado = subTask.getSubTaskStatus() == SubTaskStatus.COMPLETA ? "✓" : "○";
+
+                    setText(estado + " " + subTask.getTitle() + fecha);
+
+                    // Estilos según estado
+                    if (subTask.getSubTaskStatus() == SubTaskStatus.COMPLETA) {
+                        setStyle("-fx-text-fill: #888888; " +
+                                "-fx-font-style: italic; " +
+                                "-fx-opacity: 0.7;");
+                    } else {
+                        setStyle("-fx-text-fill: #000000; " +
+                                "-fx-font-weight: normal;");
                     }
                 }
             }
@@ -717,15 +754,17 @@ public class MainController {
     }
     //metodo del boton editar subtareas
     @FXML
-    private void handleEditSubTask(){
-
+    private void handleEditSubTask() {
         SubTask selectedSubTask = subTaskView.getSelectionModel().getSelectedItem();
-        if(selectedSubTask == null){
+        if(selectedSubTask == null) {
             AlertUtil.showWarning("Atención", "Selecciona una Subtarea para editar");
             return;
         }
-        //reutiliza subtask-form.fxml
-        try{
+
+        // Guardar el ID de la tarea antes de editar
+        int taskId = selectedSubTask.getTaskId();
+
+        try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/subtask-form.fxml"));
             Scene scene = new Scene(loader.load());
 
@@ -740,14 +779,20 @@ public class MainController {
 
             SubTask updatedSubTask = controller.getResult();
 
-            if(updatedSubTask != null){
+            if(updatedSubTask != null) {
                 updatedSubTask.setId(selectedSubTask.getId());
-                updatedSubTask.setTaskId(selectedSubTask.getTaskId());
+                updatedSubTask.setTaskId(taskId);  // Usar el ID guardado
 
                 subTaskDAO.update(updatedSubTask);
-                loadSubTasks(selectedSubTask.getTaskId());
+
+                // RECARGAR SUBTAREAS
+                loadSubTasks(taskId);
+
+                //Mostrar mensaje de éxito
+                AlertUtil.showInfo("Información", "Subtarea actualizada correctamente");
             }
         } catch (Exception e) {
+            AlertUtil.showError("Error", "Error al editar subtarea: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -863,7 +908,6 @@ public class MainController {
         // Mostrar en ventana personalizada
         showNotificationStats(stats, notifications, unreadCount);
     }
-
     //Ventana de estadísticas personalizada
     private void showNotificationStats(String stats, List<EmailNotification> notifications, int unreadCount) {
         Dialog<ButtonType> dialog = new Dialog<>();
@@ -905,19 +949,19 @@ public class MainController {
         if (currentUser == null) return;
 
         List<Task> allTasks = taskDAO.getByUserId(currentUser.getId());
-        LocalDate today = LocalDate.now();
+        LocalDateTime now = LocalDateTime.now();
 
         List<Task> upcomingTasks = allTasks.stream()
-                .filter(t -> t.getDueDate() != null)
+                .filter(t -> t.getDueDateTime() != null)
                 .filter(t -> t.getStatus() != TaskStatus.COMPLETA)
                 .filter(t -> {
-                    long days = ChronoUnit.DAYS.between(today, t.getDueDate());
-                    return days >= 0 && days <= 7;
+                    long hoursUntil = ChronoUnit.HOURS.between(now, t.getDueDateTime());
+                    return hoursUntil >= 0 && hoursUntil <= 168; // 7 días
                 })
                 .sorted((t1, t2) -> {
-                    if (t1.getDueDate() == null) return 1;
-                    if (t2.getDueDate() == null) return -1;
-                    return t1.getDueDate().compareTo(t2.getDueDate());
+                    if (t1.getDueDateTime() == null) return 1;
+                    if (t2.getDueDateTime() == null) return -1;
+                    return t1.getDueDateTime().compareTo(t2.getDueDateTime());
                 })
                 .collect(Collectors.toList());
 
@@ -932,28 +976,46 @@ public class MainController {
             content.getChildren().add(new Label("No tienes tareas próximas a vencer"));
         } else {
             for (Task task : upcomingTasks) {
-                long daysUntilDue = ChronoUnit.DAYS.between(today, task.getDueDate());
+                long hoursUntil = ChronoUnit.HOURS.between(now, task.getDueDateTime());
+                long daysUntil = ChronoUnit.DAYS.between(now.toLocalDate(), task.getDueDateTime().toLocalDate());
 
-                //TEXTO CLARO
                 String urgencia;
                 String color;
 
-                if (daysUntilDue == 0) {
-                    urgencia = "VENCE HOY";
-                    color = "#ff6b6b";  // Rojo
-                } else if (daysUntilDue == 1) {
-                    urgencia = "VENCE MAÑANA";
-                    color = "#ffb347";  // Naranja
-                } else if (daysUntilDue <= 3) {
-                    urgencia = "VENCE PRONTO";
-                    color = "#ffd966";  // Amarillo
+                if (hoursUntil < 0) {
+                    urgencia = "VENCIDA";
+                    color = "#ff0000";
+                } else if (daysUntil == 0) {
+                    // MISMO DÍA
+                    urgencia = "VENCE HOY (" + hoursUntil + "h)";
+                    color = "#ff6b6b";
+                } else if (daysUntil == 1) {
+                    // vence mañana
+                    LocalDateTime mananaMismoHora = now.plusDays(1);
+                    long horasExactas = ChronoUnit.HOURS.between(now, task.getDueDateTime());
+
+                    //días y horas
+                    long diasCompletos = horasExactas / 24;
+                    long horasRestantes = horasExactas % 24;
+
+                    urgencia = String.format("VENCE MAÑANA (%d h)", horasExactas);
+                    color = "#ffb347";
+
+                    // Mensaje
+                    System.out.println("Cálculo preciso: " + task.getTitle() +
+                            " | Horas totales: " + horasExactas +
+                            " | Días: " + diasCompletos +
+                            " | Horas: " + horasRestantes);
                 } else {
-                    urgencia = "PROGRAMADA";
-                    color = "#4caf50";  // Verde
+                    //2 o más días
+                    urgencia = "VENCE EN " + daysUntil + " DÍAS";
+                    color = daysUntil <= 3 ? "#ffd966" : "#4caf50";
                 }
 
-                Label taskLabel = new Label(String.format("%s - %s (%d días) [%s]",
-                        task.getTitle(), task.getDueDate(), daysUntilDue, urgencia));
+                String fechaStr = DateUtil.formatDateTime(task.getDueDateTime());
+
+                Label taskLabel = new Label(String.format("%s - %s [%s]",
+                        task.getTitle(), fechaStr, urgencia));
                 taskLabel.setStyle("-fx-text-fill: " + color + "; -fx-font-weight: bold;");
                 taskLabel.setPadding(new Insets(5));
 
@@ -971,13 +1033,13 @@ public class MainController {
                 }
             }
         }
-
         Button notifyButton = new Button("Recordarme estas tareas");
         notifyButton.setOnAction(e -> {
             for (Task task : upcomingTasks) {
-                long days = ChronoUnit.DAYS.between(today, task.getDueDate());
-                if (days >= 0) {
-                    EmailNotification notification = new EmailNotification(currentUser, task, (int) days);
+                long hoursUntil = ChronoUnit.HOURS.between(now, task.getDueDateTime());
+                long daysUntil = hoursUntil / 24;
+                if (hoursUntil >= 0) {
+                    EmailNotification notification = new EmailNotification(currentUser, task, (int) daysUntil);
                     emailNotificationDAO.insert(notification);
                 }
             }
@@ -1181,7 +1243,7 @@ public class MainController {
             Task tempTask = new Task();
             tempTask.setTitle("Subtarea: " + selectedSubtask.getTitle());
             tempTask.setDescription(selectedSubtask.getTitle());
-            tempTask.setDueDate(selectedSubtask.getDueDate());
+            tempTask.setDueDateTime(selectedSubtask.getDueDateTime());
             tempTask.setImportant(selectedSubtask.isImportant());
             tempTask.setStatus(TaskStatus.PENDIENTE);
 
@@ -1432,7 +1494,7 @@ public class MainController {
             Task tempTask = new Task();
             tempTask.setTitle("Subtarea: " + selectedSubtask.getTitle());
             tempTask.setDescription(selectedSubtask.getTitle());
-            tempTask.setDueDate(selectedSubtask.getDueDate());
+            tempTask.setDueDateTime(selectedSubtask.getDueDateTime());
             tempTask.setImportant(selectedSubtask.isImportant());
             tempTask.setStatus(TaskStatus.PENDIENTE);
 
@@ -1639,10 +1701,10 @@ public class MainController {
         metaTable.addCell(createCell(task.getPriority().toString(), false));
 
         // Fecha límite
-        if (task.getDueDate() != null) {
+        if (task.getDueDateTime() != null) {
             metaTable.addCell(createCell("Fecha límite:", true));
             metaTable.addCell(createCell(
-                    task.getDueDate().format(DateTimeFormatter.ofPattern("ddMMyyyy")), false));
+                    task.getDueDateTime().format(DateTimeFormatter.ofPattern("ddMMyyyy")), false));
         }
 
         // Estado
@@ -1683,9 +1745,9 @@ public class MainController {
                 }
 
                 // Fecha de subtarea si existe (solo para no completadas)
-                if (sub.getDueDate() != null && sub.getSubTaskStatus() != SubTaskStatus.COMPLETA) {
+                if (sub.getDueDateTime() != null && sub.getSubTaskStatus() != SubTaskStatus.COMPLETA) {
                     card.add(new Paragraph(
-                            "      Fecha: " + sub.getDueDate().format(DateTimeFormatter.ofPattern("ddMMyyyy")))
+                            "      Fecha: " + sub.getDueDateTime().format(DateTimeFormatter.ofPattern("ddMMyyyy")))
                             .setFontSize(9)
                             .setFontColor(ColorConstants.GRAY));
                 }

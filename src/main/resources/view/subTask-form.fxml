@@ -16,6 +16,11 @@
         <Label text="Fecha límite:"/>
         <DatePicker fx:id="dueDatePicker" prefWidth="200"/>
 
+        <!-- Hora -->
+        <Label text="Hora (opcional):"/>
+        <TextField fx:id="hourField" promptText="HH:mm" prefWidth="100"/>
+        <Label text="(ej: 14:30)" style="-fx-text-fill: gray; -fx-font-size: 10px;"/>
+
         <Label text="Importante:"/>
         <CheckBox fx:id="importantCheckBox" text="Subtarea importante"/>
 

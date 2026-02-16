@@ -4,11 +4,15 @@ import com.prioriza.model.Priority;
 import com.prioriza.model.Task;
 import com.prioriza.model.TaskStatus;
 import com.prioriza.util.AlertUtil;
+import com.prioriza.util.DateUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class TaskFormController {
 
@@ -18,6 +22,8 @@ public class TaskFormController {
     private TextArea descriptionField;
     @FXML
     private DatePicker datePicker;
+    @FXML
+    private TextField hourField;
     @FXML
     private ChoiceBox<Priority> priorityChoiceBox;
     @FXML
@@ -37,13 +43,25 @@ public class TaskFormController {
 
         //cargar estados
         statusChoiceBox.getItems().setAll(TaskStatus.values());
-        //valor por defecto
         statusChoiceBox.setValue(TaskStatus.PENDIENTE);
+
         //la fecha por defecto (hoy)
         datePicker.setValue(LocalDate.now());
 
+        //hora por defecto 09:00
+        hourField.setText("09:00");
+
         //checkBox por defecto: false
         importantCheckBox.setSelected(false);
+
+        // Validación de hora mientras escribe
+        hourField.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal.matches("^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$") && !newVal.isEmpty()) {
+                hourField.setStyle("-fx-border-color: red;");
+            } else {
+                hourField.setStyle("");
+            }
+        });
     }
 
     //cuando se pulsa guardar - editar
@@ -53,6 +71,7 @@ public class TaskFormController {
         String title = titleField.getText();
         String description = descriptionField.getText();
         LocalDate date = datePicker.getValue();
+        String hourText = hourField.getText().trim();
         Priority priority = priorityChoiceBox.getValue();
         TaskStatus status = statusChoiceBox.getValue();
         boolean important = importantCheckBox.isSelected();
@@ -67,12 +86,34 @@ public class TaskFormController {
             AlertUtil.showError("Error", "Debe seleccionar una prioridad");
             return;
         }
+        // Validar fecha
+        if (date == null) {
+            AlertUtil.showError("Error", "Debe seleccionar una fecha");
+            return;
+        }
+
+        // Validar y convertir hora usando DateUtil
+        LocalDateTime dueDateTime = null;
+        if (!hourText.isEmpty()) {
+            try {
+                // Usar DateUtil para parsear la hora
+                LocalTime time = DateUtil.parseTime(hourText);
+                dueDateTime = LocalDateTime.of(date, time);
+            } catch (Exception e) {
+                AlertUtil.showError("Error", "Formato de hora incorrecto. Use HH:mm (ej: 14:30)");
+                return;
+            }
+        } else {
+            // Si no hay hora, usar medianoche
+            dueDateTime = date.atStartOfDay();
+        }
+
 
         if(editMode){
             //editar existente
             taskToEdit.setTitle(title);
             taskToEdit.setDescription(description);
-            taskToEdit.setDueDate(date);
+            taskToEdit.setDueDateTime(dueDateTime);
             taskToEdit.setPriority(priority);
             taskToEdit.setStatus(status);
             taskToEdit.setImportant(important);
@@ -82,7 +123,7 @@ public class TaskFormController {
             Task task = new Task();
             task.setTitle(title);
             task.setDescription(description);
-            task.setDueDate(date);
+            task.setDueDateTime(dueDateTime);
             task.setPriority(priority);
             task.setStatus(status);
             task.setImportant(important);
@@ -117,7 +158,17 @@ public class TaskFormController {
         //cargar datos en el formulario
         titleField.setText(selectedTask.getTitle());
         descriptionField.setText(selectedTask.getDescription());
-        datePicker.setValue(selectedTask.getDueDate());
+
+        // Usar DateUtil para descomponer la fecha+hora
+        LocalDateTime dateTime = selectedTask.getDueDateTime();
+        if (dateTime != null) {
+            datePicker.setValue(dateTime.toLocalDate());
+            hourField.setText(DateUtil.formatTime(dateTime)); // "HH:mm"
+        } else {
+            datePicker.setValue(null);
+            hourField.clear();
+        }
+
         priorityChoiceBox.setValue(selectedTask.getPriority());
         statusChoiceBox.setValue(selectedTask.getStatus());
         importantCheckBox.setSelected(selectedTask.isImportant());

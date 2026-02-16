@@ -50,7 +50,7 @@ public class EmailService {
                     " por vencer en " + notification.getDaysRemaining() + " días");
             System.out.println("\nDetalle:");
             System.out.println("   Título: " + notification.getItemTitle());
-            System.out.println("   Fecha: " + notification.getDuedate());
+            System.out.println("   Fecha: " + notification.getDueDateTime());
             System.out.println("   Días restantes: " + notification.getDaysRemaining());
             System.out.println("=".repeat(60) + "\n");
             return true;
@@ -79,7 +79,7 @@ public class EmailService {
                             "Equipo PRIORIZA",
                     notification.getItemType().toLowerCase(),
                     notification.getItemTitle(),
-                    notification.getDuedate(),
+                    notification.getDueDateTime(),
                     notification.getDaysRemaining()
             );
 

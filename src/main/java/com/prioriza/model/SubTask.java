@@ -1,6 +1,7 @@
 package com.prioriza.model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class SubTask {
     private int id;
@@ -79,6 +80,8 @@ public class SubTask {
     @Override
     public String toString() {
 
-        return title + " (" + subTaskStatus + ")";
+        String fecha = dueDateTime != null ?
+                " [" + dueDateTime.format(DateTimeFormatter.ofPattern("dd/MM HH:mm")) + "]" : "";
+        return title + fecha + " (" + subTaskStatus + ")";
     }
 }

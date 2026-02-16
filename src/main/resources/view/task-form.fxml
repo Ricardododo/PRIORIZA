@@ -19,7 +19,13 @@
                   promptText="Descripción..."
                   prefRowCount="3" />
 
-        <DatePicker fx:id="datePicker" />
+        <DatePicker fx:id="datePicker" promptText="Fecha"/>
+
+        <HBox spacing="5" alignment="CENTER_LEFT">
+            <Label text="Hora:"/>
+            <TextField fx:id="hourField" promptText="HH:mm" prefWidth="80"/>
+            <Label text="(formato 24h)" style="-fx-text-fill: gray; -fx-font-size: 10px;"/>
+        </HBox>
 
         <Label text="Prioridad:"/>
         <ChoiceBox fx:id="priorityChoiceBox" prefWidth="150"/>

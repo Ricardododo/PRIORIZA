@@ -131,11 +131,11 @@
                 <Label styleClass="section-title" text="Tareas" />
                 <TableView fx:id="taskTableView" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn fx:id="colTitle" text="Título" />
-                        <TableColumn fx:id="colDescription" text="Descripción" />
-                        <TableColumn fx:id="colPriority" text="Prioridad" />
-                        <TableColumn fx:id="colDueDate" text="Fecha" />
-                        <TableColumn fx:id="colStatus" text="Estado" />
+                        <TableColumn fx:id="colTitle" text="Título" prefWidth="150"/>
+                        <TableColumn fx:id="colDescription" text="Descripción" prefWidth="200"/>
+                        <TableColumn fx:id="colPriority" text="Prioridad" prefWidth="80"/>
+                        <TableColumn fx:id="colDueDateTime" text="Fecha/Hora" prefWidth="120" />
+                        <TableColumn fx:id="colStatus" text="Estado" prefWidth="100"/>
                     </columns>
                 </TableView>
                 <HBox alignment="CENTER" spacing="10">

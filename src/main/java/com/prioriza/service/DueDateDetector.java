@@ -82,11 +82,11 @@ public class DueDateDetector {
         LocalDate today = LocalDate.now();
 
         for (Task task : tasks) {
-            if (task.getDueDate() == null) continue;
+            if (task.getDueDateTime() == null) continue;
             if (task.getStatus() == TaskStatus.COMPLETA ||
                     task.getStatus() == TaskStatus.CANCELADA) continue;
 
-            long daysUntilDue = ChronoUnit.DAYS.between(today, task.getDueDate());
+            long daysUntilDue = ChronoUnit.DAYS.between(today, task.getDueDateTime());
 
             // Verificar si está en los días de alerta
             for (int alertDay : ALERT_DAYS) {
@@ -132,10 +132,10 @@ public class DueDateDetector {
         for (Task task : tasks) {
             List<SubTask> subtasks = subTaskDAO.getByTaskId(task.getId());
             for (SubTask sub : subtasks) {
-                if (sub.getDueDate() == null) continue;
+                if (sub.getDueDateTime() == null) continue;
                 if (sub.getSubTaskStatus() == SubTaskStatus.COMPLETA) continue;
 
-                long daysUntilDue = ChronoUnit.DAYS.between(today, sub.getDueDate());
+                long daysUntilDue = ChronoUnit.DAYS.between(today, sub.getDueDateTime());
 
                 for (int alertDay : ALERT_DAYS) {
                     if (daysUntilDue == alertDay) {

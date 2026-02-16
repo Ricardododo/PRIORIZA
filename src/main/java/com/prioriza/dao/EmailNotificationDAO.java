@@ -28,7 +28,7 @@ public class EmailNotificationDAO {
             ps.setObject(4, notification.getSubtaskId());
             ps.setString(5, notification.getItemType());
             ps.setString(6, notification.getItemTitle());
-            ps.setString(7, notification.getDuedate().toString());
+            ps.setString(7, notification.getDueDateTime().toString());
             ps.setInt(8, notification.getDaysRemaining());
             ps.setString(9, notification.getStatus());
             ps.setString(10, notification.getCreatedAt().toString());
@@ -230,7 +230,7 @@ public class EmailNotificationDAO {
         n.setSubtaskId((Integer) rs.getObject("subtask.id"));
         n.setItemType(rs.getString("item_type"));
         n.setItemTitle(rs.getString("item_title"));
-        n.setDuedate(LocalDate.parse(rs.getString("due_date")));
+        n.setDueDateTime(LocalDateTime.parse(rs.getString("due_date")));
         n.setDaysRemaining(rs.getInt("days_remaining"));
         n.setStatus(rs.getString("status"));
         n.setCreatedAt(rs.getObject("created_at", LocalDateTime.class));

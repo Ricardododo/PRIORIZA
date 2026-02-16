@@ -163,10 +163,10 @@ public class PDFExportService {
         metaTable.addCell(createCell("Prioridad:", true));
         metaTable.addCell(createCell(task.getPriority().toString(), false));
 
-        if (task.getDueDate() != null) {
+        if (task.getDueDateTime() != null) {
             metaTable.addCell(createCell("Fecha límite:", true));
             metaTable.addCell(createCell(
-                    task.getDueDate().format(DATE_FORMATTER), false));
+                    task.getDueDateTime().format(DATE_FORMATTER), false));
         }
 
         metaTable.addCell(createCell("Estado:", true));
@@ -191,9 +191,9 @@ public class PDFExportService {
                         checkBox, sub.getTitle()))
                         .setFontSize(10));
 
-                if (sub.getDueDate() != null) {
+                if (sub.getDueDateTime() != null) {
                     card.add(new Paragraph("    Fecha: " +
-                            sub.getDueDate().format(DATE_FORMATTER))
+                            sub.getDueDateTime().format(DATE_FORMATTER))
                             .setFontSize(9)
                             .setFontColor(ColorConstants.GRAY));
                 }

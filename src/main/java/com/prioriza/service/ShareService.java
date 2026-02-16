@@ -2,6 +2,7 @@ package com.prioriza.service;
 
 import com.prioriza.model.*;
 import com.prioriza.util.AlertUtil;
+import com.prioriza.util.DateUtil;
 
 import java.awt.*;
 import java.io.File;
@@ -119,8 +120,9 @@ public class ShareService {
         for (Task t : tasks) {
             msg.append("- ").append(t.getTitle());
             msg.append(" [").append(t.getPriority()).append("]");
-            if (t.getDueDate() != null) {
-                msg.append(" (").append(t.getDueDate()).append(")");
+            //MUESTRA FECHA Y HORA
+            if (t.getDueDateTime() != null) {
+                msg.append(" (").append(DateUtil.formatDateTime(t.getDueDateTime())).append(")");
             }
             msg.append("\n");
         }
@@ -140,8 +142,8 @@ public class ShareService {
         }
 
         msg.append("\nPrioridad: ").append(task.getPriority());
-        if (task.getDueDate() != null) {
-            msg.append("\nFecha límite: ").append(task.getDueDate());
+        if (task.getDueDateTime() != null) {
+            msg.append("\nFecha límite: ").append(DateUtil.formatDateTime(task.getDueDateTime()));
         }
         msg.append("\nEstado: ").append(task.getStatus());
 
