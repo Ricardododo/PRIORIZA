@@ -1,14 +1,13 @@
 package com.prioriza.dao;
 
 import com.prioriza.model.UserSettings;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserSettingsDAO {
 
-    //OBTENER CONFIGURACIÓN DE UN USUARIO
+    // OBTENER CONFIGURACIÓN DE UN USUARIO
     public UserSettings getByUserId(int userId) {
         String sql = "SELECT * FROM user_settings WHERE user_id = ?";
 
@@ -27,18 +26,18 @@ public class UserSettingsDAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            return createDefaultSettings(userId); // Fallback a valores por defecto
+            return createDefaultSettings(userId);
         }
     }
 
-    //CREAR CONFIGURACIÓN POR DEFECTO
+    // CREAR CONFIGURACIÓN POR DEFECTO
     private UserSettings createDefaultSettings(int userId) {
         UserSettings settings = new UserSettings(userId);
-        insert(settings); // Guardar en BD
+        insert(settings);
         return settings;
     }
 
-    //INSERTAR NUEVA CONFIGURACIÓN
+    // INSERTAR NUEVA CONFIGURACIÓN
     public void insert(UserSettings settings) {
         String sql = """
             INSERT INTO user_settings 
@@ -67,7 +66,7 @@ public class UserSettingsDAO {
         }
     }
 
-    //ACTUALIZAR CONFIGURACIÓN
+    // ACTUALIZAR CONFIGURACIÓN
     public void update(UserSettings settings) {
         String sql = """
             UPDATE user_settings SET 
@@ -103,7 +102,7 @@ public class UserSettingsDAO {
         }
     }
 
-    // ============= ELIMINAR CONFIGURACIÓN =============
+    // ELIMINAR CONFIGURACIÓN
     public void delete(int userId) {
         String sql = "DELETE FROM user_settings WHERE user_id = ?";
 
@@ -119,7 +118,7 @@ public class UserSettingsDAO {
         }
     }
 
-    //OBTENER TODAS LAS CONFIGURACIONES (ADMIN)
+    // OBTENER TODAS LAS CONFIGURACIONES (ADMIN)
     public List<UserSettings> getAll() {
         List<UserSettings> list = new ArrayList<>();
         String sql = "SELECT * FROM user_settings ORDER BY user_id";
@@ -138,7 +137,7 @@ public class UserSettingsDAO {
         return list;
     }
 
-    //VERIFICAR SI EXISTE CONFIGURACIÓN
+    // VERIFICAR SI EXISTE CONFIGURACIÓN
     public boolean exists(int userId) {
         String sql = "SELECT COUNT(*) FROM user_settings WHERE user_id = ?";
 
@@ -158,7 +157,7 @@ public class UserSettingsDAO {
         return false;
     }
 
-    //MAPPER
+    // MAPPER
     private UserSettings mapResultSet(ResultSet rs) throws SQLException {
         UserSettings settings = new UserSettings();
         settings.setUserId(rs.getInt("user_id"));

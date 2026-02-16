@@ -1,4 +1,4 @@
-package com.prioriza.test;
+package test;
 
 import com.prioriza.dao.DatabaseConnection;
 

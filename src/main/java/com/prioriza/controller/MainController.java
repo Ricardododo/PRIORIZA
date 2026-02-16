@@ -96,7 +96,7 @@ public class MainController {
     @FXML
     private MenuItem globalStatsMenuItem;
 
-    private UserSettings currentUserSettings; //esto es para mantener la config actual
+    private UserSettings currentUserSettings;
 
     //aplicar en los métodos
     public void aplicarReglasHeuristicas(){

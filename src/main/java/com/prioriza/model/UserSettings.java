@@ -9,7 +9,7 @@ public class UserSettings {
     private int maxAlertsPerDay;
     private int notificationHour; // 0-23
 
-    // Constructor vacío
+    // Constructor vacío JDBC
     public UserSettings() {}
 
     // Constructor con valores por defecto
@@ -21,6 +21,18 @@ public class UserSettings {
         this.alertOnlyWorkingDays = false;
         this.maxAlertsPerDay = 5;
         this.notificationHour = 9;
+    }
+    // Constructor completo
+    public UserSettings(int userId, boolean emailEnabled, int daysBeforeAlert,
+                        boolean alertForSubtasks, boolean alertOnlyWorkingDays,
+                        int maxAlertsPerDay, int notificationHour) {
+        this.userId = userId;
+        this.emailEnabled = emailEnabled;
+        this.daysBeforeAlert = daysBeforeAlert;
+        this.alertForSubtasks = alertForSubtasks;
+        this.alertOnlyWorkingDays = alertOnlyWorkingDays;
+        this.maxAlertsPerDay = maxAlertsPerDay;
+        this.notificationHour = notificationHour;
     }
 
     public int getUserId() { return userId; }
@@ -44,13 +56,49 @@ public class UserSettings {
     public int getNotificationHour() { return notificationHour; }
     public void setNotificationHour(int notificationHour) { this.notificationHour = notificationHour; }
 
+    //--------métodos útiles
+    //aplica configuración a un detector de notificaciones
+    public void applyToDetector() {
+        // Aquí puedes poner lógica para aplicar la configuración
+        System.out.println("Configuración aplicada: " + this);
+    }
+    //crear copia de esta configuración
+    public UserSettings copy() {
+        return new UserSettings(
+                userId, emailEnabled, daysBeforeAlert, alertForSubtasks,
+                alertOnlyWorkingDays, maxAlertsPerDay, notificationHour
+        );
+    }
+
+
     @Override
     public String toString() {
         return String.format(
                 "UserSettings[userId=%d, email=%b, days=%d, subtasks=%b, workingDays=%b, max=%d, hour=%d]",
                 userId, emailEnabled, daysBeforeAlert, alertForSubtasks,
-                alertOnlyWorkingDays, maxAlertsPerDay, notificationHour);
+                alertOnlyWorkingDays, maxAlertsPerDay, notificationHour
+        );
     }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserSettings that = (UserSettings) o;
+        return userId == that.userId &&
+                emailEnabled == that.emailEnabled &&
+                daysBeforeAlert == that.daysBeforeAlert &&
+                alertForSubtasks == that.alertForSubtasks &&
+                alertOnlyWorkingDays == that.alertOnlyWorkingDays &&
+                maxAlertsPerDay == that.maxAlertsPerDay &&
+                notificationHour == that.notificationHour;
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(userId, emailEnabled, daysBeforeAlert,
+                alertForSubtasks, alertOnlyWorkingDays, maxAlertsPerDay, notificationHour);
+    }
+
 }
 
 
