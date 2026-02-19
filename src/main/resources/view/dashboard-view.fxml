@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.geometry.Insets?>
+<BorderPane prefHeight="600.0" prefWidth="800.0"
+            styleClass="dashboard-root"
+            stylesheets="/css/dashboard.css"
+            xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.prioriza.controller.DashboardController">
+
+    <top>
+        <VBox spacing="10" styleClass="dashboard-header">
+            <Label text="Panel de Control" styleClass="dashboard-title" />
+            <Label fx:id="dateLabel" text="17/02/2026" styleClass="dashboard-date" />
+        </VBox>
+    </top>
+
+    <center>
+        <TabPane styleClass="dashboard-tab-pane">
+            <!-- TAB 1: RESUMEN DIARIO -->
+            <Tab text="Resumen Diario" closable="false">
+                <ScrollPane fitToWidth="true" styleClass="dashboard-scroll">
+                    <VBox spacing="20" styleClass="dashboard-content">
+
+                        <!-- TARJETA DE HOY -->
+                        <VBox styleClass="dashboard-card">
+                            <Label text="HOY" styleClass="card-title" />
+                            <Label fx:id="todayTasksLabel" text="Cargando..." styleClass="card-content" />
+                            <ListView fx:id="todayTasksList" prefHeight="150" styleClass="compact-list" />
+                        </VBox>
+
+                        <!-- TARJETA DE MAÑANA -->
+                        <VBox styleClass="dashboard-card">
+                            <Label text="MAÑANA" styleClass="card-title" />
+                            <Label fx:id="tomorrowTasksLabel" text="Cargando..." styleClass="card-content" />
+                            <ListView fx:id="tomorrowTasksList" prefHeight="150" styleClass="compact-list" />
+                        </VBox>
+
+                        <!-- TARJETA DE PRÓXIMOS 7 DÍAS -->
+                        <VBox styleClass="dashboard-card">
+                            <Label text="PRÓXIMOS 7 DÍAS" styleClass="card-title" />
+                            <Label fx:id="weekTasksLabel" text="Cargando..." styleClass="card-content" />
+                            <ListView fx:id="weekTasksList" prefHeight="200" styleClass="compact-list" />
+                        </VBox>
+
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+
+            <!-- TAB 2: GRÁFICOS Y ESTADÍSTICAS -->
+            <Tab fx:id="statsTab" text="Estadísticas" closable="false">
+                <ScrollPane fitToWidth="true" fitToHeight="true">
+                <VBox spacing="25" styleClass="dashboard-content" alignment="TOP_CENTER">
+
+                <!-- GRÁFICO DE PRIORIDADES -->
+                <VBox styleClass="dashboard-card" alignment="CENTER">
+                    <Label text="Distribución de Tareas por Prioridad" styleClass="card-title" />
+                    <PieChart fx:id="priorityChart" prefHeight="300" prefWidth="500" />
+                </VBox>
+
+                <!-- ESTADÍSTICAS NUMÉRICAS -->
+                <GridPane styleClass="stats-grid" hgap="20" vgap="15">
+                    <padding><Insets top="20" bottom="20" left="30" right="30"/></padding>
+
+                    <Label text="TOTAL TAREAS:" styleClass="stats-label" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                    <Label fx:id="totalTasksLabel" text="0" styleClass="stats-value" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                    <Label text="COMPLETADAS:" styleClass="stats-label" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                    <Label fx:id="completedTasksLabel" text="0" styleClass="stats-value" style="-fx-text-fill: #28a745;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                    <Label text="PENDIENTES:" styleClass="stats-label" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                    <Label fx:id="pendingTasksLabel" text="0" styleClass="stats-value" style="-fx-text-fill: #ffc107;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                    <Label text="URGENTES:" styleClass="stats-label" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                    <Label fx:id="urgentTasksLabel" text="0" styleClass="stats-value" style="-fx-text-fill: #dc3545; -fx-font-weight: bold;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                </GridPane>
+
+                </VBox>
+                </ScrollPane>
+            </Tab>
+
+            <!-- TAB 3: CALENDARIO (para el Día 3) -->
+            <Tab text="Calendario" closable="false" disable="true">
+                <Label text="Próximamente..." alignment="CENTER" />
+            </Tab>
+        </TabPane>
+    </center>
+
+    <bottom>
+        <HBox alignment="CENTER_RIGHT" spacing="10" styleClass="dashboard-footer">
+            <Button text="Cerrar" onAction="#handleClose" styleClass="dashboard-button" />
+        </HBox>
+    </bottom>
+
+</BorderPane>

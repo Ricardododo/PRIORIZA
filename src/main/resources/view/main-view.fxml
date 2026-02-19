@@ -71,8 +71,10 @@
                 <HBox alignment="CENTER_RIGHT" spacing="10" styleClass="user-box">
                     <Label styleClass="user-status" text="⬤" />
                     <Label fx:id="userLabel" styleClass="user-label" text="Usuario" />
+                    <Button onAction="#handleOpenDashboard" styleClass="dashboard-button" text="Panel" />
                     <Button onAction="#handleLogout" styleClass="logout-button" text="Cerrar sesión" />
                 </HBox>
+
 
             </HBox>
 

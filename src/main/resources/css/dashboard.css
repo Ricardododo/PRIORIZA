@@ -1,0 +1,184 @@
+/* ============= DASHBOARD ============= */
+.dashboard-root {
+    -fx-background-color: #f4f6f9;
+}
+
+/* HEADER */
+.dashboard-header {
+    -fx-background-color: white;
+    -fx-padding: 20 30;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 2);
+}
+
+.dashboard-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a2634;
+}
+
+.dashboard-date {
+    -fx-font-size: 14px;
+    -fx-text-fill: #6c757d;
+}
+
+/* CONTENIDO */
+.dashboard-content {
+    -fx-padding: 20;
+    -fx-spacing: 20;
+}
+
+/* CARDS */
+.dashboard-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.03), 8, 0, 0, 2);
+    -fx-border-color: #e9ecef;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+}
+
+.card-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 0 0 10 0;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #e9ecef;
+}
+
+.card-content {
+    -fx-font-size: 14px;
+    -fx-text-fill: #6c757d;
+    -fx-padding: 5 0;
+}
+
+/* LISTAS COMPACTAS */
+.compact-list {
+    -fx-background-color: transparent;
+    -fx-border-color: #e9ecef;
+    -fx-border-radius: 8;
+    -fx-padding: 5;
+}
+
+.compact-list .list-cell {
+    -fx-padding: 8 12;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.compact-list .list-cell:hover {
+    -fx-background-color: #f8f9fa;
+}
+
+/* TABS */
+.dashboard-tab-pane {
+    -fx-background-color: transparent;
+}
+
+.dashboard-tab-pane .tab-header-area {
+    -fx-padding: 10 20 0 20;
+}
+
+.dashboard-tab-pane .tab {
+    -fx-background-color: transparent;
+    -fx-background-radius: 8 8 0 0;
+    -fx-padding: 8 25;
+}
+
+.dashboard-tab-pane .tab:selected {
+    -fx-background-color: white;
+    -fx-border-color: #dee2e6 #dee2e6 transparent #dee2e6;
+    -fx-border-width: 1;
+}
+
+/* ============= NUEVOS ESTILOS PARA ESTADÍSTICAS ============= */
+
+/* GRÁFICO DE PRIORIDADES */
+.pie-chart {
+    -fx-pie-label-visible: true;
+    -fx-label-line-length: 10;
+    -fx-start-angle: 90;
+}
+
+/* COLORES PERSONALIZADOS PARA EL GRÁFICO */
+.pie-chart-data {
+    -fx-background-color: #dc3545;  /* URGENTE - Rojo */
+}
+.pie-chart-data.data1 {
+    -fx-background-color: #fd7e14;  /* ALTA - Naranja */
+}
+.pie-chart-data.data2 {
+    -fx-background-color: #ffc107;  /* MEDIA - Amarillo */
+}
+.pie-chart-data.data3 {
+    -fx-background-color: #6c757d;  /* BAJA - Gris */
+}
+
+/* LEYENDA DEL GRÁFICO */
+.chart-legend {
+    -fx-background-color: transparent;
+    -fx-padding: 10;
+}
+
+.chart-legend-item {
+    -fx-text-fill: #2c3e50;
+    -fx-font-size: 12px;
+}
+
+/* GRID DE ESTADÍSTICAS */
+.stats-grid {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-color: #e9ecef;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+}
+
+.stats-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #495057;
+}
+
+.stats-value {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #212529;
+}
+
+/* FOOTER */
+.dashboard-footer {
+    -fx-background-color: white;
+    -fx-padding: 15 30;
+    -fx-border-width: 1 0 0 0;
+    -fx-border-color: #e9ecef;
+}
+
+/* BOTONES */
+.dashboard-button {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-padding: 8 20;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+
+.dashboard-button:hover {
+    -fx-background-color: #5a6268;
+}
+
+/* EN LA BARRA SUPERIOR */
+.dashboard-button-small {
+    -fx-background-color: #28a745;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-padding: 5 15;
+    -fx-background-radius: 20;
+    -fx-cursor: hand;
+}
+
+.dashboard-button-small:hover {
+    -fx-background-color: #218838;
+}

@@ -33,6 +33,10 @@ public class TaskService {
     public Task getById(int id) throws SQLException{
         return taskDAO.getById(id);
     }
+    //metodo para el dashboard
+    public List<Task> getTasksByUserId(int userId) throws SQLException {
+        return taskDAO.getByUserId(userId);
+    }
 
     //listar tareas por lista
     public List<Task> getByTasksListId(int taskListId) throws SQLException{

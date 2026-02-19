@@ -1924,6 +1924,25 @@ public class MainController {
 
         return summary;
     }
+    //Abre el panel de control (dashboard)
+    @FXML
+    private void handleOpenDashboard() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/view/dashboard-view.fxml")
+            );
+
+            Stage stage = new Stage();
+            stage.setTitle("Panel de Control - PRIORIZA");
+            stage.setScene(new Scene(loader.load()));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.show();
+
+        } catch (Exception e) {
+            AlertUtil.showError("Error", "No se pudo abrir el panel de control");
+            e.printStackTrace();
+        }
+    }
 
     //color segun proioridad
     private String getPriorityColor(Priority priority) {
