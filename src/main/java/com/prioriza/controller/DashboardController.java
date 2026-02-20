@@ -12,15 +12,16 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.PieChart;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Tab;
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class DashboardController {
@@ -28,6 +29,8 @@ public class DashboardController {
     //Servicios
     private final TaskService taskService = new TaskService();
     private final SubTaskService subTaskService = new SubTaskService();
+
+    @FXML private TabPane tabPane;
 
     //Elementos FXML - Resumen diario
     @FXML private Label dateLabel;
@@ -46,7 +49,20 @@ public class DashboardController {
     @FXML private Label urgentTasksLabel;
     @FXML private Tab statsTab;  // Para habilitar la pestaña
 
+    //Elementos FXML - Calendario
+    @FXML private Tab calendarTab;
+    @FXML private GridPane calendarGrid;
+    @FXML private Label monthYearLabel;
+    @FXML private Button prevMonthButton;
+    @FXML private Button nextMonthButton;
+    @FXML private ListView<Task> selectedDayTasksList;
+    @FXML private Label selectedDayLabel;
+    @FXML private Label selectedDayCountLabel;
+
     private User currentUser;
+    private YearMonth  currentYearMonth;
+    private Map<LocalDate, List<Task>> tasksByDate;
+    private LocalDate selectedDate;
 
     //Initialize
     @FXML
@@ -57,21 +73,36 @@ public class DashboardController {
             AlertUtil.showError("Error", "No hay usuario autenticado");
             return;
         }
-        //2. Mostrar fecha con formato bonito
-        dateLabel.setText(LocalDate.now()
-                .format(DateTimeFormatter.ofPattern("EEEE, dd 'de ' MMMM 'de' yyyy")));
+        //2. Mostrar fecha con formato bonito y fecha actual
+        dateLabel.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("EEEE, dd 'de' MMMM 'de' yyyy")));
 
-        //3. Configurar cómo se ven las tareas en las listas
+        // Configurar las celdas de las listas
         configureListCells();
 
-        //4. cargar datos reales
+        // Cargar datos
         loadDashboardData();
 
-        //5. cargar estadísticas
+        // Cargar estadísticas
         loadStatistics();
 
-        //6. Habilitar la pestaña de estadística
+        // Inicializar calendario
+        initializeCalendar();
+
+        // Habilitar pestañas
         statsTab.setDisable(false);
+        calendarTab.setDisable(false);
+    }
+
+    //Selecciona una pestaña específica al abrir el dashboard
+    //@param index Índice de la pestaña (0: Resumen, 1: Estadísticas, 2: Calendario)
+
+    public void selectTab(int index) {
+        if (tabPane != null && index >= 0 && index < tabPane.getTabs().size()) {
+            tabPane.getSelectionModel().select(index);
+            System.out.println("Pestaña seleccionada: " + index);
+        } else {
+            System.err.println("Error: No se pudo seleccionar la pestaña " + index);
+        }
     }
 
     private void loadDashboardData() {
@@ -171,8 +202,8 @@ public class DashboardController {
             });
         }
     }
-    // Métodos para Estadísticas
-    //Cargar las estadisticas y el gráfico de prioridades
+    // ============= MÉTODOS PARA Estadísticas =============
+
     private void loadStatistics() {
         try {
             List<Task> allTasks = taskService.getTasksByUserId(currentUser.getId());
@@ -233,7 +264,158 @@ public class DashboardController {
             e.printStackTrace();
         }
     }
+    // ============= MÉTODOS PARA Calendario =============
 
+    private void initializeCalendar() {
+        currentYearMonth = YearMonth.now();
+        tasksByDate = loadTasksByDate();
+        selectedDate = LocalDate.now();
+
+        updateCalendarHeader();
+        buildCalendar();
+
+        // Configurar botones de navegación
+        prevMonthButton.setOnAction(e -> navigateMonth(-1));
+        nextMonthButton.setOnAction(e -> navigateMonth(1));
+    }
+
+    private Map<LocalDate, List<Task>> loadTasksByDate() {
+        try {
+            List<Task> allTasks = taskService.getTasksByUserId(currentUser.getId());
+
+            return allTasks.stream()
+                    .filter(t -> t.getDueDateTime() != null)
+                    .filter(t -> t.getStatus() != TaskStatus.COMPLETA)
+                    .collect(Collectors.groupingBy(
+                            t -> t.getDueDateTime().toLocalDate()
+                    ));
+        } catch (Exception e) {
+            AlertUtil.showError("Error", "No se pudieron cargar las tareas para el calendario");
+            e.printStackTrace();
+            return Map.of();
+        }
+    }
+
+    private void updateCalendarHeader() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy");
+        monthYearLabel.setText(currentYearMonth.format(formatter));
+    }
+
+    private void navigateMonth(int delta) {
+        currentYearMonth = currentYearMonth.plusMonths(delta);
+        updateCalendarHeader();
+        buildCalendar();
+    }
+
+    private void buildCalendar() {
+        calendarGrid.getChildren().clear();
+
+        // Días de la semana
+        String[] dayNames = {"Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"};
+        for (int i = 0; i < 7; i++) {
+            Label dayLabel = new Label(dayNames[i]);
+            dayLabel.getStyleClass().add("calendar-weekday");
+            calendarGrid.add(dayLabel, i, 0);
+        }
+
+        LocalDate firstOfMonth = currentYearMonth.atDay(1);
+        int dayOfWeek = firstOfMonth.getDayOfWeek().getValue() - 1; // 0 = Lunes
+
+        int daysInMonth = currentYearMonth.lengthOfMonth();
+        LocalDate today = LocalDate.now();
+
+        // Rellenar días del mes
+        for (int day = 1; day <= daysInMonth; day++) {
+            LocalDate date = currentYearMonth.atDay(day);
+            int row = (day + dayOfWeek - 1) / 7 + 1;
+            int col = (day + dayOfWeek - 1) % 7;
+
+            VBox dayCell = createDayCell(date, today);
+            calendarGrid.add(dayCell, col, row);
+        }
+    }
+
+    private VBox createDayCell(LocalDate date, LocalDate today) {
+        VBox cell = new VBox(5);
+        cell.getStyleClass().add("calendar-cell");
+        cell.setPrefHeight(80);
+        cell.setPrefWidth(100);
+
+        // Número del día
+        Label dayNumber = new Label(String.valueOf(date.getDayOfMonth()));
+        dayNumber.getStyleClass().add("calendar-day-number");
+
+        // Marcador si es hoy
+        if (date.equals(today)) {
+            cell.getStyleClass().add("calendar-cell-today");
+        }
+
+        // Tareas del día
+        List<Task> dayTasks = tasksByDate.getOrDefault(date, List.of());
+        long urgentCount = dayTasks.stream()
+                .filter(t -> t.getPriority() == Priority.URGENTE)
+                .count();
+
+        if (!dayTasks.isEmpty()) {
+            // Indicador de tareas
+            Label tasksIndicator = new Label(dayTasks.size() + " tareas");
+            tasksIndicator.getStyleClass().add("calendar-tasks-indicator");
+
+            if (urgentCount > 0) {
+                tasksIndicator.setStyle("-fx-background-color: #dc3545;");
+                cell.getStyleClass().add("calendar-cell-urgent");
+            } else {
+                tasksIndicator.setStyle("-fx-background-color: #ffc107;");
+                cell.getStyleClass().add("calendar-cell-has-tasks");
+            }
+
+            cell.getChildren().addAll(dayNumber, tasksIndicator);
+
+            // Tooltip con detalles
+            Tooltip tooltip = new Tooltip();
+            tooltip.setText(buildTooltipText(date, dayTasks));
+            Tooltip.install(cell, tooltip);
+        } else {
+            cell.getChildren().add(dayNumber);
+        }
+
+        // Evento de clic para ver tareas del día
+        cell.setOnMouseClicked(e -> showDayTasks(date, dayTasks));
+
+        return cell;
+    }
+
+    private String buildTooltipText(LocalDate date, List<Task> tasks) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))).append("\n");
+        sb.append("Tareas: ").append(tasks.size()).append("\n");
+
+        long urgent = tasks.stream().filter(t -> t.getPriority() == Priority.URGENTE).count();
+        if (urgent > 0) {
+            sb.append("URGENTES: ").append(urgent).append("\n");
+        }
+
+        sb.append("\n");
+        for (Task task : tasks) {
+            sb.append("• ").append(task.getTitle());
+            if (task.getPriority() == Priority.URGENTE) {
+                sb.append(" [URGENTE]");
+            }
+            sb.append("\n");
+        }
+
+        return sb.toString();
+    }
+
+    private void showDayTasks(LocalDate date, List<Task> tasks) {
+        selectedDate = date;
+        selectedDayLabel.setText("Tareas del " +
+                date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        selectedDayCountLabel.setText(tasks.size() + " tareas");
+
+        ObservableList<Task> taskList = FXCollections.observableArrayList(tasks);
+        selectedDayTasksList.setItems(taskList);
+    }
 
     @FXML
     private void handleClose() {

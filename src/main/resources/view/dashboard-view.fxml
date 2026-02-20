@@ -5,6 +5,7 @@
 
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.shape.Rectangle?>
 <BorderPane prefHeight="600.0" prefWidth="800.0"
             styleClass="dashboard-root"
             stylesheets="/css/dashboard.css"
@@ -20,7 +21,7 @@
     </top>
 
     <center>
-        <TabPane styleClass="dashboard-tab-pane">
+        <TabPane fx:id="tabPane" styleClass="dashboard-tab-pane">
             <!-- TAB 1: RESUMEN DIARIO -->
             <Tab text="Resumen Diario" closable="false">
                 <ScrollPane fitToWidth="true" styleClass="dashboard-scroll">
@@ -83,9 +84,48 @@
                 </ScrollPane>
             </Tab>
 
-            <!-- TAB 3: CALENDARIO (para el Día 3) -->
-            <Tab text="Calendario" closable="false" disable="true">
-                <Label text="Próximamente..." alignment="CENTER" />
+            <!-- TAB 3: CALENDARIO -->
+            <Tab fx:id="calendarTab" text="Calendario" closable="false">
+                <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="calendar-scroll-pane">
+
+                    <!-- Parte superior: Calendario -->
+                    <VBox spacing="10" styleClass="calendar-container">
+                        <HBox>
+                            <Button fx:id="prevMonthButton" text="◀" styleClass="calendar-nav-button"/>
+                            <Label fx:id="monthYearLabel" text="Febrero 2026" styleClass="calendar-month-year"/>
+                            <Button fx:id="nextMonthButton" text="▶" styleClass="calendar-nav-button"/>
+                        </HBox>
+                        <GridPane fx:id="calendarGrid" styleClass="calendar-grid"
+                                  hgap="5" vgap="5" alignment="CENTER">
+                            <!-- Se llena dinámicamente desde el controlador -->
+                        </GridPane>
+
+                    <!-- Leyenda -->
+                    <HBox spacing="20" alignment="CENTER" styleClass="calendar-legend">
+                        <HBox spacing="5" alignment="CENTER">
+                            <Rectangle width="15" height="15" styleClass="legend-today" />
+                            <Label text="Hoy" styleClass="legend-label" />
+                        </HBox>
+                        <HBox spacing="5" alignment="CENTER">
+                            <Rectangle width="15" height="15" styleClass="legend-has-tasks" />
+                            <Label text="Con tareas" styleClass="legend-label" />
+                        </HBox>
+                        <HBox spacing="5" alignment="CENTER">
+                            <Rectangle width="15" height="15" styleClass="legend-urgent" />
+                            <Label text="Con urgentes" styleClass="legend-label" />
+                        </HBox>
+                    </HBox>
+
+                        <!-- Parte inferior: Tareas del día seleccionado -->
+                        <VBox spacing="10" styleClass="calendar-day-tasks">
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label fx:id="selectedDayLabel" text="Selecciona un día" styleClass="calendar-day-title" />
+                                <Label fx:id="selectedDayCountLabel" text="" styleClass="calendar-day-count" />
+                            </HBox>
+                            <ListView fx:id="selectedDayTasksList" prefHeight="150" styleClass="compact-list" />
+                        </VBox>
+                    </VBox>
+                </ScrollPane>
             </Tab>
         </TabPane>
     </center>

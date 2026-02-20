@@ -45,7 +45,12 @@
                         <MenuItem text="Tarea seleccionada" onAction="#handleShareTask"/>
                         <MenuItem text="Subtarea seleccionada" onAction="#handleShareSubtask"/>
                     </Menu>
-
+                </Menu>
+                <!-- PANEL DE CONTROL - INDIVIDUAL -->
+                <Menu text="Panel de control">
+                    <MenuItem text="Resumen diario" onAction="#handleOpenResumenDiario"/>
+                    <MenuItem text="Estadísticas" onAction="#handleOpenEstadisticas"/>
+                    <MenuItem text="Calendario" onAction="#handleOpenCalendario"/>
                 </Menu>
             </MenuBar>
 
@@ -71,7 +76,6 @@
                 <HBox alignment="CENTER_RIGHT" spacing="10" styleClass="user-box">
                     <Label styleClass="user-status" text="⬤" />
                     <Label fx:id="userLabel" styleClass="user-label" text="Usuario" />
-                    <Button onAction="#handleOpenDashboard" styleClass="dashboard-button" text="Panel" />
                     <Button onAction="#handleLogout" styleClass="logout-button" text="Cerrar sesión" />
                 </HBox>
 

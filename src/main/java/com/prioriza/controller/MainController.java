@@ -42,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -64,6 +65,7 @@ public class MainController {
     private final EmailNotificationDAO emailNotificationDAO = new EmailNotificationDAO();
     private final PDFExportService pdfService = new PDFExportService();
     private final ShareService shareService = new ShareService();
+
 
 
     @FXML
@@ -1926,8 +1928,11 @@ public class MainController {
     }
     //Abre el panel de control (dashboard)
     @FXML
-    private void handleOpenDashboard() {
+    private void handleOpenDashboard(ActionEvent event) {
         try {
+            MenuItem menuItem = (MenuItem) event.getSource();
+            String tabName = menuItem.getText();
+
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/view/dashboard-view.fxml")
             );
@@ -1935,6 +1940,72 @@ public class MainController {
             Stage stage = new Stage();
             stage.setTitle("Panel de Control - PRIORIZA");
             stage.setScene(new Scene(loader.load()));
+
+
+            DashboardController controller = loader.getController();
+
+            // Seleccionar la pestaña correspondiente
+            switch (tabName) {
+                case "Resumen diario":
+                    controller.selectTab(0); // Primera pestaña
+                    break;
+                case "Estadísticas":
+                    controller.selectTab(1); // Segunda pestaña
+                    break;
+                case "Calendario":
+                    controller.selectTab(2); // Tercera pestaña
+                    break;
+            }
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.show();
+
+        } catch (Exception e) {
+            AlertUtil.showError("Error", "No se pudo abrir el panel de control");
+            e.printStackTrace();
+        }
+    }
+    // ============= MÉTODOS PARA EL PANEL DE CONTROL =============
+
+    //Abre el panel de control en la pestaña de Resumen Diario
+
+    @FXML
+    private void handleOpenResumenDiario() {
+        openDashboardTab(0, "Resumen Diario");
+    }
+
+    //Abre el panel de control en la pestaña de Estadísticas
+
+    @FXML
+    private void handleOpenEstadisticas() {
+        openDashboardTab(1, "Estadísticas");
+    }
+
+    //Abre el panel de control en la pestaña de Calendario
+
+    @FXML
+    private void handleOpenCalendario() {
+        openDashboardTab(2, "Calendario");
+    }
+
+    /*Metodo auxiliar para abrir el dashboard en una pestaña específica
+     parametro tabIndex Índice de la pestaña (0, 1, 2)
+     parametro tabName Nombre de la pestaña (para logging)*/
+
+    private void openDashboardTab(int tabIndex, String tabName) {
+        try {
+            System.out.println("Abriendo panel de control - Pestaña: " + tabName);
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/view/dashboard-view.fxml")
+            );
+
+            Stage stage = new Stage();
+            stage.setTitle("Panel de Control - PRIORIZA");
+            stage.setScene(new Scene(loader.load()));
+
+            DashboardController controller = loader.getController();
+            controller.selectTab(tabIndex);
+
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.show();
 
