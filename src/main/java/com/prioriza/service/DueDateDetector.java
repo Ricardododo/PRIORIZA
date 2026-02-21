@@ -4,6 +4,7 @@ import com.prioriza.config.NotificationConfig;
 import com.prioriza.dao.*;
 import com.prioriza.model.*;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -20,7 +21,7 @@ public class DueDateDetector {
     private static final int[] ALERT_DAYS = NotificationConfig.ALERT_DAYS;
 
     //Escanea TODOS los usuarios
-    public void scanAllUsers() {
+    public void scanAllUsers() throws SQLException {
         // Verificar si está en horario laboral
         if (!NotificationConfig.isWorkingHours() && !NotificationConfig.DEV_MODE) {
             System.out.println("[" + java.time.LocalTime.now() +
@@ -75,11 +76,14 @@ public class DueDateDetector {
         UserSettings settings = settingsDAO.getByUserId(user.getId());
 
         if (!settings.isEmailEnabled()) {
+            System.out.println("Usuario " + user.getEmail() + " tiene emails deshabilitados");
             return 0; // Usuario no quiere notificaciones
         }
 
         List<Task> tasks = taskDAO.getByUserId(user.getId());
         LocalDate today = LocalDate.now();
+
+        System.out.println("Analizando " + tasks.size() + " tareas para " + user.getEmail());
 
         for (Task task : tasks) {
             if (task.getDueDateTime() == null) continue;
@@ -87,31 +91,39 @@ public class DueDateDetector {
                     task.getStatus() == TaskStatus.CANCELADA) continue;
 
             long daysUntilDue = ChronoUnit.DAYS.between(today, task.getDueDateTime());
+            System.out.println("Días hasta vencimiento: " + daysUntilDue);
 
             // Verificar si está en los días de alerta
+            boolean alertDayMatch = false;
             for (int alertDay : ALERT_DAYS) {
                 if (daysUntilDue == alertDay) {
-                    if (!notificationDAO.hasBeenNotifiedToday(task.getId(), alertDay)) {
+                    alertDayMatch = true;
+                    System.out.println("Coincide con día de alerta: " + alertDay);
 
-                        //USAR CONFIGURACIÓN DEL USUARIO
+                    if (notificationDAO.hasBeenNotifiedToday(task.getId(), alertDay)) {
+                        System.out.println("Ya notificado hoy - ignorada");
+                    } else {
                         int todayCount = notificationDAO.getTodayCount(user.getId());
-                        if (todayCount < settings.getMaxAlertsPerDay()) {
+                        System.out.println("Notificaciones hoy: " + todayCount + "/" + settings.getMaxAlertsPerDay());
 
+                        if (todayCount < settings.getMaxAlertsPerDay()) {
                             EmailNotification notification =
                                     new EmailNotification(user, task, alertDay);
                             notificationDAO.insert(notification);
                             count++;
                             stats.registerNotification();
-
-                            if (NotificationConfig.DEV_MODE) {
-                                System.out.println("Notificación creada: " +
-                                        user.getEmail() + " - " +
-                                        task.getTitle() + " (" + alertDay + " días)");
-                            }
+                            System.out.println("NOTIFICACIÓN CREADA");
+                        } else {
+                            System.out.println("Límite diario alcanzado");
                         }
                     }
                     break;
                 }
+            }
+
+            if (!alertDayMatch) {
+                System.out.println("No coincide con días de alerta: " +
+                        java.util.Arrays.toString(ALERT_DAYS));
             }
         }
         return count;

@@ -73,7 +73,7 @@ public class EmailNotificationDAO {
     //Marcar como enviado
     public void markAsSent(int id){
         String sql = """
-                UPDATE email_notifications SET status = 'SENT', sent_at = CURRENT_TIMESTAMP 
+                UPDATE email_notifications SET status = 'SENT', sent_at = CURRENT_TIMESTAMP
                 WHERE id = ?
                 """;
         try(Connection conn = DatabaseConnection.getConnection();
@@ -89,10 +89,7 @@ public class EmailNotificationDAO {
 
     //Marcar como envio-fallido
     public void markAsFailed(int id, String error){
-        String sql = """
-                UPDATE email_notificacions SET status = 'FAILED', error_message = ? 
-                WHERE id = ?
-                """;
+        String sql = "UPDATE email_notifications SET status = 'FAILED', error_message = ? WHERE id = ?";
         try(Connection conn = DatabaseConnection.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql)){
 
@@ -120,8 +117,11 @@ public class EmailNotificationDAO {
             ps.setInt(2, daysRemaining);
             ResultSet rs = ps.executeQuery();
 
-            if(rs.next()){
-                return rs.getInt(1) > 0;
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                System.out.println("Notificaciones hoy para tarea " + taskId +
+                        " (días=" + daysRemaining + "): " + count);
+                return count > 0;
             }
 
         } catch (Exception e) {
@@ -227,7 +227,7 @@ public class EmailNotificationDAO {
         n.setUserId(rs.getInt("user_id"));
         n.setUserEmail(rs.getString("user_email"));
         n.setTaskId((Integer) rs.getObject("task_id"));
-        n.setSubtaskId((Integer) rs.getObject("subtask.id"));
+        n.setSubtaskId((Integer) rs.getObject("subtask_id"));
         n.setItemType(rs.getString("item_type"));
         n.setItemTitle(rs.getString("item_title"));
         n.setDueDateTime(LocalDateTime.parse(rs.getString("due_date")));

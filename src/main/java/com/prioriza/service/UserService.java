@@ -4,6 +4,7 @@ import com.prioriza.dao.UserDAO;
 import com.prioriza.model.User;
 import com.prioriza.model.UserRole;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class UserService {
@@ -56,7 +57,7 @@ public class UserService {
         return userDAO.getByEmail(email);
     }
 
-    public List<User> getAllUsers() {
+    public List<User> getAllUsers() throws SQLException {
         return userDAO.getAllUsers();
     }
 

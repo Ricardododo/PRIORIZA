@@ -1,6 +1,7 @@
 package com.prioriza.controller;
 
 import com.prioriza.model.User;
+import com.prioriza.model.UserRole;
 import com.prioriza.service.TaskListService;
 import com.prioriza.service.UserService;
 import com.prioriza.session.Session;
@@ -56,7 +57,6 @@ public class LoginController {
     @FXML
     private void handleLogin() {
 
-
         String email = emailField.getText();
         String password = passField.getText();
 
@@ -69,13 +69,33 @@ public class LoginController {
         }
 
         try{
+            System.out.println("\n" + "=".repeat(60));
+            System.out.println("INTENTO DE LOGIN");
+            System.out.println("Email: " + email);
+            System.out.println("Password: " + "*".repeat(password.length()));
             User user = userService.login(email.trim(), password);
 
             if(user == null){
+                System.out.println("LOGIN FALLIDO: Usuario no encontrado o contraseña incorrecta");
                 AlertUtil.showError("Error", "Email o contraseña incorrectos.");
                 passField.clear();
                 return;
             }
+            // Mostrar información del usuario
+            System.out.println("LOGIN EXITOSO");
+            System.out.println("ID: " + user.getId());
+            System.out.println("Nombre: " + user.getName());
+            System.out.println("Email: " + user.getEmail());
+            System.out.println("Rol: " + user.getRole());
+
+            // Verificar si es ADMIN
+            if (user.getRole() == UserRole.ADMIN) {
+                System.out.println("ACCESO COMO ADMINISTRADOR");
+            } else {
+                System.out.println("ACCESO COMO USUARIO NORMAL");
+            }
+
+            System.out.println("=".repeat(60) + "\n");
 
             //guardar sesión
             Session.setUser(user);
@@ -100,6 +120,7 @@ public class LoginController {
             stage.centerOnScreen();
 
         } catch (Exception e) {
+            System.err.println("ERROR DURANTE EL LOGIN:");
             AlertUtil.showError("Error", "Error al intentar iniciar sesión.\nInténtalo de nuevo.");
             e.printStackTrace();
         }

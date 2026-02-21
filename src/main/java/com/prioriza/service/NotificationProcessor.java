@@ -4,6 +4,7 @@ import com.prioriza.config.NotificationConfig;
 import com.prioriza.dao.EmailNotificationDAO;
 import com.prioriza.model.EmailNotification;
 
+import java.sql.SQLException;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -136,7 +137,7 @@ public class NotificationProcessor {
 
     //Escaneo manual inmediato
 
-    public void scanNow() {
+    public void scanNow() throws SQLException {
         System.out.println("\nEscaneo manual...");
         detector.scanAllUsers();
     }

@@ -91,4 +91,9 @@ public class NotificationStats {
                         (totalEmailsSent.get() * 100.0) / (totalEmailsSent.get() + totalEmailsFailed.get()) : 0
         );
     }
+    public void resetScansToday() {
+        this.scansToday = 0;
+        this.lastScanDate = LocalDate.now();
+        System.out.println("Contador de escaneos diarios reseteado");
+    }
 }

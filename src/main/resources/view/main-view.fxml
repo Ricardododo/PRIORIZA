@@ -24,6 +24,7 @@
                 <!-- MENÚ SOLO ADMIN - CON fx:id -->
                 <Menu fx:id="adminMenu" text="Admin">
                     <MenuItem fx:id="scanNowMenuItem" text="Escaneo manual" onAction="#handleScanNow"/>
+                    <MenuItem text="Resetear contador" onAction="#handleResetScanCounter"/>
                     <MenuItem fx:id="sendNowMenuItem" text="Envío forzado" onAction="#handleSendNow"/>
                     <MenuItem fx:id="testNotificationsMenuItem" text="Probar sistema" onAction="#handleTestNotifications"/>
                     <SeparatorMenuItem />

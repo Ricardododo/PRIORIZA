@@ -46,6 +46,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -57,6 +58,8 @@ import java.util.stream.Collectors;
 public class MainController {
 
     private static final Logger logger = LoggerFactory.getLogger(MainController.class);
+
+    private final UserService userService = new UserService();
 
     private final TaskListService taskListService = new TaskListService();
     private final SubTaskService subTaskService = new SubTaskService();
@@ -217,10 +220,27 @@ public class MainController {
 
         boolean isAdmin = currentUser.getRole() == UserRole.ADMIN;
 
+        System.out.println("=".repeat(60));
+        System.out.println("CONFIGURANDO MENÚ POR ROL");
+        System.out.println("Usuario: " + currentUser.getName());
+        System.out.println("Rol: " + currentUser.getRole());
+        System.out.println("isAdmin: " + isAdmin);
+
         // Mostrar/ocultar menú de administración
         if (adminMenu != null) {
             adminMenu.setVisible(isAdmin);
+            System.out.println("  adminMenu visible: " + isAdmin);
         }
+        MenuItem[] adminItems = {scanNowMenuItem, sendNowMenuItem,
+                testNotificationsMenuItem, globalStatsMenuItem};
+
+        for (MenuItem item : adminItems) {
+            if (item != null) {
+                item.setVisible(isAdmin);
+                System.out.println("  " + item.getText() + " visible: " + isAdmin);
+            }
+        }
+        System.out.println("=".repeat(60));
 
         // También podemos ocultar items individuales
         if (scanNowMenuItem != null) {
@@ -251,7 +271,45 @@ public class MainController {
             AlertUtil.showError("Error", "No tienes permisos para esta acción");
             return;
         }
-        AlertUtil.showInfo("Información", "Estadísticas globales - Próximamente");
+        try {
+            // Obtener todos los usuarios
+            List<User> allUsers = userService.getAllUsers();
+
+            StringBuilder stats = new StringBuilder();
+            stats.append("ESTADÍSTICAS GLOBALES\n");
+            stats.append("═══════════════════════\n\n");
+
+            int totalUsers = allUsers.size();
+            int totalAdmins = 0;
+            int totalTasks = 0;
+            int totalLists = 0;
+
+            for (User user : allUsers) {
+                if (user.getRole() == UserRole.ADMIN) totalAdmins++;
+
+                List<TaskList> lists = taskListService.getListsByUserId(user.getId());
+                totalLists += lists.size();
+
+                List<Task> tasks = taskService.getTasksByUserId(user.getId());
+                totalTasks += tasks.size();
+            }
+
+            stats.append("Usuarios totales: ").append(totalUsers).append("\n");
+            stats.append("Administradores: ").append(totalAdmins).append("\n");
+            stats.append("Usuarios normales: ").append(totalUsers - totalAdmins).append("\n");
+            stats.append("Listas totales: ").append(totalLists).append("\n");
+            stats.append("Tareas totales: ").append(totalTasks).append("\n");
+
+            // Estadísticas de notificaciones
+            NotificationStats notifStats = NotificationStats.getInstance();
+            stats.append("\n").append(notifStats.getReport());
+
+            AlertUtil.showInfo("Estadísticas Globales", stats.toString());
+
+        } catch (Exception e) {
+            AlertUtil.showError("Error", "Error cargando estadísticas: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     //Verificar si es admin
@@ -337,6 +395,8 @@ public class MainController {
             return;
         }
         try {
+            System.out.println("\nESCANEO MANUAL INICIADO POR ADMIN");
+
             NotificationProcessor processor = new NotificationProcessor();
 
             Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
@@ -346,7 +406,11 @@ public class MainController {
 
             confirm.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
-                    processor.scanNow();
+                    try {
+                        processor.scanNow();
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
                     AlertUtil.showInfo("Información", "Escaneo completado.\nRevisa la consola para ver los resultados.");
                 }
             });
@@ -364,6 +428,8 @@ public class MainController {
             return;
         }
         try {
+            System.out.println("\nENVÍO FORZADO INICIADO POR ADMIN");
+
             NotificationProcessor processor = new NotificationProcessor();
 
             Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
@@ -404,7 +470,11 @@ public class MainController {
 
             confirm.showAndWait().ifPresent(response -> {
                 if (response == btnScan) {
-                    processor.scanNow();
+                    try {
+                        processor.scanNow();
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
                     AlertUtil.showInfo("Información", "Escaneo completado. Revisa la consola.");
                 } else if (response == btnSend) {
                     processor.sendNow();
@@ -419,6 +489,19 @@ public class MainController {
             e.printStackTrace();
         }
     }
+    @FXML
+    private void handleResetScanCounter() {
+        if (!isAdmin()) {
+            AlertUtil.showError("Error", "No tienes permisos para esta acción");
+            return;
+        }
+
+        NotificationStats stats = NotificationStats.getInstance();
+        stats.resetScansToday();  // ← Necesitas crear este método
+
+        AlertUtil.showInfo("Información", "Contador de escaneos reseteado");
+    }
+
     //metodo para controlar el popup (+ Nueva Lista)
     @FXML
     private void handleNewList(){
@@ -1120,7 +1203,7 @@ public class MainController {
         // Días de anticipación
         grid.add(new Label("Días antes de vencer:"), 0, 1);
         ComboBox<Integer> daysBox = new ComboBox<>();
-        daysBox.getItems().addAll(1, 2, 3, 5, 7);
+        daysBox.getItems().addAll(0, 1, 2, 3, 5, 7);
         daysBox.setValue(currentSettings.getDaysBeforeAlert());
         grid.add(daysBox, 1, 1);
 
@@ -1260,7 +1343,7 @@ public class MainController {
         }
 
         try {
-            // ✅ USAR SubTaskService en lugar de subTaskDAO
+            // USAR SubTaskService en lugar de subTaskDAO
             List<SubTask> subtasks = subTaskService.getSubTasksByTaskId(selectedTask.getId());
             selectedTask.setSubTasks(subtasks);
 

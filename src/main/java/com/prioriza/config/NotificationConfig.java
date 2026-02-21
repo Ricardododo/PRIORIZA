@@ -12,12 +12,12 @@ public class NotificationConfig {
     public static final int SEND_INTERVAL_MINUTES = 15; //cada 15 minutos
 
     //Límites
-    public static final int MAX_SCANS_PER_DAY = 6; //Máximo 6 escaneos/día
+    public static final int MAX_SCANS_PER_DAY = 100; //Máximo 100 escaneos/día
     public static final int MAX_EMAILS_PER_SCAN = 50; //Máx 50 emails por envío
     public static final int MAX_EMAILS_PER_DAY = 300; //Máx 300 email/día
 
     //días de alerta
-    public static final int[] ALERT_DAYS = {1, 2, 3, 5, 7}; //Días antes de vencer
+    public static final int[] ALERT_DAYS = {0, 1, 2, 3, 5, 7}; //Días antes de vencer
 
     //modo desarrollo
     public static final boolean DEV_MODE = true; //para producción sería false
