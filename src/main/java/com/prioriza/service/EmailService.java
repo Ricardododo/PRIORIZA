@@ -10,7 +10,7 @@ import java.util.Properties;
 
 public class EmailService {
 
-    // ============= CONFIGURACIÓN CORRECTA PARA GMAIL =============
+    // Configuración para Gmail
     private static final String SMTP_HOST = "smtp.gmail.com";  // ← dominio
     private static final String SMTP_PORT = "587";
     private static final String USERNAME = "ricardodevelop85@gmail.com";     // ← EMAIL

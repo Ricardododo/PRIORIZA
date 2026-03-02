@@ -39,7 +39,7 @@ public class NotificationProcessor {
 
         //TAREA 1: Escaneo programado
         if (NotificationConfig.DEV_MODE) {
-            // MODO DESARROLLO - Escaneos rápidos para prueba
+            // Escaneos rápidos para prueba y desarrollo
             scheduler.scheduleAtFixedRate(() -> {
                 try {
                     detector.scanAllUsers();
@@ -47,11 +47,9 @@ public class NotificationProcessor {
                     System.err.println("Error en escaneo: " + e.getMessage());
                 }
             }, 0, 30, TimeUnit.SECONDS); // ¡CADA 30 SEGUNDOS para pruebas!
-
             System.out.println("MODO DESARROLLO: Escaneo cada 30 segundos");
-
         } else {
-            // MODO PRODUCCIÓN - Horario inteligente
+            // para PRODUCCIÓN - Horario inteligente
             scheduler.scheduleAtFixedRate(() -> {
                 try {
                     detector.scanAllUsers();
@@ -59,7 +57,6 @@ public class NotificationProcessor {
                     System.err.println("Error en escaneo: " + e.getMessage());
                 }
             }, 0, NotificationConfig.SCAN_INTERVAL_HOURS, TimeUnit.HOURS);
-
             System.out.println("MODO PRODUCCIÓN: Escaneo cada " +
                     NotificationConfig.SCAN_INTERVAL_HOURS + " horas");
         }

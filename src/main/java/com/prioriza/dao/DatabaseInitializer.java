@@ -23,7 +23,7 @@ public class DatabaseInitializer {
             stmt.execute("PRAGMA foreign_keys = ON;");
             System.out.println("Foreign keys activadas");
 
-            // 4. IMPORTANTE: NADA DE TEXT BLOCKS - Strings tradicionales
+            // 4. USERS
             String createUsers =
                     "CREATE TABLE IF NOT EXISTS users (" +
                             "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
