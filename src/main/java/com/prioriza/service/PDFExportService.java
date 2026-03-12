@@ -16,6 +16,7 @@ import com.prioriza.model.*;
 import java.io.FileOutputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PDFExportService {
@@ -25,7 +26,6 @@ public class PDFExportService {
 
     //Metodo que Exporta una lista de tareas a PDF
     //returna la Ruta del archivo generado
-
     public String exportTaskList(TaskList taskList, List<Task> tasks, User user) {
         String fileName = String.format("PRIORIZA_%s_%s.pdf",
                 taskList.getName().replace(" ", "_"),
@@ -38,7 +38,7 @@ public class PDFExportService {
             PdfDocument pdf = new PdfDocument(writer);
             Document document = new Document(pdf);
 
-            // Encabezado
+            // el encabezado
             document.add(new Paragraph("PRIORIZA")
                     .setFontSize(24)
                     .setBold()
@@ -67,16 +67,23 @@ public class PDFExportService {
             document.add(infoTable);
             document.add(new Paragraph("\n"));
 
-            // Tareas
-            for (Task task : tasks) {
-                document.add(createTaskCard(task));
-                document.add(new Paragraph("\n"));
+            //verificar si hay tareas
+            if (tasks == null || tasks.isEmpty()){
+                document.add(new Paragraph("No hay tareas en esta lista")
+                        .setFontSize(12)
+                        .setFontColor(ColorConstants.GRAY));
+            }else{
+                // Tareas
+                for (Task task : tasks) {
+                    document.add(createTaskCard(task));
+                    document.add(new Paragraph("\n"));
+                }
             }
 
-            // Resumen
+            // resumen
             document.add(createSummary(tasks));
 
-            // Pie de página
+            // acá esta el pie de página
             document.add(new Paragraph("\n"));
             Paragraph footer = new Paragraph(
                     "Documento generado automáticamente por PRIORIZA - " +
@@ -97,8 +104,13 @@ public class PDFExportService {
         }
     }
 
-    //Exporta una TAREA ESPECÍFICA a PDF
+    //Exxporta una TAREA ESPECÍFICA a PDF
     public String exportSingleTask(Task task, User user) {
+        //Asegurarse que las subtareas están cargadas
+        if (task.getSubTasks() == null){
+            task.setSubTasks(new ArrayList<>());
+        }
+
         String fileName = String.format("TAREA_%s_%s.pdf",
                 task.getTitle().replace(" ", "_"),
                 LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
@@ -133,7 +145,7 @@ public class PDFExportService {
             return null;
         }
     }
-
+    //metodo carta para el PDF
     private Div createTaskCard(Task task) {
         Div card = new Div();
         card.setBackgroundColor(ColorConstants.WHITE);
@@ -186,11 +198,18 @@ public class PDFExportService {
                     .setBold());
 
             for (SubTask sub : task.getSubTasks()) {
-                String checkBox = sub.getSubTaskStatus() == SubTaskStatus.COMPLETA ? "✓" : "○";
-                card.add(new Paragraph(String.format("   %s %s",
-                        checkBox, sub.getTitle()))
-                        .setFontSize(10));
+                String estado = sub.getSubTaskStatus() == SubTaskStatus.COMPLETA ? "✓" : "○";
+                String subText = String.format(" %s %s", estado, sub.getTitle());
 
+                Paragraph subPara = new Paragraph(subText).setFontSize(10);
+
+                if(sub.getSubTaskStatus() == SubTaskStatus.COMPLETA){
+                    subPara.setFontColor(ColorConstants.GRAY);
+                    subPara.setUnderline(0.5f, -3f); //efecto texto tachado
+                }
+                card.add(subPara);
+
+                //añadir la fecha
                 if (sub.getDueDateTime() != null) {
                     card.add(new Paragraph("    Fecha: " +
                             sub.getDueDateTime().format(DATE_FORMATTER))
@@ -198,7 +217,25 @@ public class PDFExportService {
                             .setFontColor(ColorConstants.GRAY));
                 }
             }
+        }else {
+            card.add(new Paragraph("   (Sin subtareas)")
+                    .setFontSize(10)
+                    .setFontColor(ColorConstants.GRAY));
         }
+
+        //subtareas pendientes (resumen)
+        long pendingSubtasks = task.getSubTasks() != null ?
+                task.getSubTasks().stream()
+                        .filter(s -> s.getSubTaskStatus() != SubTaskStatus.COMPLETA)
+                        .count() : 0;
+
+        if (pendingSubtasks > 0) {
+            card.add(new Paragraph(
+                    "   " + pendingSubtasks + " subtareas pendientes")
+                    .setFontSize(10)
+                    .setFontColor(ColorConstants.ORANGE));
+        }
+
         return card;
     }
 

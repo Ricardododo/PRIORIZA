@@ -202,12 +202,25 @@ public class DashboardController {
             });
         }
     }
-    // ============= MÉTODOS PARA Estadísticas =============
-
+    //MÉTODOS PARA Estadísticas
     private void loadStatistics() {
         try {
             List<Task> allTasks = taskService.getTasksByUserId(currentUser.getId());
+            //si no hay tareas, mostrar mensaje y salir
+            if (allTasks.isEmpty()){
+                totalTasksLabel.setText("Total: 0");
+                completedTasksLabel.setText("Completadas: 0");
+                pendingTasksLabel.setText("Pendientes: 0");
+                urgentTasksLabel.setText("Urgentes: 0");
 
+                //Grafico vacío pero con mensaje
+                ObservableList<PieChart.Data> emptyData = FXCollections.observableArrayList(
+                        new PieChart.Data("Sin tareas", 1)
+                );
+                priorityChart.setData(emptyData);
+                priorityChart.setTitle("No hay tareas para mostrar");
+                return;
+            }
             // Contar tareas por prioridad
             long urgentCount = allTasks.stream()
                     .filter(t -> t.getPriority() == Priority.URGENTE)
@@ -244,12 +257,20 @@ public class DashboardController {
             urgentTasksLabel.setText("Urgentes: " + urgentCount);
 
             // Crear datos para el gráfico
-            ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
-                    new PieChart.Data("URGENTE (" + urgentCount + ")", urgentCount),
-                    new PieChart.Data("ALTA (" + altaCount + ")", altaCount),
-                    new PieChart.Data("MEDIA (" + mediaCount + ")", mediaCount),
-                    new PieChart.Data("BAJA (" + bajaCount + ")", bajaCount)
-            );
+            ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+
+            if (urgentCount > 0) {
+                pieChartData.add(new PieChart.Data("URGENTE (" + urgentCount + ")", urgentCount));
+            }
+            if (altaCount > 0) {
+                pieChartData.add(new PieChart.Data("ALTA (" + altaCount + ")", altaCount));
+            }
+            if (mediaCount > 0) {
+                pieChartData.add(new PieChart.Data("MEDIA (" + mediaCount + ")", mediaCount));
+            }
+            if (bajaCount > 0) {
+                pieChartData.add(new PieChart.Data("BAJA (" + bajaCount + ")", bajaCount));
+            }
 
             // Configurar gráfico
             priorityChart.setData(pieChartData);
@@ -259,12 +280,18 @@ public class DashboardController {
             priorityChart.setLabelsVisible(true);
             priorityChart.setLegendVisible(true);
 
+            //forzar actualización del grafico
+            priorityChart.applyCss();
+            priorityChart.layout();
+
         } catch (Exception e) {
-            AlertUtil.showError("Error", "No se pudieron cargar las estadísticas");
+            System.err.println("ERROR al cargar estadísticas: " + e.getMessage());
             e.printStackTrace();
+            AlertUtil.showError("Error", "No se pudieron cargar las estadísticas");
+
         }
     }
-    // ============= MÉTODOS PARA Calendario =============
+    //MÉTODOS PARA Calendario
 
     private void initializeCalendar() {
         currentYearMonth = YearMonth.now();

@@ -115,7 +115,6 @@ public class MainController {
 
     @FXML
     public void initialize() {
-
         //comprobar si hay un usuario
         if (Session.getUser() == null){
             AlertUtil.showError("Error", "Tu sesión no esta activa. Inicia sesión nuevamente.");
@@ -136,14 +135,16 @@ public class MainController {
         //ajustar columnas automaticamente
         taskTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
+        //deshabilitar la columna de relleno automático
+        taskTableView.setTableMenuButtonVisible(false);
+
         //columnas
         colTitle.setCellValueFactory(data ->
                 new javafx.beans.property.SimpleObjectProperty<>(data.getValue().getTitle())
         );
 
         colDescription.setCellValueFactory(data ->
-                new javafx.beans.property.SimpleObjectProperty<>(data.getValue().getDescription())
-        );
+                new SimpleObjectProperty<>(data.getValue().getDescription()));
 
         colPriority.setCellValueFactory(data ->
                 new SimpleObjectProperty<>(data.getValue().getPriority())
@@ -151,8 +152,7 @@ public class MainController {
 
         colDueDateTime.setCellValueFactory(data -> {
             LocalDateTime dateTime = data.getValue().getDueDateTime();
-            String formatted = dateTime != null ?
-                    DateUtil.formatDateTime(dateTime) : "";
+            String formatted = dateTime != null ? DateUtil.formatDateTime(dateTime) : "";
             return new SimpleObjectProperty<>(formatted);
         });
 
@@ -160,24 +160,105 @@ public class MainController {
                 new SimpleObjectProperty<>(data.getValue().getStatus())
         );
 
-        //Colores por prioridad
-        taskTableView.setRowFactory(tv -> new TableRow<Task>(){
+        // Clase interna para celdas con color
+        class ColoredCell<S, T> extends TableCell<S, T> {
             @Override
-            protected void updateItem(Task task, boolean empty){
-                super.updateItem(task, empty);
+            protected void updateItem(T item, boolean empty) {
+                super.updateItem(item, empty);
 
-                if(task == null || empty){
+                if (empty || item == null) {
+                    setText(null);
                     setStyle("");
-                }else if(task.getPriority() != null){
-                    switch (task.getPriority()){
-                        case URGENTE -> setStyle("-fx-background-color: #ffb3b3;");
-                        case ALTA -> setStyle("-fx-background-color: #ffd966;");
-                        case MEDIA -> setStyle("-fx-background-color: #c6efce;");
-                        case BAJA -> setStyle("-fx-background-color: #d9e1f2;");
+                    return;
+                }
+                setText(item.toString());
+
+                // Obtener la fila actual
+                int rowIndex = getIndex();
+                if (rowIndex < 0 || rowIndex >= getTableView().getItems().size()) return;
+
+                S rowItem = getTableView().getItems().get(rowIndex);
+                if (rowItem instanceof Task) {
+                        Task task = (Task) rowItem;
+
+                        //detecta si esta en modo oscuro
+                        boolean isDark = rootpane.getStyleClass().contains("dark");
+
+                        // Si la fila está seleccionada, aplicar estilo de selección
+                        if (getTableView().getSelectionModel().isSelected(rowIndex)) {
+                            setStyle("-fx-background-color: #0078d7; -fx-text-fill: #000000; -fx-background-insets: 0;");
+                            return;
+                        }
+                        //Colores segun modo
+                        String bgColor = "";
+                        String textColor = isDark ? "#ffffff" : "#000000";
+
+                        if (task.getPriority() == Priority.URGENTE) {
+                            bgColor = isDark ? "#7f1d1d" : "#ffb3b3";
+                        } else if (task.getPriority() == Priority.ALTA) {
+                            bgColor = isDark ? "#9b5e1e" : "#ffd966";
+                        } else if (task.getPriority() == Priority.MEDIA) {
+                            bgColor = isDark ? "#1e5e1e" : "#c6efce";
+                        } else if (task.getPriority() == Priority.BAJA) {
+                            bgColor = isDark ? "#4a4a4a" : "#d9e1f2";
+                        }
+                        else {
+                            bgColor = isDark ? "#2d2d3a" : "#ffffff";
+                        }
+                            setStyle("-fx-background-color: " + bgColor + "; -fx-text-fill: " + textColor + "; -fx-background-insets: 0;");
+                        }
                     }
+        }
+
+        // Ahora aplicamos la cell factory a CADA columna
+        colTitle.setCellFactory(column -> new ColoredCell<Task, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (!empty && item != null) {
+                    setText(item);
                 }
             }
+        });
 
+        colDescription.setCellFactory(column -> new ColoredCell<Task, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (!empty && item != null) {
+                    setText(item);
+                }
+            }
+        });
+
+        colPriority.setCellFactory(column -> new ColoredCell<Task, Priority>() {
+            @Override
+            protected void updateItem(Priority item, boolean empty) {
+                super.updateItem(item, empty);
+                if (!empty && item != null) {
+                    setText(item.toString());
+                }
+            }
+        });
+
+        colDueDateTime.setCellFactory(column -> new ColoredCell<Task, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (!empty && item != null) {
+                    setText(item);
+                }
+            }
+        });
+
+        colStatus.setCellFactory(column -> new ColoredCell<Task, TaskStatus>() {
+            @Override
+            protected void updateItem(TaskStatus item, boolean empty) {
+                super.updateItem(item, empty);
+                if (!empty && item != null) {
+                    setText(item.toString());
+                }
+            }
         });
         subTaskView.setCellFactory(param -> new ListCell<SubTask>() {
             @Override
@@ -211,7 +292,7 @@ public class MainController {
             }
         });
         loadTaskLists(); //cargar las listas de tareas(datos)
-        setupListeners(); //activar listeners 8seleccio de listas, tareas, subtareas) para los clicks
+        setupListeners(); //activar listeners 8seleccion de listas, tareas, subtareas) para los clicks
     }
     //configuración menú según el rol del usuario
     private void configureMenuByRole() {
@@ -501,7 +582,6 @@ public class MainController {
 
         AlertUtil.showInfo("Información", "Contador de escaneos reseteado");
     }
-
     //metodo para controlar el popup (+ Nueva Lista)
     @FXML
     private void handleNewList(){
@@ -512,7 +592,6 @@ public class MainController {
         dialog.setContentText("Nombre de la lista: ");
 
         dialog.showAndWait().ifPresent(name -> {
-
             if (name == null || name.trim().isEmpty()){
                 AlertUtil.showError("Error", "El nombre de la lista no puede estar vacío");
                 return;
@@ -533,8 +612,12 @@ public class MainController {
                         .findFirst()
                         .ifPresent(l -> taskListView.getSelectionModel().select(l));
 
+            } catch (IllegalArgumentException e) {
+            //capturar error cuando el nombre este duplicado
+            AlertUtil.showError("Error", e.getMessage());
             } catch (Exception e) {
                 e.printStackTrace();
+                AlertUtil.showError("Error", "Error al crear la lista");
             }
         });
     }
@@ -542,14 +625,11 @@ public class MainController {
     //metodo para controlar el popup (+ Nueva Tarea)
     @FXML
     private void handleNewTask(){
-
         TaskList selectedList = taskListView.getSelectionModel().getSelectedItem();
-
         if (selectedList == null) {
            AlertUtil.showWarning("Atención", "Primero selecciona una lista para añadir una tarea.");
            return;
         }
-
         try{
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/view/task-form.fxml")
@@ -579,13 +659,9 @@ public class MainController {
                 //refrescar tabla
                 loadTasks(selectedList.getId());
             }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
+        } catch (IOException | SQLException e) {
             e.printStackTrace();
         }
-
     }
     //metodo para controlar el popup (+ Nueva SubTarea)
     @FXML
@@ -1101,9 +1177,7 @@ public class MainController {
         }
     }
 
-    /*
-     * Crea una tarjeta visual para mostrar una tarea en el diálogo de próximas tareas
-     */
+    //crea una tarjeta visual para mostrar una tarea en el diálogo de próximas tareas
     private Node createTaskCardForDialog(Task task, LocalDateTime now) {
         VBox card = new VBox(5);
         card.setPadding(new Insets(10));
@@ -1114,8 +1188,6 @@ public class MainController {
 
         String urgencia;
         String color;
-        String emoji = ""; // Sin emojis, como solicitaste
-
         if (hoursUntil < 0) {
             urgencia = "VENCIDA";
             color = "#dc3545"; // Rojo
@@ -1159,7 +1231,7 @@ public class MainController {
                     .count();
 
             if (pendingSubs > 0) {
-                Label subLabel = new Label("📋 " + pendingSubs + " subtareas pendientes");
+                Label subLabel = new Label("SubTareas" + pendingSubs + " subtareas pendientes");
                 subLabel.setStyle("-fx-text-fill: #6c757d; -fx-font-size: 11px;");
                 card.getChildren().add(subLabel);
             }
@@ -1281,11 +1353,17 @@ public class MainController {
             // USAR TaskService en lugar de taskDAO
             List<Task> tasks = taskService.getByTasksListId(selectedList.getId());
 
+            //verificar que hay tareas
+            System.out.println("Tareas encontradas: " + tasks.size());
+
             // Cargar subtareas usando SubTaskService
             for (Task task : tasks) {
-                task.setSubTasks(subTaskService.getSubTasksByTaskId(task.getId()));
+                List<SubTask> subtasks = subTaskService.getSubTasksByTaskId(task.getId());
+                task.setSubTasks(subtasks);
+                System.out.println("Tarea '" + task.getTitle() + "' tiene " + subtasks.size() + " subtareas");
             }
 
+            //Generar PDF
             String pdfPath = pdfService.exportTaskList(selectedList, tasks, Session.getUser());
 
             if (pdfPath != null) {
@@ -1299,9 +1377,7 @@ public class MainController {
         }
     }
 
-    /*
-     * Muestra diálogo de éxito con opciones para el PDF generado
-     */
+    //Muestra dialogo de éxito con opciones para el PDF generado
     private void showPdfSuccess(String pdfPath, TaskList selectedList, List<Task> tasks) {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("PDF Generado");
@@ -1360,9 +1436,7 @@ public class MainController {
         }
     }
 
-    /*
-     * Muestra diálogo de éxito para PDF de tarea
-     */
+    //Muestra diálogo de éxito para PDF de tarea
     private void showTaskPdfSuccess(String pdfPath, Task task) {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("PDF Generado");
@@ -1411,7 +1485,7 @@ public class MainController {
             subtasks.add(selectedSubtask);
             tempTask.setSubTasks(subtasks);
 
-            // Generar PDF
+            // generar PDF
             String pdfPath = exportSingleTaskToPDF(tempTask, Session.getUser());
 
             if (pdfPath != null) {
@@ -1533,7 +1607,7 @@ public class MainController {
 
         // Tareas de la lista
         if (tasks.isEmpty()) {
-            document.add(new Paragraph("   (Sin tareas)")
+            document.add(new Paragraph(" (Sin tareas)")
                     .setFontSize(12)
                     .setFontColor(ColorConstants.GRAY));
         } else {
@@ -1543,7 +1617,6 @@ public class MainController {
         }
         document.add(new Paragraph("\n"));
     }
-
     //Añade el resumen final al documento
     private void addSummaryToDocument(Document document, int totalLists, int totalTasks, int totalSubtasks) {
         document.add(new Paragraph("RESUMEN TOTAL:")
@@ -1572,8 +1645,8 @@ public class MainController {
         confirm.setHeaderText("PDF generado correctamente");
         confirm.setContentText("Se han exportado " + allLists.size() + " listas\n\n" + filePath);
 
-        ButtonType btnOpen = new ButtonType("📂 Abrir carpeta");
-        ButtonType btnShare = new ButtonType("📱 Compartir todo");
+        ButtonType btnOpen = new ButtonType("Abrir carpeta");
+        ButtonType btnShare = new ButtonType("Compartir todo");
         ButtonType btnClose = new ButtonType("Cerrar", ButtonBar.ButtonData.CANCEL_CLOSE);
 
         confirm.getButtonTypes().setAll(btnOpen, btnShare, btnClose);
@@ -1694,7 +1767,6 @@ public class MainController {
             AlertUtil.showWarning("Atención", "Selecciona una subtarea para compartir");
             return;
         }
-
         try {
             // Crear tarea temporal para la subtarea
             Task tempTask = new Task();
@@ -1746,9 +1818,7 @@ public class MainController {
     }
 
     //MÉTODOS AUXILIARES DE EXPORTACIÓN PDF
-
     //Exporta una lista de tareas a PDF
-
     private String exportTaskListToPDF(TaskList taskList, List<Task> tasks, User user) {
         String fileName = String.format("PRIORIZA_%s_%s.pdf",
                 taskList.getName().replace(" ", "_"),
@@ -1795,7 +1865,6 @@ public class MainController {
                 document.add(createTaskCard(task));
                 document.add(new Paragraph("\n"));
             }
-
             // Resumen
             document.add(createSummary(tasks));
 
@@ -1856,9 +1925,7 @@ public class MainController {
             return null;
         }
     }
-
     //Crea una tarjeta visual para una tarea en el PDF
-
     //crea celda para tabla PDF
     private Cell createCell(String text, boolean isHeader) {
         Cell cell = new Cell();
@@ -2047,7 +2114,7 @@ public class MainController {
             e.printStackTrace();
         }
     }
-    // ============= MÉTODOS PARA EL PANEL DE CONTROL =============
+    // ============= METODOS PARA EL PANEL DE CONTROL =============
 
     //Abre el panel de control en la pestaña de Resumen Diario
 
@@ -2136,9 +2203,13 @@ public class MainController {
     public void toggleDarkMode(){
         if (rootpane.getStyleClass().contains("dark")){
             rootpane.getStyleClass().remove("dark");
+            System.out.println("Modo claro activado");
         }else{
             rootpane.getStyleClass().add("dark");
+            System.out.println("Modo oscuro activado");
         }
+        //forzar actualización de la tabla
+        taskTableView.refresh();
     }
 }
 

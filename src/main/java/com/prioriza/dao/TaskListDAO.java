@@ -346,4 +346,22 @@ public class TaskListDAO {
                     list.getTasks().size() + " tareas");
         }
     }
+    //Metodo para verificar el nombre de una lista (validar nombres duplicados)
+    public boolean existsByNameAndUser(String name, int userId) {
+        String sql = "SELECT COUNT(*) FROM task_list WHERE LOWER(name) = LOWER(?) AND user_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, name.trim());
+            ps.setInt(2, userId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

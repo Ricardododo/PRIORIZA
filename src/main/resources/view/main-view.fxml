@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
@@ -9,15 +10,13 @@
     <!-- TOP - Contenedor principal de la barra superior -->
     <top>
         <VBox spacing="0" styleClass="top-bar-container">
-            <!-- MENÚ BAR -->
+            <!-- MENU BAR -->
             <MenuBar styleClass="menu-bar">
-            <!-- MENÚ PARA TODOS LOS USUARIOS -->
                 <Menu text="Notificaciones">
                     <MenuItem onAction="#handleUserNotificationStats" text="Mis estadísticas" />
                     <MenuItem onAction="#handleUpcomingTasks" text="Próximas tareas" />
                     <MenuItem onAction="#handleNotificationSettings" text="Configurar alertas" />
                 </Menu>
-                <!-- MENÚ SOLO ADMIN - CON fx:id -->
                 <Menu fx:id="adminMenu" text="Admin">
                     <MenuItem fx:id="scanNowMenuItem" onAction="#handleScanNow" text="Escaneo manual" />
                     <MenuItem onAction="#handleResetScanCounter" text="Resetear contador" />
@@ -26,9 +25,7 @@
                     <SeparatorMenuItem />
                     <MenuItem fx:id="globalStatsMenuItem" onAction="#handleGlobalStats" text="Estadísticas globales" />
                 </Menu>
-                <!-- ARCHIVO -->
                 <Menu text="Archivo">
-                <!-- Exportar PDF -->
                     <Menu text="Exportar PDF">
                         <MenuItem onAction="#handleExportListToPDF" text="Lista actual" />
                         <MenuItem onAction="#handleExportTaskToPDF" text="Tarea seleccionada" />
@@ -36,14 +33,12 @@
                         <SeparatorMenuItem />
                         <MenuItem onAction="#handleExportEverythingToPDF" text="Todo (exportar todo)" />
                     </Menu>
-                <!-- COMPARTIR -->
                     <Menu text="Compartir">
                         <MenuItem onAction="#handleShareList" text="Lista actual" />
                         <MenuItem onAction="#handleShareTask" text="Tarea seleccionada" />
                         <MenuItem onAction="#handleShareSubtask" text="Subtarea seleccionada" />
                     </Menu>
                 </Menu>
-                <!-- PANEL DE CONTROL - INDIVIDUAL -->
                 <Menu text="Panel de control">
                     <MenuItem onAction="#handleOpenResumenDiario" text="Resumen diario" />
                     <MenuItem onAction="#handleOpenEstadisticas" text="Estadísticas" />
@@ -53,8 +48,6 @@
 
             <!-- BARRA SUPERIOR -->
             <HBox fx:id="topBar" alignment="CENTER_LEFT" spacing="15" styleClass="top-bar">
-
-                <!-- Logo y título -->
                 <HBox alignment="CENTER_LEFT" spacing="12">
                     <ImageView fitHeight="32" preserveRatio="true">
                         <image>
@@ -66,165 +59,88 @@
                         <Label styleClass="app-subtitle" text="Gestor Inteligente de Tareas" />
                     </VBox>
                 </HBox>
-
                 <Region HBox.hgrow="ALWAYS" />
-
-                <!-- User info y logout -->
                 <HBox alignment="CENTER_RIGHT" spacing="10" styleClass="user-box">
                     <Label styleClass="user-status" text="⬤" />
                     <Label fx:id="userLabel" styleClass="user-label" text="Usuario" />
+                    <Button onAction="#toggleDarkMode" styleClass="theme-toggle-button" text="🌙" />
                     <Button onAction="#handleLogout" styleClass="logout-button" text="Cerrar sesión" />
                 </HBox>
-
-
             </HBox>
-
         </VBox>
     </top>
 
     <!-- CENTER - (cards, listas, tablas) -->
     <center>
         <HBox spacing="15" styleClass="main-container">
-            <!-- Mis listas -->
-            <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+            <!-- Mis listas - 20% -->
+            <VBox maxWidth="250" prefWidth="200" spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
                 <Label styleClass="section-title" text="Mis listas" />
                 <ListView fx:id="taskListView" VBox.vgrow="ALWAYS" />
                 <HBox alignment="CENTER" spacing="10">
                     <Button onAction="#handleNewList" styleClass="icon-button">
-                        <graphic>
-                            <ImageView fitHeight="32" fitWidth="32" preserveRatio="true">
-                                <image>
-                                    <Image url="@/img/agregar.png" />
-                                </image>
-                            </ImageView>
-                        </graphic>
-                        <tooltip>
-                            <Tooltip text="Nueva lista" />
-                        </tooltip>
+                        <graphic><ImageView fitHeight="32" fitWidth="32" preserveRatio="true"><image><Image url="@/img/agregar.png" /></image></ImageView></graphic>
+                        <tooltip><Tooltip text="Nueva lista" /></tooltip>
                     </Button>
                     <Button onAction="#handleEditList" styleClass="icon-button">
-                        <graphic>
-                            <ImageView fitHeight="32" fitWidth="32" preserveRatio="true">
-                                <image>
-                                    <Image url="@/img/editar.png" />
-                                </image>
-                            </ImageView>
-                        </graphic>
-                        <tooltip>
-                            <Tooltip text="Editar lista" />
-                        </tooltip>
+                        <graphic><ImageView fitHeight="32" fitWidth="32" preserveRatio="true"><image><Image url="@/img/editar.png" /></image></ImageView></graphic>
+                        <tooltip><Tooltip text="Editar lista" /></tooltip>
                     </Button>
                     <Button onAction="#handleDeleteListTask" styleClass="icon-button">
-                        <graphic>
-                            <ImageView fitHeight="32" fitWidth="32" preserveRatio="true">
-                                <image>
-                                    <Image url="@/img/eliminar.png" />
-                                </image>
-                            </ImageView>
-                        </graphic>
-                        <tooltip>
-                            <Tooltip text="Eliminar lista" />
-                        </tooltip>
+                        <graphic><ImageView fitHeight="32" fitWidth="32" preserveRatio="true"><image><Image url="@/img/eliminar.png" /></image></ImageView></graphic>
+                        <tooltip><Tooltip text="Eliminar lista" /></tooltip>
                     </Button>
                 </HBox>
             </VBox>
 
-            <!-- Tareas -->
-            <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+            <!-- Tareas - 60% -->
+            <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
+                <padding><Insets bottom="15" left="15" right="15" top="15" /></padding>
                 <Label styleClass="section-title" text="Tareas" />
-                <TableView fx:id="taskTableView" VBox.vgrow="ALWAYS">
+                <TableView fx:id="taskTableView" VBox.vgrow="ALWAYS" prefWidth="600">
                     <columns>
-                        <TableColumn fx:id="colTitle" prefWidth="46.39999085664749" text="Título" />
-                        <TableColumn fx:id="colDescription" prefWidth="60.799983978271484" text="Descripción" />
-                        <TableColumn fx:id="colPriority" prefWidth="56.600006103515625" text="Prioridad" />
-                        <TableColumn fx:id="colDueDateTime" prefWidth="59.0" text="Fecha/Hora" />
-                        <TableColumn fx:id="colStatus" prefWidth="58.40001525878904" text="Estado" />
+                        <TableColumn fx:id="colTitle" text="Título" />
+                        <TableColumn fx:id="colDescription" text="Descripción" />
+                        <TableColumn fx:id="colPriority"  text="Prioridad" />
+                        <TableColumn fx:id="colDueDateTime" text="Fecha/Hora" />
+                        <TableColumn fx:id="colStatus" text="Estado" />
                     </columns>
                 </TableView>
                 <HBox alignment="CENTER" spacing="10">
                     <Button onAction="#handleNewTask" styleClass="icon-button">
-                        <graphic>
-                            <ImageView fitHeight="32" fitWidth="32" preserveRatio="true">
-                                <image>
-                                    <Image url="@/img/agregar.png" />
-                                </image>
-                            </ImageView>
-                        </graphic>
-                        <tooltip>
-                            <Tooltip text="Nueva tarea" />
-                        </tooltip>
+                        <graphic><ImageView fitHeight="32" fitWidth="32" preserveRatio="true"><image><Image url="@/img/agregar.png" /></image></ImageView></graphic>
+                        <tooltip><Tooltip text="Nueva tarea" /></tooltip>
                     </Button>
                     <Button onAction="#handleEditTask" styleClass="icon-button">
-                        <graphic>
-                            <ImageView fitHeight="32" fitWidth="32" preserveRatio="true">
-                                <image>
-                                    <Image url="@/img/editar.png" />
-                                </image>
-                            </ImageView>
-                        </graphic>
-                        <tooltip>
-                            <Tooltip text="Editar tarea" />
-                        </tooltip>
+                        <graphic><ImageView fitHeight="32" fitWidth="32" preserveRatio="true"><image><Image url="@/img/editar.png" /></image></ImageView></graphic>
+                        <tooltip><Tooltip text="Editar tarea" /></tooltip>
                     </Button>
                     <Button onAction="#handleDeleteTask" styleClass="icon-button">
-                        <graphic>
-                            <ImageView fitHeight="32" fitWidth="32" preserveRatio="true">
-                                <image>
-                                    <Image url="@/img/eliminar.png" />
-                                </image>
-                            </ImageView>
-                        </graphic>
-                        <tooltip>
-                            <Tooltip text="Eliminar tarea" />
-                        </tooltip>
+                        <graphic><ImageView fitHeight="32" fitWidth="32" preserveRatio="true"><image><Image url="@/img/eliminar.png" /></image></ImageView></graphic>
+                        <tooltip><Tooltip text="Eliminar tarea" /></tooltip>
                     </Button>
                 </HBox>
             </VBox>
 
-            <!-- Subtareas -->
-            <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+            <!-- Subtareas - 20% -->
+            <VBox maxWidth="250" prefWidth="200" spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
                 <Label styleClass="section-title" text="Subtareas" />
                 <ListView fx:id="subTaskView" VBox.vgrow="ALWAYS" />
                 <HBox alignment="CENTER" spacing="10">
                     <Button onAction="#handleNewSubTask" styleClass="icon-button">
-                        <graphic>
-                            <ImageView fitHeight="32" fitWidth="32" preserveRatio="true">
-                                <image>
-                                    <Image url="@/img/agregar.png" />
-                                </image>
-                            </ImageView>
-                        </graphic>
-                        <tooltip>
-                            <Tooltip text="Nueva subtarea" />
-                        </tooltip>
+                        <graphic><ImageView fitHeight="32" fitWidth="32" preserveRatio="true"><image><Image url="@/img/agregar.png" /></image></ImageView></graphic>
+                        <tooltip><Tooltip text="Nueva subtarea" /></tooltip>
                     </Button>
                     <Button onAction="#handleEditSubTask" styleClass="icon-button">
-                        <graphic>
-                            <ImageView fitHeight="32" fitWidth="32" preserveRatio="true">
-                                <image>
-                                    <Image url="@/img/editar.png" />
-                                </image>
-                            </ImageView>
-                        </graphic>
-                        <tooltip>
-                            <Tooltip text="Editar subtarea" />
-                        </tooltip>
+                        <graphic><ImageView fitHeight="32" fitWidth="32" preserveRatio="true"><image><Image url="@/img/editar.png" /></image></ImageView></graphic>
+                        <tooltip><Tooltip text="Editar subtarea" /></tooltip>
                     </Button>
                     <Button onAction="#handleDeleteSubTask" styleClass="icon-button">
-                        <graphic>
-                            <ImageView fitHeight="32" fitWidth="32" preserveRatio="true">
-                                <image>
-                                    <Image url="@/img/eliminar.png" />
-                                </image>
-                            </ImageView>
-                        </graphic>
-                        <tooltip>
-                            <Tooltip text="Eliminar subtarea" />
-                        </tooltip>
+                        <graphic><ImageView fitHeight="32" fitWidth="32" preserveRatio="true"><image><Image url="@/img/eliminar.png" /></image></ImageView></graphic>
+                        <tooltip><Tooltip text="Eliminar subtarea" /></tooltip>
                     </Button>
                 </HBox>
             </VBox>
         </HBox>
     </center>
-
 </BorderPane>

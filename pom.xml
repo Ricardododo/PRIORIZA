@@ -118,6 +118,7 @@
 
     <build>
         <plugins>
+            <!-- Plugin para compilar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -129,7 +130,7 @@
                     </compilerArgs>
                 </configuration>
             </plugin>
-
+            <!-- plugin para pruebas -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -138,16 +139,56 @@
                     <argLine>-Dnet.bytebuddy.experimental=true</argLine>
                 </configuration>
             </plugin>
-
+            <!-- Plugin para empaquetar dependencias (fat JAR) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.prioriza.MainApp</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Plugin original de JavaFX y jlink (puede no funcionar con Java 24) -->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
                     <mainClass>com.prioriza.MainApp</mainClass>
-                    <options>
-                        <option>--enable-preview</option>
-                    </options>
+                    <!-- Para jlink -->
+                    <compress>2</compress>
+                    <noHeaderFiles>true</noHeaderFiles>
+                    <stripDebug>true</stripDebug>
+                    <launcher>prioriza</launcher>
+                    <jlinkImageName>prioriza-runtime</jlinkImageName>
+                    <jlinkZipName>prioriza-runtime</jlinkZipName>
+                </configuration>
+            </plugin>
+
+            <!-- Plugin exec (alternativo) -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <mainClass>com.prioriza.MainApp</mainClass>
+
                 </configuration>
             </plugin>
         </plugins>

@@ -76,7 +76,7 @@
     -fx-border-width: 0.5;
 }
 
-/* ----- TOP BAR (TU DISEÑO ORIGINAL) ----- */
+/* ----- TOP BAR ----- */
 .top-bar {
     -fx-background-color: white;
     -fx-padding: 12 25 12 25;
@@ -135,7 +135,7 @@
     -fx-border-color: #fc8181;
 }
 
-/* ============= CARDS (TUS LISTAS, TAREAS, SUBTAREAS) ============= */
+/* ============= CARDS (LISTAS, TAREAS, SUBTAREAS) ============= */
 .main-container {
     -fx-padding: 20;
     -fx-spacing: 20;
@@ -196,31 +196,192 @@
     -fx-background-radius: 8;
 }
 
-/* ============= PRIORIDADES ============= */
-.priority-urgente {
-    -fx-text-fill: #e53e3e;
+/* ============= BOTÓN MODO OSCURO ============= */
+.theme-toggle-button {
+    -fx-background-color: transparent;
+    -fx-font-size: 18px;
+    -fx-padding: 5 10;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+}
+
+.theme-toggle-button:hover {
+    -fx-background-color: #e9ecef;
+    -fx-background-radius: 20;
+}
+
+/* ============= LOGIN MINIMALISTA ============= */
+.login-simple {
+    -fx-background-color: #f8fafc;
+    -fx-padding: 40 0;
+}
+
+.login-simple-container {
+    -fx-padding: 30 20;
+}
+
+.login-simple-card {
+    -fx-background-color: white;
+    -fx-background-radius: 28;
+    -fx-padding: 32 32 40 32;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.02), 20, 0, 0, 0);
+    -fx-max-width: 360;
+    -fx-min-width: 320;
+}
+
+.login-simple-title {
+    -fx-font-size: 42px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #0a0f1a;
+    -fx-letter-spacing: 3;
+    -fx-padding: 0 0 5 0;
+}
+
+.login-simple-subtitle {
+    -fx-font-size: 15px;
+    -fx-text-fill: #475569;
+    -fx-font-weight: 500;
+}
+
+.login-simple-field {
+    -fx-background-color: #f1f5f9;
+    -fx-background-radius: 12;
+    -fx-padding: 14 18;
+    -fx-font-size: 14px;
+    -fx-pref-width: 280;
+}
+
+.login-simple-button {
+    -fx-background-color: #0f172a;
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: 700;
+    -fx-padding: 14;
+    -fx-background-radius: 12;
+    -fx-pref-width: 280;
+}
+
+.login-simple-footer {
+    -fx-padding: 20 0 0 0;
+}
+
+.login-simple-link {
+    -fx-background-color: transparent;
+    -fx-text-fill: #2563eb;
+    -fx-font-weight: 700;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-padding: 5 12;
+}
+
+/* ============= REGISTRO ============= */
+.register-container {
+    -fx-padding: 40 30;
+    -fx-spacing: 15;
+    -fx-background-color: #f8fafc;
+    -fx-alignment: center;
+}
+
+.register-title {
+    -fx-font-size: 24px;
     -fx-font-weight: bold;
+    -fx-text-fill: #0a0f1a;
 }
 
-.priority-alta {
-    -fx-text-fill: #ed8936;
+.register-field {
+    -fx-background-color: #f1f5f9;
+    -fx-background-radius: 12;
+    -fx-padding: 14 18;
+    -fx-font-size: 14px;
+    -fx-pref-width: 300;
+}
+
+.register-button {
+    -fx-background-color: #0f172a;
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: 700;
+    -fx-padding: 14;
+    -fx-background-radius: 12;
+    -fx-pref-width: 300;
+}
+/* ============= TABLA DE TAREAS ============= */
+.table-view {
+    -fx-font-size: 13px;
+}
+/* HEADERS */
+.table-view .column-header {
+    -fx-background-color: #f0f2f5;
+}
+
+.table-view .column-header .label {
     -fx-font-weight: bold;
+    -fx-text-fill: #1f2937;
+    -fx-alignment: center;
 }
 
-.priority-media {
-    -fx-text-fill: #48bb78;
+/* ANCHOS FIJOS */
+#colTitle { -fx-pref-width: 80px; }
+#colDescription { -fx-pref-width: 160px; }
+#colPriority { -fx-pref-width: 100px;  }
+#colDueDateTime { -fx-pref-width: 140px; }
+#colStatus { -fx-pref-width: 120px; }
+
+/* CELDAS - sin bordes internos */
+.table-cell {
+    -fx-padding: 8 5;
+    -fx-border-width: 0;
+    -fx-background-insets: 0;
+}
+/* SELECCIÓN - texto negro */
+.table-row-cell:selected {
+    -fx-background-color: #0078d7;
+}
+.table-row-cell:selected .table-cell {
+    -fx-text-fill: #000000;
+}
+/* ============= ALINEACIÓN DE CABECERAS Y CELDAS ============= */
+
+/* Headers de la tabla - misma alineación que las celdas */
+.table-view .column-header {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 8 10;
+}
+
+.table-view .column-header .label {
     -fx-font-weight: bold;
+    -fx-text-fill: #2d3748;
+    -fx-alignment: center;
 }
 
-.priority-baja {
-    -fx-text-fill: #718096;
+/* Alineación específica para cada columna en headers y celdas */
+#colPriority .label,
+#colPriority .table-cell {
+    -fx-alignment: center;
 }
 
-/* ============= DARK MODE ============= */
+#colDueDateTime .label,
+#colDueDateTime .table-cell {
+    -fx-alignment: center;
+}
+
+#colStatus .label,
+#colStatus .table-cell {
+    -fx-alignment: center;
+}
+
+/* Padding consistente */
+.table-cell {
+    -fx-padding: 8 10;
+}
+/* ============= MODO OSCURO ============= */
 .root.dark {
     -fx-background-color: #1a202c;
 }
 
+/* Top bar modo oscuro */
 .root.dark .top-bar-container,
 .root.dark .top-bar,
 .root.dark .menu-bar {
@@ -231,75 +392,162 @@
     -fx-text-fill: #e2e8f0;
 }
 
+.root.dark .menu-bar .menu:hover {
+    -fx-background-color: #4a5568;
+}
+
+.root.dark .menu-bar .menu:hover .label {
+    -fx-text-fill: #ffffff;
+}
+
+.root.dark .menu-bar .context-menu {
+    -fx-background-color: #2d3748;
+    -fx-border-color: #4a5568;
+}
+
+.root.dark .menu-bar .menu-item .label {
+    -fx-text-fill: #e2e8f0;
+}
+
+.root.dark .menu-bar .menu-item:hover {
+    -fx-background-color: #4a5568;
+}
+
+.root.dark .app-title {
+    -fx-text-fill: #ffffff;
+}
+
+.root.dark .app-subtitle {
+    -fx-text-fill: #a0aec0;
+}
+
+/* Cards modo oscuro */
 .root.dark .card {
     -fx-background-color: #2d3748;
     -fx-border-color: #4a5568;
 }
 
 .root.dark .section-title {
-    -fx-text-fill: #f7fafc;
+    -fx-text-fill: #ffffff;
     -fx-border-color: #4a5568;
 }
-/* ============= LOGIN MINIMALISTA - TAMAÑO AJUSTADO ============= */
-.login-simple {
-    -fx-background-color: #f8fafc;
-    -fx-padding: 40 0;              /* Reducido de 80 a 40 */
+
+/* ListView modo oscuro */
+.root.dark .list-view {
+    -fx-background-color: #2d3748;
+    -fx-border-color: #4a5568;
 }
 
-.login-simple-container {
-    -fx-padding: 30 20;            /* Reducido de 60 a 30 */
+.root.dark .list-view .list-cell {
+    -fx-background-color: #2d3748;
+    -fx-text-fill: #e2e8f0;
+    -fx-border-color: #4a5568;
 }
 
-.login-simple-card {
-    -fx-background-color: white;
-    -fx-background-radius: 28;      /* Reducido de 32 a 28 */
-    -fx-padding: 32 32 40 32;      /* Reducido de 48-60 a 32-40 */
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.02), 20, 0, 0, 0);
-    -fx-max-width: 360;            /* Reducido de 380 a 360 */
-    -fx-min-width: 320;
+.root.dark .list-view .list-cell:hover {
+    -fx-background-color: #4a5568;
 }
 
-.login-simple-title {
-    -fx-font-size: 42px;           /* Reducido de 48 a 42 */
-    -fx-font-weight: 900;
-    -fx-text-fill: #0a0f1a;
-    -fx-letter-spacing: 3;         /* Reducido de 4 a 3 */
-    -fx-padding: 0 0 5 0;
+.root.dark .list-view .list-cell:selected {
+    -fx-background-color: #3182ce;
+    -fx-text-fill: #ffffff;
 }
 
-.login-simple-subtitle {
-    -fx-font-size: 15px;           /* Reducido de 16 a 15 */
-    -fx-text-fill: #475569;
-    -fx-font-weight: 500;
+/* TableView modo oscuro */
+.root.dark .table-view {
+    -fx-background-color: #1a202c;
+    -fx-border-color: #4a5568;
 }
 
-.login-simple-field {
-    -fx-background-color: #f1f5f9;
-    -fx-background-radius: 12;     /* Reducido de 14 a 12 */
-    -fx-padding: 14 18;           /* Reducido de 16-20 a 14-18 */
-    -fx-font-size: 14px;          /* Reducido de 15 a 14 */
-    -fx-pref-width: 280;          /* Reducido de 300 a 280 */
+.root.dark .table-view .column-header {
+    -fx-background-color: #2d3748;
 }
 
-.login-simple-button {
-    -fx-background-color: #0f172a;
-    -fx-text-fill: white;
-    -fx-font-size: 15px;          /* Reducido de 16 a 15 */
-    -fx-font-weight: 700;
-    -fx-padding: 14;             /* Reducido de 16 a 14 */
-    -fx-background-radius: 12;    /* Reducido de 14 a 12 */
-    -fx-pref-width: 280;         /* Reducido de 300 a 280 */
+.root.dark .table-view .column-header .label {
+    -fx-text-fill: #e2e8f0;
 }
 
-.login-simple-footer {
-    -fx-padding: 20 0 0 0;       /* Reducido de 25 a 20 */
+.root.dark .table-cell {
+    -fx-text-fill: #e2e8f0;
+}
+/* Filas vacías o sin datos - fondo oscuro */
+.root.dark .table-row-cell:empty {
+    -fx-background-color: #1a202c;
 }
 
-.login-simple-link {
-    -fx-background-color: transparent;
-    -fx-text-fill: #2563eb;
-    -fx-font-weight: 700;
-    -fx-font-size: 14px;         /* Reducido de 15 a 14 */
-    -fx-cursor: hand;
-    -fx-padding: 5 12;           /* Reducido de 8-15 a 5-12 */
+.root.dark .table-cell:empty {
+    -fx-background-color: #1a202c;
+}
+
+/* User box modo oscuro */
+.root.dark .user-box {
+    -fx-background-color: #4a5568;
+    -fx-border-color: #718096;
+}
+
+.root.dark .user-label {
+    -fx-text-fill: #ffffff;
+}
+
+.root.dark .user-status {
+    -fx-text-fill: #48bb78;
+}
+
+/* Botón logout modo oscuro */
+.root.dark .logout-button {
+    -fx-text-fill: #fc8181;
+    -fx-border-color: #fc8181;
+}
+
+.root.dark .logout-button:hover {
+    -fx-background-color: #742a2a;
+}
+
+/* Botón modo oscuro hover */
+.root.dark .theme-toggle-button:hover {
+    -fx-background-color: #4a5568;
+}
+
+/* Login modo oscuro */
+.root.dark .login-simple {
+    -fx-background-color: #1a202c;
+}
+
+.root.dark .login-simple-card {
+    -fx-background-color: #2d3748;
+}
+
+.root.dark .login-simple-title {
+    -fx-text-fill: #ffffff;
+}
+
+.root.dark .login-simple-subtitle {
+    -fx-text-fill: #a0aec0;
+}
+
+.root.dark .login-simple-field {
+    -fx-background-color: #4a5568;
+    -fx-text-fill: #e2e8f0;
+}
+
+.root.dark .login-simple-button {
+    -fx-background-color: #3182ce;
+}
+
+/* Registro modo oscuro */
+.root.dark .register-container {
+    -fx-background-color: #1a202c;
+}
+
+.root.dark .register-title {
+    -fx-text-fill: #ffffff;
+}
+
+.root.dark .register-field {
+    -fx-background-color: #4a5568;
+    -fx-text-fill: #e2e8f0;
+}
+
+.root.dark .register-button {
+    -fx-background-color: #3182ce;
 }

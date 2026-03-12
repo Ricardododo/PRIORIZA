@@ -123,10 +123,12 @@
 .chart-pie {
     -fx-pie-color: #dc3545; /* URGENTE - por defecto, se sobrescribe con CSS */
 }
-.pie-chart-data0 { -fx-pie-color: #dc3545; } /* URGENTE - Rojo */
-.pie-chart-data1 { -fx-pie-color: #fd7e14; } /* ALTA - Naranja */
-.pie-chart-data2 { -fx-pie-color: #ffc107; } /* MEDIA - Amarillo */
-.pie-chart-data3 { -fx-pie-color: #6c757d; } /* BAJA - Gris */
+/* COLORES DEL GRÁFICO - Por orden de datos */
+.default-color0.chart-pie { -fx-pie-color: #dc3545; } /* URGENTE - Rojo */
+.default-color1.chart-pie { -fx-pie-color: #fd7e14; } /* ALTA - Naranja */
+.default-color2.chart-pie { -fx-pie-color: #ffc107; } /* MEDIA - Amarillo */
+.default-color3.chart-pie { -fx-pie-color: #6c757d; } /* BAJA - Gris */
+
 
 /* LEYENDA DEL GRÁFICO */
 .chart-legend {

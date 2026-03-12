@@ -3,20 +3,29 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox spacing="12" alignment="CENTER"
+<?import javafx.geometry.Insets?>
+<VBox spacing="15" alignment="CENTER"
       xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.prioriza.controller.RegisterController">
+      fx:controller="com.prioriza.controller.RegisterController"
+      styleClass="register-container">
 
-    <Label text="Crear Cuenta" style="-fx-font-size: 22px,"/>
+    <!-- Padding añadido mediante estilo o clase CSS -->
+    <padding>
+        <Insets top="30" right="30" bottom="30" left="30"/>
+    </padding>
 
-    <TextField fx:id="usernameField" promptText="Nombre de usuario"/>
-    <TextField fx:id="emailField" promptText="Correo electrónico"/>
-    <PasswordField fx:id="passwordField" promptText="Contraseña"/>
-    <PasswordField fx:id="confirmPasswordField" promptText="Confirmar contraseña"/>
-    <Button text="Registrarse" onAction="#handleRegister"/>
+    <Label text="Crear Cuenta" style="-fx-font-size: 22px;" styleClass="register-title"/>
 
-    <Hyperlink text="¿Ya tienes cuenta en PRIORIZA? Inicia sesión" onAction="#handleBackToLogin"/>
+    <TextField fx:id="usernameField" promptText="Nombre de usuario" styleClass="register-field"/>
+    <TextField fx:id="emailField" promptText="Correo electrónico" styleClass="register-field"/>
+    <PasswordField fx:id="passwordField" promptText="Contraseña" styleClass="register-field"/>
+    <PasswordField fx:id="confirmPasswordField" promptText="Confirmar contraseña" styleClass="register-field"/>
+    <Button text="Registrarse" onAction="#handleRegister" styleClass="register-button" />
+
+    <Hyperlink text="¿Ya tienes cuenta en PRIORIZA? Inicia sesión"
+               onAction="#handleBackToLogin"
+               styleClass="register-link"/>
 
 
 </VBox>

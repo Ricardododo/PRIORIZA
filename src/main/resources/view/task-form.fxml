@@ -17,7 +17,8 @@
 
         <TextArea fx:id="descriptionField"
                   promptText="Descripción..."
-                  prefRowCount="3" />
+                  prefRowCount="4"
+                  prefHeight="100"/>
 
         <DatePicker fx:id="datePicker" promptText="Fecha"/>
 
