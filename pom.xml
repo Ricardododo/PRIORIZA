@@ -114,6 +114,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- SpotBugs -->
+        <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs</artifactId>
+            <version>4.8.3</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -189,6 +196,18 @@
                 <configuration>
                     <mainClass>com.prioriza.MainApp</mainClass>
 
+                </configuration>
+            </plugin>
+
+            <!-- SpotBugs -->
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.8.3.1</version>
+                <configuration>
+                    <effort>Max</effort>
+                    <threshold>Low</threshold>
+                    <xmlOutput>true</xmlOutput>
                 </configuration>
             </plugin>
         </plugins>

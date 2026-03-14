@@ -57,14 +57,7 @@ public class TaskListService {
     public void createDefaultLists(int userId) throws SQLException {
         taskListDAO.createDefaultListsForUser(userId);
     }
-    //verifica si un usuario es dueño de una lista o no
-    public boolean isOwner(int listId, int userId) {
-        return taskListDAO.isOwner(listId, userId);
-    }
-    //obtiene listas con conteo de tareas
-    public List<TaskList> getListsWithTaskCount(int userId) {
-        return taskListDAO.getByUserIdWithTaskCount(userId);
-    }
+
     //validar si el nombre de lista esta disponible o no
     public boolean isListNameAvailable(String name, int userId) throws SQLException {
         return !taskListDAO.existsByNameAndUser(name, userId);

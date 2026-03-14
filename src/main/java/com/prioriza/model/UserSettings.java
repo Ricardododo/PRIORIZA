@@ -56,21 +56,6 @@ public class UserSettings {
     public int getNotificationHour() { return notificationHour; }
     public void setNotificationHour(int notificationHour) { this.notificationHour = notificationHour; }
 
-    //--------métodos útiles
-    //aplica configuración a un detector de notificaciones
-    public void applyToDetector() {
-        // Aquí puedes poner lógica para aplicar la configuración
-        System.out.println("Configuración aplicada: " + this);
-    }
-    //crear copia de esta configuración
-    public UserSettings copy() {
-        return new UserSettings(
-                userId, emailEnabled, daysBeforeAlert, alertForSubtasks,
-                alertOnlyWorkingDays, maxAlertsPerDay, notificationHour
-        );
-    }
-
-
     @Override
     public String toString() {
         return String.format(

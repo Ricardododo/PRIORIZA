@@ -141,42 +141,9 @@ public class TaskDAO {
         }
         return tasks;
     }
+
     /**
-     * Busca tareas por estado.
-     * 
-     * @param status Estado de las tareas a buscar
-     * @return Lista de tareas con el estado especificado
-     */
-    public List<Task> getByStatus(TaskStatus status) {
-        List<Task> tasks = new ArrayList<>();
-        String sql = "SELECT * FROM task WHERE status = ? ORDER BY priority_score DESC";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setString(1, status.name());
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                tasks.add(mapResultSetToTask(rs));
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return tasks;
-    }
-    /**
-     * Busca tareas por prioridad.
-     * 
-     * @param priority Prioridad de las tareas a buscar
-     * @return Lista de tareas con la prioridad especificada
-     */
-    public List<Task> getByPriority(Priority priority) {
-        List<Task> tasks = new ArrayList<>();
-        String sql = "SELECT * FROM task WHERE priority = ? ORDER BY due_date ASC";
-
-        try (Connection conn = DatabaseConnection.getConnection();
+     * Busca tareas importantes de un usuario.
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, priority.name());

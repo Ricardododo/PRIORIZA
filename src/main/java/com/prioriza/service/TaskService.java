@@ -105,7 +105,7 @@ public class TaskService {
      * @param task La tarea a evaluar
      * @return El nivel de prioridad calculado
      */
-    public PriorityLevel calculatePriorityLevel(Task task) {
+    private PriorityLevel calculatePriorityLevel(Task task) {
         return priorityEngine.calculate(task);
     }
 
@@ -115,7 +115,7 @@ public class TaskService {
      * @param task La tarea a evaluar
      * @return Puntuación numérica de prioridad
      */
-    public int calculatePriorityScore(Task task) {
+    private int calculatePriorityScore(Task task) {
         return priorityEngine.calculateScore(task);
     }
 

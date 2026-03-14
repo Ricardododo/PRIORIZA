@@ -93,19 +93,6 @@ public class SubTaskService {
     }
 
     /*
-     * Marca una subtarea como pendiente
-     */
-    public void pendSubTask(int subTaskId) {
-        SubTask subTask = subTaskDAO.getById(subTaskId);
-        if (subTask == null) {
-            throw new IllegalArgumentException("Subtarea no encontrada");
-        }
-        subTask.setSubTaskStatus(SubTaskStatus.PENDIENTE);
-        subTaskDAO.update(subTask);
-        System.out.println("Subtarea pendiente ID: " + subTaskId);
-    }
-
-    /*
      * Elimina todas las subtareas de una tarea
      */
     public void deleteByTaskId(int taskId) {
@@ -122,14 +109,5 @@ public class SubTaskService {
         return subTaskDAO.getByTaskId(taskId).stream()
                 .filter(s -> s.getSubTaskStatus() == SubTaskStatus.PENDIENTE)
                 .count();
-    }
-
-    /*
-     * Verifica si todas las subtareas de una tarea están completadas
-     */
-    public boolean areAllCompleted(int taskId) {
-        List<SubTask> subtasks = subTaskDAO.getByTaskId(taskId);
-        return !subtasks.isEmpty() && subtasks.stream()
-                .allMatch(s -> s.getSubTaskStatus() == SubTaskStatus.COMPLETA);
     }
 }

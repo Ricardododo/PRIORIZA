@@ -20,9 +20,9 @@ public class NotificationConfig {
     public static final int[] ALERT_DAYS = {0, 1, 2, 3, 5, 7}; //Días antes de vencer
 
     //modo desarrollo
-    public static final boolean DEV_MODE = true; //para producción sería false
+    public static final boolean DEV_MODE = true;
 
-    //Horarios especiales para Desarrollo
+    //Horarios
     public static LocalTime[] getDevSchedule() {
         if (DEV_MODE) {
             return new LocalTime[] {
@@ -36,7 +36,7 @@ public class NotificationConfig {
 
     // Verificar si está en horario laboral
     public static boolean isWorkingHours() {
-        if (DEV_MODE) return true; // En desarrollo, siempre true
+        if (DEV_MODE) return true;
 
         LocalTime now = LocalTime.now();
         int hour = now.getHour();
