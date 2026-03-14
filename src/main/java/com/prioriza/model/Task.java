@@ -6,6 +6,16 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Representa una tarea en el sistema PRIORIZA.
+ * 
+ * Una tarea pertenece a una lista de tareas (TaskList) y puede contener subtareas.
+ * El sistema calcula automáticamente su prioridad basándose en fecha de vencimiento,
+ * importancia, estado y cantidad de subtareas.
+ * 
+ * @author PRIORIZA
+ * @version 1.0
+ */
 public class Task {
     private int id;
     private String title;
@@ -13,23 +23,39 @@ public class Task {
     private LocalDateTime dueDateTime;
     private boolean important;
     private TaskStatus status;
-    private int taskListId; // FK a TaskList
+    private int taskListId;
 
     private List<SubTask> subTasks =  new ArrayList<>();
 
-    // campos derivados (no dominio persistente)
-    private int priorityScore;              // heuristica
-    private Priority priority;             // UI
-    private PriorityLevel priorityLevel;  // motor
+    /**
+     * Campos derivados (no persisten en la base de datos).
+     */
+    private int priorityScore;
+    private Priority priority;
+    private PriorityLevel priorityLevel;
 
-    //Constructor
+    /**
+     * Constructor por defecto.
+     * Inicializa la tarea con valores predeterminados:
+     * estado PENDIENTE, prioridad MEDIA y nivel de prioridad MEDIO.
+     */
     public Task() {
         this.status = TaskStatus.PENDIENTE;
         this.priority = Priority.MEDIA;
         this.priorityLevel = PriorityLevel.MEDIO;
     }
 
-    //constructor completo
+    /**
+     * Constructor completo para crear una tarea con todos los atributos.
+     * 
+     * @param title        Título de la tarea
+     * @param description  Descripción detallada de la tarea
+     * @param dueDateTime  Fecha y hora de vencimiento
+     * @param priority     Prioridad para la interfaz de usuario
+     * @param status       Estado de la tarea
+     * @param taskListId   Identificador de la lista de tareas
+     * @param important    Indica si la tarea es importante
+     */
     public Task(String title, String description, LocalDateTime dueDateTime, Priority priority, TaskStatus status, int taskListId, boolean important) {
         this();
         this.title = title;
@@ -133,6 +159,10 @@ public class Task {
         this.priorityLevel = priorityLevel;
     }
 
+    /**
+     * Representación en cadena de la tarea.
+     * @return Cadena con el título y la prioridad
+     */
     @Override
     public String toString() {
         return title + " (" + priority + "(";

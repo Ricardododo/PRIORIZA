@@ -10,9 +10,22 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * DAO para gestionar operaciones de base de datos de tareas.
+ * 
+ * Proporciona métodos para insertar, actualizar, eliminar y consultar tareas
+ * en la base de datos SQLite.
+ * 
+ * @author PRIORIZA
+ * @version 1.0
+ */
 public class TaskDAO {
 
-    //Insertar, actualiza la SQL
+    /**
+     * Inserta una nueva tarea en la base de datos.
+     * 
+     * @param task La tarea a insertar
+     */
     public void insert(Task task) {
         String sql = "INSERT INTO task(title, description, due_date, priority, status, important, priority_score, task_list_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -34,7 +47,7 @@ public class TaskDAO {
             ps.setString(5, task.getStatus() != null ? task.getStatus().name() : "PENDIENTE");
             ps.setBoolean(6, task.isImportant());
             ps.setInt(7, task.getPriorityScore());
-            ps.setInt(8, task.getTaskListId()); //incluyendo la FK
+            ps.setInt(8, task.getTaskListId());
 
             ps.executeUpdate();
 
@@ -48,7 +61,12 @@ public class TaskDAO {
         }
     }
 
-    //Leer o encontrar por ID
+    /**
+     * Busca una tarea por su identificador.
+     * 
+     * @param id Identificador de la tarea
+     * @return La tarea encontrada o null si no existe
+     */
     public Task getById(int id){
         String sql = "SELECT * FROM task WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -68,7 +86,12 @@ public class TaskDAO {
         }
         return null;
     }
-    // encontrar por lista de tareas (TaskList)
+    /**
+     * Busca tareas por identificador de lista de tareas.
+     * 
+     * @param taskListId Identificador de la lista de tareas
+     * @return Lista de tareas de la lista especificada
+     */
     public List<Task> getByTaskListId(int taskListId){
         List<Task> tasks = new ArrayList<>();
         String sql = "SELECT * FROM task WHERE task_list_id = ? ORDER BY priority_score DESC, due_date ASC";
@@ -88,7 +111,12 @@ public class TaskDAO {
         }
         return tasks;
     }
-    //buscar tareas por usuario (a través de task_list)
+    /**
+     * Busca todas las tareas de un usuario a través de sus listas de tareas.
+     * 
+     * @param userId Identificador del usuario
+     * @return Lista de tareas del usuario
+     */
     public List<Task> getByUserId(int userId) {
         List<Task> tasks = new ArrayList<>();
         String sql = """
@@ -113,7 +141,12 @@ public class TaskDAO {
         }
         return tasks;
     }
-    // buscar tarea por estado
+    /**
+     * Busca tareas por estado.
+     * 
+     * @param status Estado de las tareas a buscar
+     * @return Lista de tareas con el estado especificado
+     */
     public List<Task> getByStatus(TaskStatus status) {
         List<Task> tasks = new ArrayList<>();
         String sql = "SELECT * FROM task WHERE status = ? ORDER BY priority_score DESC";
@@ -133,7 +166,12 @@ public class TaskDAO {
         }
         return tasks;
     }
-    //buscar tarea por prioridad
+    /**
+     * Busca tareas por prioridad.
+     * 
+     * @param priority Prioridad de las tareas a buscar
+     * @return Lista de tareas con la prioridad especificada
+     */
     public List<Task> getByPriority(Priority priority) {
         List<Task> tasks = new ArrayList<>();
         String sql = "SELECT * FROM task WHERE priority = ? ORDER BY due_date ASC";
@@ -153,7 +191,12 @@ public class TaskDAO {
         }
         return tasks;
     }
-    //buscar tarea por importantes
+    /**
+     * Busca tareas importantes de un usuario.
+     * 
+     * @param userId Identificador del usuario
+     * @return Lista de tareas importantes del usuario
+     */
     public List<Task> getImportantTasks(int userId) {
         List<Task> tasks = new ArrayList<>();
         String sql = """
@@ -178,7 +221,12 @@ public class TaskDAO {
         }
         return tasks;
     }
-    //buscar tareas vencidas
+    /**
+     * Busca tareas vencidas de un usuario.
+     * 
+     * @param userId Identificador del usuario
+     * @return Lista de tareas vencidas del usuario
+     */
     public List<Task> getOverdueTasks(int userId) {
         List<Task> tasks = new ArrayList<>();
         String sql = """
@@ -205,7 +253,12 @@ public class TaskDAO {
         }
         return tasks;
     }
-    //buscar tareas para hoy
+    /**
+     * Busca tareas con fecha de vencimiento para hoy.
+     * 
+     * @param userId Identificador del usuario
+     * @return Lista de tareas para hoy del usuario
+     */
     public List<Task> getTodayTasks(int userId) {
         List<Task> tasks = new ArrayList<>();
         String sql = """
@@ -233,7 +286,11 @@ public class TaskDAO {
         return tasks;
     }
 
-    //actualizar completo
+    /**
+     * Actualiza una tarea existente.
+     * 
+     * @param task La tarea con los datos actualizados
+     */
     public void update(Task task){
         String sql = "UPDATE task SET title = ?, description = ?, due_date = ?, priority = ?, status = ?, important = ?, priority_score = ?, task_list_id = ? WHERE id = ?";
 
@@ -268,7 +325,12 @@ public class TaskDAO {
         }
     }
 
-    //actualizar solo el estado
+    /**
+     * Actualiza solo el estado de una tarea.
+     * 
+     * @param taskId Identificador de la tarea
+     * @param status Nuevo estado de la tarea
+     */
     public void updateStatus(int taskId, TaskStatus status) {
         String sql = "UPDATE task SET status = ? WHERE id = ?";
 
@@ -284,7 +346,12 @@ public class TaskDAO {
         }
     }
 
-    //actualizar solo la prioridad heuristica
+    /**
+     * Actualiza solo la puntuación de prioridad de una tarea.
+     * 
+     * @param taskId        Identificador de la tarea
+     * @param priorityScore Nueva puntuación de prioridad
+     */
     public void updatePriorityScore(int taskId, int priorityScore) {
         String sql = "UPDATE task SET priority_score = ? WHERE id = ?";
 
@@ -300,7 +367,12 @@ public class TaskDAO {
         }
     }
 
-    //actualizar solo importante
+    /**
+     * Actualiza solo el campo importante de una tarea.
+     * 
+     * @param taskId    Identificador de la tarea
+     * @param important Nuevo valor de importante
+     */
     public void updateImportant(int taskId, boolean important) {
         String sql = "UPDATE task SET important = ? WHERE id = ?";
 
@@ -316,7 +388,11 @@ public class TaskDAO {
         }
     }
 
-    //Eliminar
+    /**
+     * Elimina una tarea por su identificador.
+     * 
+     * @param id Identificador de la tarea a eliminar
+     */
     public void delete(int id){
         String sql = "DELETE FROM task WHERE id = ?";
 
@@ -334,7 +410,13 @@ public class TaskDAO {
             e.printStackTrace();
         }
     }
-    //contar tareas por estado
+    /**
+     * Cuenta las tareas de un usuario por estado.
+     * 
+     * @param userId Identificador del usuario
+     * @param status Estado de las tareas a contar
+     * @return Número de tareas con el estado especificado
+     */
     public int countByStatus(int userId, TaskStatus status) {
         String sql = """
             SELECT COUNT(*) FROM task t
@@ -360,7 +442,13 @@ public class TaskDAO {
     }
 
 
-    //Mapper privado para leer (convierte fila en objeto)
+    /**
+     * Mapea una fila del ResultSet a un objeto Task.
+     * 
+     * @param rs ResultSet con los datos de la tarea
+     * @return Objeto Task con los datos del ResultSet
+     * @throws SQLException Si ocurre un error al leer los datos
+     */
     private Task mapResultSetToTask(ResultSet rs) throws SQLException {
         Task task = new Task();
         task.setId(rs.getInt("id"));

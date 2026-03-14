@@ -6,6 +6,17 @@ import com.prioriza.priority.rules.*;
 
 import java.util.List;
 
+/**
+ * Motor de cálculo de prioridades para tareas.
+ * 
+ * Utiliza un conjunto de reglas heurísticas para calcular el nivel de prioridad
+ * de una tarea basándose en: fecha de vencimiento, importancia, estado y subtareas.
+ * 
+ * Niveles: CRITICO (>=80) > URGENTE (>=50) > ALTO (>=30) > MEDIO (>=10) > BAJO
+ * 
+ * @author PRIORIZA
+ * @version 1.0
+ */
 public class PriorityEngine {
 
     private final List<PriorityRule> rules = List.of(
@@ -15,7 +26,13 @@ public class PriorityEngine {
             new ImportantRule(),
             new CompletionStatusRule()
     );
-    //este metodo devuelve el nivel de prioridad
+
+    /**
+     * Calcula el nivel de prioridad de una tarea.
+     * 
+     * @param task La tarea a evaluar
+     * @return Nivel de prioridad calculado
+     */
     public PriorityLevel calculate(Task task){
         int score = rules.stream().mapToInt(r -> r.evaluate(task)).sum();
 
@@ -25,7 +42,13 @@ public class PriorityEngine {
         if (score >= 10) return PriorityLevel.MEDIO;
         return PriorityLevel.BAJO;
     }
-    //este metodo devuelve la puntuacion numerica
+
+    /**
+     * Calcula la puntuación numérica de prioridad de una tarea.
+     * 
+     * @param task La tarea a evaluar
+     * @return Puntuación numérica (suma de todas las reglas)
+     */
     public int calculateScore(Task task){
         return rules.stream().mapToInt(r -> r.evaluate(task)).sum();
     }

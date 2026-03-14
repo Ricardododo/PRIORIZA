@@ -1,17 +1,34 @@
 package com.prioriza.model;
 
+/**
+ * Representa un usuario en el sistema PRIORIZA.
+ * 
+ * Cada usuario tiene un nombre, email, contraseña y rol.
+ * Los usuarios pueden crear y gestionar sus propias listas de tareas.
+ * 
+ * @author PRIORIZA
+ * @version 1.0
+ */
 public class User {
     private int id;
     private String name;
     private String email;
-    private String password; //paswordHash
+    private String password;
     private UserRole role;
 
-    //constructores jdbc
+    /**
+     * Constructor por defecto para JDBC.
+     */
     public User() {
     }
 
-    //constructor registro
+    /**
+     * Constructor para registro de nuevo usuario.
+     * 
+     * @param name     Nombre del usuario
+     * @param email    Correo electrónico del usuario
+     * @param password Contraseña del usuario
+     */
     public User(String name, String email, String password) {
         this.name = name;
         this.email = email;
@@ -19,6 +36,13 @@ public class User {
         this.role = UserRole.USER;
     }
 
+    /**
+     * Constructor con id y datos básicos.
+     * 
+     * @param id    Identificador del usuario
+     * @param name  Nombre del usuario
+     * @param email Correo electrónico del usuario
+     */
     public User(int id, String name, String email) {
         this.id = id;
         this.name = name;
@@ -30,7 +54,15 @@ public class User {
         this.email = email;
     }
 
-    //constructor completo - role
+    /**
+     * Constructor completo con todos los atributos.
+     * 
+     * @param id       Identificador del usuario
+     * @param name     Nombre del usuario
+     * @param email    Correo electrónico del usuario
+     * @param password Contraseña del usuario
+     * @param role     Rol del usuario
+     */
     public User(int id, String name, String email, String password, UserRole role) {
         this.id = id;
         this.name = name;
@@ -43,8 +75,6 @@ public class User {
         this.id = id;
         this.name = name;
     }
-
-
 
     // Getter y Setter
 
@@ -89,8 +119,10 @@ public class User {
     }
 
 
-    //toString para poder imprimir mostrar
-
+    /**
+     * Representación en cadena del usuario.
+     * @return Cadena con id, nombre y email
+     */
     @Override
     public String toString() {
         return "User{" +

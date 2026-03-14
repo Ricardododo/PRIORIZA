@@ -6,6 +6,15 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+/**
+ * Utilidades para manejo de fechas y tiempos.
+ * 
+ * Proporciona métodos estáticos para formateo, parsing y conversión
+ * de fechas y horas en diferentes formatos.
+ * 
+ * @author PRIORIZA
+ * @version 1.0
+ */
 public class DateUtil {
 
     // ============= FORMATOS =============

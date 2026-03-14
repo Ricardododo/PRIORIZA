@@ -1,7 +1,12 @@
 package com.prioriza.model;
 
+/**
+ * Enum representing the status of a task.
+ * 
+ * @author PRIORIZA
+ * @version 1.0
+ */
 public enum TaskStatus {
-    //estado de la tarea
     PENDIENTE,
     EN_PROGRESO,
     COMPLETA,

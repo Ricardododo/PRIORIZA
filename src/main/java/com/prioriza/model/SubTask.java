@@ -3,20 +3,39 @@ package com.prioriza.model;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Representa una subtarea en el sistema PRIORIZA.
+ * 
+ * Una subtarea pertenece a una tarea principal y representa una parte
+ * más específica del trabajo a realizar. Las subtareas influyen en el
+ * cálculo de prioridad de la tarea padre.
+ * 
+ * @author PRIORIZA
+ * @version 1.0
+ */
 public class SubTask {
     private int id;
     private String title;
     private SubTaskStatus subTaskStatus;
-    private int taskId; // esta es la FK a la clase Task para la BD
+    private int taskId;
 
     private LocalDateTime dueDateTime;
     private boolean important;
 
-    //Constructor
+    /**
+     * Constructor por defecto.
+     * Inicializa la subtarea con estado PENDIENTE.
+     */
     public SubTask() {
         this.subTaskStatus = SubTaskStatus.PENDIENTE;
     }
 
+    /**
+     * Constructor para crear una subtarea.
+     * 
+     * @param title  Título de la subtarea
+     * @param taskId Identificador de la tarea padre
+     */
     public SubTask(String title, int taskId) {
         this.title = title;
         this.taskId = taskId;
@@ -72,7 +91,9 @@ public class SubTask {
         this.important = important;
     }
 
-    //metodo para marcar completado
+    /**
+     * Marca la subtarea como completada.
+     */
     public void markCompleted(){
         this.subTaskStatus = SubTaskStatus.COMPLETA;
     }

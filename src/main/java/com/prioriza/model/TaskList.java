@@ -3,18 +3,37 @@ package com.prioriza.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Representa una lista de tareas en el sistema PRIORIZA.
+ * 
+ * Cada lista de tareas pertenece a un usuario y puede contener múltiples tareas.
+ * Es la entidad principal para organizar las tareas del usuario.
+ * 
+ * @author PRIORIZA
+ * @version 1.0
+ */
 public class TaskList {
     private int id;
     private String name;
-    private int userId; // FK a la clase User
+    private int userId;
 
-    //relación lógica
+    /**
+     * Relación lógica con las tareas de esta lista.
+     */
     private List<Task> tasks = new ArrayList<>();
 
-    //Constructor vacio (JDBC)
+    /**
+     * Constructor vacío para JDBC.
+     */
     public TaskList() {
     }
-    //constructor completo (lectura desde BD)
+
+    /**
+     * Constructor completo para crear una lista de tareas.
+     * 
+     * @param name   Nombre de la lista de tareas
+     * @param userId Identificador del usuario propietario
+     */
     public TaskList(String name, int userId) {
         this.name = name;
         this.userId = userId;
@@ -54,7 +73,10 @@ public class TaskList {
         this.tasks = tasks;
     }
 
-    //toString
+    /**
+     * Representación en cadena de la lista de tareas.
+     * @return Nombre de la lista
+     */
     @Override
     public String toString() {
 
