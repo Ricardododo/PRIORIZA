@@ -92,7 +92,7 @@ public class MainController {
     @FXML
     private BorderPane rootpane;
 
-    //Elementos del menú para ocultar o mostrar segun role
+    //Elementos del menú para ocultar o mostrar segun ROL
     @FXML
     private Menu adminMenu;
     @FXML
@@ -109,7 +109,7 @@ public class MainController {
     //aplicar en los métodos
     public void aplicarReglasHeuristicas(){
         logger.debug("Aplicando reglas heurísticas...");
-        // Tu código
+
         logger.info("Reglas aplicadas exitosamente");
     }
 
@@ -210,7 +210,7 @@ public class MainController {
                     }
         }
 
-        // Ahora aplicamos la cell factory a CADA columna
+        // acá aplicamos la cell factory a CADA columna
         colTitle.setCellFactory(column -> new ColoredCell<Task, String>() {
             @Override
             protected void updateItem(String item, boolean empty) {
@@ -274,7 +274,7 @@ public class MainController {
                     String fecha = subTask.getDueDateTime() != null ?
                             " [" + subTask.getDueDateTime().format(DateTimeFormatter.ofPattern("dd/MM HH:mm")) + "]" : "";
 
-                    // Texto según estado
+                    // Texto según el estado
                     String estado = subTask.getSubTaskStatus() == SubTaskStatus.COMPLETA ? "✓" : "○";
 
                     setText(estado + " " + subTask.getTitle() + fecha);
@@ -292,7 +292,7 @@ public class MainController {
             }
         });
         loadTaskLists(); //cargar las listas de tareas(datos)
-        setupListeners(); //activar listeners 8seleccion de listas, tareas, subtareas) para los clicks
+        setupListeners(); //activar listeners (seleccion de listas, tareas, subtareas) para los clicks
     }
     //configuración menú según el rol del usuario
     private void configureMenuByRole() {
@@ -323,7 +323,7 @@ public class MainController {
         }
         System.out.println("=".repeat(60));
 
-        // También podemos ocultar items individuales
+        // También ocultar items individuales
         if (scanNowMenuItem != null) {
             scanNowMenuItem.setVisible(isAdmin);
         }
@@ -578,7 +578,7 @@ public class MainController {
         }
 
         NotificationStats stats = NotificationStats.getInstance();
-        stats.resetScansToday();  // ← Necesitas crear este método
+        stats.resetScansToday();
 
         AlertUtil.showInfo("Información", "Contador de escaneos reseteado");
     }
@@ -948,7 +948,7 @@ public class MainController {
 
                 subTaskService.updateSubTask(updatedSubTask);
 
-                // RECARGAR SUBTAREAS
+                // recargar subtareas
                 loadSubTasks(taskId);
 
                 //Mostrar mensaje de éxito
@@ -1152,7 +1152,7 @@ public class MainController {
                     long hoursUntil = ChronoUnit.HOURS.between(now, task.getDueDateTime());
                     long daysUntil = hoursUntil / 24;
                     if (hoursUntil >= 0) {
-                        //USAR EmailNotificationDAO (no tiene servicio)
+                        //USAR EmailNotificationDAO (no servicio)
                         EmailNotification notification = new EmailNotification(currentUser, task, (int) daysUntil);
                         emailNotificationDAO.insert(notification);
                     }
@@ -1332,7 +1332,7 @@ public class MainController {
     //Metodo para aplicar la configuración al sistema
     private void aplicarConfiguracionNotificaciones(UserSettings settings) {
         this.currentUserSettings = settings; //guardar en variable de instancia
-        // Aquí puedes actualizar variables globales o reiniciar servicios
+        //actualizar variables globales o reiniciar servicios
         System.out.println("Nueva configuración aplicada:");
         System.out.println("Email: " + (settings.isEmailEnabled() ? "SÍ" : "NO"));
         System.out.println("Días alerta: " + settings.getDaysBeforeAlert());
@@ -1350,7 +1350,7 @@ public class MainController {
         }
 
         try {
-            // USAR TaskService en lugar de taskDAO
+            // USAR TaskService
             List<Task> tasks = taskService.getByTasksListId(selectedList.getId());
 
             //verificar que hay tareas
@@ -1419,7 +1419,7 @@ public class MainController {
         }
 
         try {
-            // USAR SubTaskService en lugar de subTaskDAO
+            // SubTaskService en lugar de subTaskDAO
             List<SubTask> subtasks = subTaskService.getSubTasksByTaskId(selectedTask.getId());
             selectedTask.setSubTasks(subtasks);
 
@@ -1523,7 +1523,7 @@ public class MainController {
         if (currentUser == null) return;
 
         try {
-            //USAR TaskListService en lugar de taskListDAO
+            //TaskListService en lugar de taskListDAO
             List<TaskList> allLists = taskListService.getListsByUserId(currentUser.getId());
 
             if (allLists.isEmpty()) {
@@ -1554,7 +1554,7 @@ public class MainController {
 
                     // Cargar subtareas para cada tarea
                     for (Task task : tasks) {
-                        //USAR SubTaskService en lugar de subTaskDAO
+                        //USA SubTaskService en lugar de subTaskDAO
                         task.setSubTasks(subTaskService.getSubTasksByTaskId(task.getId()));
                         totalSubtasks += task.getSubTasks().size();
                     }
@@ -1656,7 +1656,7 @@ public class MainController {
                 if (response == btnOpen) {
                     Desktop.getDesktop().open(new File(filePath).getParentFile());
                 } else if (response == btnShare) {
-                    // Aquí podrías implementar compartir el PDF completo
+                    //compartir el PDF completo
                     AlertUtil.showInfo("Información",
                             "Compartir PDF completo - Función en desarrollo\n\n" +
                                     "El archivo está en:\n" + filePath);
@@ -2114,7 +2114,7 @@ public class MainController {
             e.printStackTrace();
         }
     }
-    // ============= METODOS PARA EL PANEL DE CONTROL =============
+    // METODOS PARA EL PANEL DE CONTROL
 
     //Abre el panel de control en la pestaña de Resumen Diario
 

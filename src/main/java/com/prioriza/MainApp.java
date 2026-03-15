@@ -30,8 +30,6 @@ public class MainApp extends Application {
         Parent root = loader.load();
         Scene scene = new Scene(root);
 
-        //CSS ya no hace falta acá --- ahora esta en FXML
-
         //Icono
         stage.getIcons().add(
                 new Image(getClass().getResourceAsStream("/img/prioriza-icono.png"))

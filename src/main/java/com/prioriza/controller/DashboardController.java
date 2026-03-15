@@ -67,13 +67,13 @@ public class DashboardController {
     //Initialize
     @FXML
     public void initialize(){
-        //1. obtener usuario actual
+        // obtener usuario actual
         currentUser = Session.getUser();
         if (currentUser == null){
             AlertUtil.showError("Error", "No hay usuario autenticado");
             return;
         }
-        //2. Mostrar fecha con formato bonito y fecha actual
+        // Mostrar fecha con formato y fecha actual
         dateLabel.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("EEEE, dd 'de' MMMM 'de' yyyy")));
 
         // Configurar las celdas de las listas
@@ -155,7 +155,7 @@ public class DashboardController {
                     })
                     .collect(Collectors.toList());
 
-            // Actualizar UI
+            // Actualizar la UI
             todayTasksLabel.setText(todayTasks.size() + " tareas para hoy");
             todayTasksList.setItems(FXCollections.observableArrayList(todayTasks));
 
@@ -172,7 +172,7 @@ public class DashboardController {
     }
 
     private void configureListCells() {
-        //para cada lista, definir cómo mostrar cada tarea
+        //para cada lista, define cómo mostrar cada tarea
         ListView<?>[] lists = {todayTasksList, tomorrowTasksList, weekTasksList};
         for (ListView<Task> list : (ListView<Task>[]) lists) {
             list.setCellFactory(param -> new ListCell<Task>() {
@@ -202,7 +202,7 @@ public class DashboardController {
             });
         }
     }
-    //MÉTODOS PARA Estadísticas
+    //MÉTODOS Para Estadísticas
     private void loadStatistics() {
         try {
             List<Task> allTasks = taskService.getTasksByUserId(currentUser.getId());
@@ -301,7 +301,7 @@ public class DashboardController {
         updateCalendarHeader();
         buildCalendar();
 
-        // Configurar botones de navegación
+        // botones de navegación
         prevMonthButton.setOnAction(e -> navigateMonth(-1));
         nextMonthButton.setOnAction(e -> navigateMonth(1));
     }

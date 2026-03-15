@@ -49,7 +49,7 @@ public class NotificationProcessor {
             }, 0, 30, TimeUnit.SECONDS); // ¡CADA 30 SEGUNDOS para pruebas!
             System.out.println("MODO DESARROLLO: Escaneo cada 30 segundos");
         } else {
-            // para PRODUCCIÓN - Horario inteligente
+            //  Horario inteligente
             scheduler.scheduleAtFixedRate(() -> {
                 try {
                     detector.scanAllUsers();

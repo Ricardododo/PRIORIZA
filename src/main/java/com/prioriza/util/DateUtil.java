@@ -17,7 +17,7 @@ import java.time.format.DateTimeParseException;
  */
 public class DateUtil {
 
-    // ============= FORMATOS =============
+    // FORMATOS
     private static final DateTimeFormatter DATE_FORMATTER =
             DateTimeFormatter.ofPattern("dd/MM/yyyy");        // Para mostrar fecha
     private static final DateTimeFormatter DATETIME_FORMATTER =
@@ -29,7 +29,7 @@ public class DateUtil {
     private static final DateTimeFormatter SQL_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); // Para guardar en BD
 
-    // ============= PARSE =============
+    //PARSE
     public static LocalTime parseTime(String timeStr) throws DateTimeParseException {
         if (timeStr == null || timeStr.trim().isEmpty()) {
             return null;
@@ -37,7 +37,7 @@ public class DateUtil {
         return LocalTime.parse(timeStr.trim(), TIME_FORMATTER);
     }
 
-    // ============= FORMATO PARA MOSTRAR =============
+    // FORMATO PARA MOSTRAR
     public static String formatDate(LocalDate date) {
         return date != null ? date.format(DATE_FORMATTER) : "";
     }
@@ -54,12 +54,12 @@ public class DateUtil {
         return dateTime != null ? dateTime.format(DATETIME_FORMATTER) : "";
     }
 
-    // ============= FORMATO PARA BASE DE DATOS =============
+    // FORMATO PARA BASE DE DATOS
     public static String formatForDatabase(LocalDateTime dateTime) {
         return dateTime != null ? dateTime.format(SQL_FORMATTER) : null;
     }
 
-    // ============= FORMATO PARA NOMBRES DE ARCHIVO =============
+    // FORMATO PARA NOMBRES DE ARCHIVO
     public static String formatForFileName(LocalDateTime dateTime) {
         return dateTime != null ? dateTime.format(FILE_NAME_FORMATTER) : "";
     }
@@ -68,7 +68,7 @@ public class DateUtil {
         return date != null ? date.format(DateTimeFormatter.ofPattern("yyyyMMdd")) : "";
     }
 
-    // ============= CONVERSIONES ÚTILES =============
+    //CONVERSIONES ÚTILES
     public static LocalDateTime atStartOfDay(LocalDate date) {
         return date != null ? date.atStartOfDay() : null;
     }

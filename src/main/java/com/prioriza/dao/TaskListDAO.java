@@ -332,13 +332,13 @@ public class TaskListDAO {
     public static void ejemploUso(int userId) throws SQLException {
         TaskListDAO listDAO = new TaskListDAO();
 
-        // 1. Crear lista por defecto si no tiene
+        // Crear lista por defecto si no tiene
         listDAO.createDefaultListsForUser(userId);
 
-        // 2. Obtener todas las listas del usuario
+        // Obtener todas las listas del usuario
         List<TaskList> lists = listDAO.getByUserId(userId);
 
-        // 3. Para cada lista, cargar sus tareas
+        // Para cada lista, cargar sus tareas
         TaskDAO taskDAO = new TaskDAO();
         for (TaskList list : lists) {
             list.setTasks(taskDAO.getByTaskListId(list.getId()));

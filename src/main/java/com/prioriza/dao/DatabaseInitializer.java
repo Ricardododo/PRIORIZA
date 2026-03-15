@@ -7,7 +7,7 @@ import java.sql.Statement;
 public class DatabaseInitializer {
 
     public static void initialize() {
-        // 1. FUERZA BORRADO - Ignorar si no existe
+        // Forzar borrado - Ignorar si no existe
         try {
             java.nio.file.Files.deleteIfExists(java.nio.file.Paths.get("prioriza.db"));
             System.out.println("Base de datos eliminada");
@@ -15,15 +15,15 @@ public class DatabaseInitializer {
             // Ignorar
         }
 
-        // 2. NUEVA CONEXIÓN
+        // Nueva conección
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement()) {
 
-            // 3. ACTIVAR FOREIGN KEYS
+            // ACTIVAR FOREIGN KEYS
             stmt.execute("PRAGMA foreign_keys = ON;");
             System.out.println("Foreign keys activadas");
 
-            // 4. USERS
+            //USERS
             String createUsers =
                     "CREATE TABLE IF NOT EXISTS users (" +
                             "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -37,7 +37,7 @@ public class DatabaseInitializer {
             stmt.executeUpdate(createUsers);
             System.out.println("Tabla 'users' creada");
 
-            // 5. TASK_LIST
+            // TASK_LIST
             String createTaskList =
                     "CREATE TABLE IF NOT EXISTS task_list (" +
                             "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -49,7 +49,7 @@ public class DatabaseInitializer {
             stmt.executeUpdate(createTaskList);
             System.out.println("Tabla 'task_list' creada");
 
-            // 6. TASK
+            // TASK
             String createTask =
                     "CREATE TABLE IF NOT EXISTS task (" +
                             "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -67,7 +67,7 @@ public class DatabaseInitializer {
             stmt.executeUpdate(createTask);
             System.out.println("Tabla 'task' creada");
 
-            // 7. SUB_TASK
+            // SUB_TASK
             String createSubTask =
                     "CREATE TABLE IF NOT EXISTS sub_task (" +
                             "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -82,7 +82,7 @@ public class DatabaseInitializer {
             stmt.executeUpdate(createSubTask);
             System.out.println("Tabla 'sub_task' creada");
 
-            // 8. ADMIN
+            // ADMIN
             String insertAdmin =
                     "INSERT OR IGNORE INTO users (name, email, password, user_role) " +
                             "VALUES ('Administrador', 'admin@prioriza.com', 'admin123', 'ADMIN');";
@@ -92,7 +92,7 @@ public class DatabaseInitializer {
                 System.out.println("Usuario ADMIN creado");
             }
 
-            // 9. Notificaciones
+            // Notificaciones
             String createNotifications =
                     "CREATE TABLE IF NOT EXISTS email_notifications (" +
                     "id INTEGER PRIMARY KEY AUTOINCREMENT, " +

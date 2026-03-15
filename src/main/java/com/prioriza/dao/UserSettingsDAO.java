@@ -1,6 +1,7 @@
 package com.prioriza.dao;
 
 import com.prioriza.model.UserSettings;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,14 +31,14 @@ public class UserSettingsDAO {
         }
     }
 
-    // CREAR CONFIGURACIÓN POR DEFECTO
+    // Crear configuración por defecto
     private UserSettings createDefaultSettings(int userId) {
         UserSettings settings = new UserSettings(userId);
         insert(settings);
         return settings;
     }
 
-    // INSERTAR NUEVA CONFIGURACIÓN
+    // Insertar nueva configuración
     public void insert(UserSettings settings) {
         String sql = """
             INSERT INTO user_settings 
@@ -66,7 +67,7 @@ public class UserSettingsDAO {
         }
     }
 
-    // ACTUALIZAR CONFIGURACIÓN
+    // Actualizar configuración
     public void update(UserSettings settings) {
         String sql = """
             UPDATE user_settings SET 
@@ -102,7 +103,7 @@ public class UserSettingsDAO {
         }
     }
 
-    // ELIMINAR CONFIGURACIÓN
+    // Eliminar configuración
     public void delete(int userId) {
         String sql = "DELETE FROM user_settings WHERE user_id = ?";
 
@@ -118,7 +119,7 @@ public class UserSettingsDAO {
         }
     }
 
-    // OBTENER TODAS LAS CONFIGURACIONES (ADMIN)
+    // Obtener todas las configuraciones (ADMIN)
     public List<UserSettings> getAll() {
         List<UserSettings> list = new ArrayList<>();
         String sql = "SELECT * FROM user_settings ORDER BY user_id";
@@ -137,7 +138,7 @@ public class UserSettingsDAO {
         return list;
     }
 
-    // VERIFICAR SI EXISTE CONFIGURACIÓN
+    // Verificar si existen configuraciones
     public boolean exists(int userId) {
         String sql = "SELECT COUNT(*) FROM user_settings WHERE user_id = ?";
 
